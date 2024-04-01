@@ -4,5 +4,5 @@
 ---
 
 > [!note]
-> Togather [Server Repository](https://github.com/cbnu-togather/now-togather)
+> Togather [Server Repository](https://github.com/cbnu-togather/togather-server)
 
