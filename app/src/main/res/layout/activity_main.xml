@@ -1,18 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
+    <!-- 로그인 액티비티 기준 레이아웃 -->
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:translationY="-50dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/logo_imageView"
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_centerHorizontal="true"
+            android:paddingLeft="10dp"
+            android:src="@drawable/logo" />
+
+        <TextView
+            android:id="@+id/slogan_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/logo_imageView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="-20dp"
+            android:text="함께해요 우리"
+            android:textSize="25sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/slogan_textView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+            android:lineHeight="22.5dp"
+            android:text="동네라서 가능한 모든 것\n지금 투게더에서 시작해 보세요!"
+            android:textAlignment="center"
+            android:textSize="17.5sp" />
+    </RelativeLayout>
+
+
+    <!-- 로그인 버튼 -->
+    <Button
+        android:id="@+id/start_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="22.5dp"
+        android:fontFamily="@font/spoqa_han_sans_neo_regular"
+        android:letterSpacing="0"
+        android:outlineProvider="none"
+        android:paddingTop="17.5dp"
+        android:paddingBottom="17.5dp"
+        android:text="시작하기"
+        android:textSize="19sp"
+        android:textStyle="bold"
+        app:cornerRadius="17.5dp" />
+
+</RelativeLayout>
