@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".HandleAndStoreUserInformationPoliciesActivity">
+
+    <!-- activity (header) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityHeader_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- "뒤로가기" 버튼 -->
+        <ImageButton
+            android:id="@+id/back_imageButton"
+            android:layout_width="42.5dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2.5dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/transparent"
+            android:src="@drawable/arrow_back" />
+
+        <TextView
+            android:id="@+id/head_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:letterSpacing="-0.01"
+            android:text="개인정보 수집 및 이용 방침"
+            android:textColor="@color/dark_gray"
+            android:textSize="17.5sp" />
+    </RelativeLayout>
+
+    <!-- activity (body) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityBody_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activityHeader_relativeLayout">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RelativeLayout
+                    android:id="@+id/handleAndStoreUserInformationPolicies_relativeLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="50dp">
+
+                    <RelativeLayout
+                        android:id="@+id/rule1_relativeLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12.5dp">
+
+                        <TextView
+                            android:id="@+id/rule1_textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/light_gray_background"
+                            android:fontFamily="@font/spoqa_han_sans_neo_medium"
+                            android:paddingStart="12.5dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="12.5dp"
+                            android:paddingBottom="5dp"
+                            android:text="제 1조, 개인정보 수집에 대한 동의"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rule1_textView"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/spoqa_han_sans_neo_light"
+                            android:text="@string/our_policies_rule_2"
+                            android:textSize="15sp" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rule2_relativeLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rule1_relativeLayout"
+                        android:layout_marginTop="50dp">
+
+                        <TextView
+                            android:id="@+id/rule2_textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/light_gray_background"
+                            android:fontFamily="@font/spoqa_han_sans_neo_medium"
+                            android:paddingStart="12.5dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="12.5dp"
+                            android:paddingBottom="5dp"
+                            android:text="제 2조, 수집하는 개인정보 항목"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rule2_textView"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/spoqa_han_sans_neo_light"
+                            android:text="@string/our_policies_rule_3"
+                            android:textSize="15sp" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rule3_relativeLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rule2_relativeLayout"
+                        android:layout_marginTop="50dp">
+
+                        <TextView
+                            android:id="@+id/rule3_textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/light_gray_background"
+                            android:fontFamily="@font/spoqa_han_sans_neo_medium"
+                            android:paddingStart="12.5dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="12.5dp"
+                            android:paddingBottom="5dp"
+                            android:text="제 3조, 개인정보의 열람 및 정정"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rule3_textView"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/spoqa_han_sans_neo_light"
+                            android:text="@string/our_policies_rule_5"
+                            android:textSize="15sp" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:id="@+id/rule4_relativeLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/rule3_relativeLayout"
+                        android:layout_marginTop="50dp"
+                        android:layout_marginBottom="50dp">
+
+                        <TextView
+                            android:id="@+id/rule4_textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:background="@drawable/light_gray_background"
+                            android:fontFamily="@font/spoqa_han_sans_neo_medium"
+                            android:paddingStart="12.5dp"
+                            android:paddingTop="5dp"
+                            android:paddingEnd="12.5dp"
+                            android:paddingBottom="5dp"
+                            android:text="제 4조, 개인정보 수집, 이용, 제공에 대한 동의철회"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/rule4_textView"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/spoqa_han_sans_neo_light"
+                            android:text="@string/our_policies_rule_6"
+                            android:textSize="15sp" />
+                    </RelativeLayout>
+                </RelativeLayout>
+            </RelativeLayout>
+        </ScrollView>
+    </RelativeLayout>
+
+</RelativeLayout>
