@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".LoginActivity">
+
+    <!-- activity (header) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityHeader_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- "뒤로가기" 버튼 -->
+        <ImageButton
+            android:id="@+id/back_imageButton"
+            android:layout_width="42.5dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2.5dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/transparent"
+            android:src="@drawable/arrow_back" />
+    </RelativeLayout>
+
+    <!-- activity (body) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityBody_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activityHeader_relativeLayout">
+
+        <RelativeLayout
+            android:id="@+id/receiveAuthCode_relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:paddingHorizontal="15dp">
+
+            <TextView
+                android:id="@+id/head_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                android:text="안녕하세요!\n휴대폰 번호로 로그인해 주세요."
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/head2_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/head_textView"
+                android:layout_marginTop="15dp"
+                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                android:text="휴대폰 번호는 안전하게 보관되며 이웃들에게 공개되지 않아요."
+                android:textSize="15sp" />
+
+            <EditText
+                android:id="@+id/phoneNumber_editText"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_below="@+id/head2_textView"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/light_gray_border"
+                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                android:hint="휴대폰 번호(- 없이 숫자만 입력)"
+                android:inputType="phone"
+                android:maxLength="13"
+                android:paddingHorizontal="15dp"
+                android:textColorHint="@color/hint_color"
+                android:textSize="17.5sp" />
+
+            <Button
+                android:id="@+id/receiveAuthCode_button"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_below="@+id/phoneNumber_editText"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/light_gray_border"
+                android:enabled="false"
+                android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                android:outlineProvider="none"
+                android:text="인증문자 받기"
+                android:textColor="@color/disabled_widget_text_light_gray_color"
+                android:textSize="19sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/confirmAuthCode_relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/receiveAuthCode_relativeLayout"
+            android:layout_centerHorizontal="true"
+            android:paddingHorizontal="15dp"
+            android:visibility="invisible">
+
+            <EditText
+                android:id="@+id/authCode_editText"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/light_gray_border"
+                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                android:hint="인증문자 입력"
+                android:paddingHorizontal="15dp"
+                android:textColorHint="@color/hint_color"
+                android:textSize="17.5sp" />
+
+            <TextView
+                android:id="@+id/authCodeWarning_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/authCode_editText"
+                android:layout_marginTop="7.5dp"
+                android:text="@string/auth_code_warning"
+                android:textColor="#9B9DA4"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/confirmAuthCode_button"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_below="@+id/authCodeWarning_textView"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/light_gray_border"
+                android:backgroundTint="@color/disabled_widget_background_light_gray_color"
+                android:enabled="false"
+                android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                android:outlineProvider="none"
+                android:text="인증문자 확인"
+                android:textColor="@color/disabled_widget_text_deep_gray_color"
+                android:textSize="19sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>
