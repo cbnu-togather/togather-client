@@ -2,6 +2,21 @@
 <resources>
     <color name="theme_color">#3A8AF9</color>
     <color name="text_color">#1a1f27</color>
+    <color name="icon_color">#1b1f27</color>
+    <color name="toast_bg">#888F9B</color>
+    <color name='hint_color'>#B5B7BF</color>
+    <color name='disabled_widget_text_light_gray_color'>#D2D3D8</color>
+    <color name='disabled_widget_background_light_gray_color'>#DCDEE2</color>
+    <color name='disabled_widget_text_deep_gray_color'>#B1B4BC</color>
     <color name="black">#000</color>
     <color name="white">#FFF</color>
+    <color name="red">#d53220</color>
+    <color name="yellow">#f6ca64</color>
+    <color name="gray">#9B9DA4</color>
+    <color name="lighter_gray">#eeeff1</color>
+    <color name="light_gray">#BCBDBF</color>
+    <color name="dark_gray">#212836</color>
+    <color name="sm_light_gray">#dfdedf</color>
+    <color name="light_green">#59bd83</color>
+    <color name="transparent">#00ff0000</color>
 </resources>
