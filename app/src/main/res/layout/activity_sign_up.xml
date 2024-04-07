@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".LoginActivity">
+
+    <!-- activity (header) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityHeader_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- "뒤로가기" 버튼 -->
+        <ImageButton
+            android:id="@+id/back_imageButton"
+            android:layout_width="42.5dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2.5dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/transparent"
+            android:src="@drawable/arrow_back" />
+    </RelativeLayout>
+
+
+    <!-- activity (body) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityBody_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activityHeader_relativeLayout">
+
+        <RelativeLayout
+            android:id="@+id/receiveAuthCode_relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:paddingHorizontal="15dp">
+
+            <TextView
+                android:id="@+id/head_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                android:text="회원가입을 위해\n개인정보를 입력해 주세요."
+                android:textSize="25sp" />
+
+            <EditText
+                android:id="@+id/phoneNumber_editText"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_below="@+id/head_textView"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/light_gray_border"
+                android:backgroundTint="@color/disabled_widget_background_light_gray_color"
+                android:enabled="false"
+                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                android:inputType="phone"
+                android:maxLength="13"
+                android:paddingHorizontal="15dp"
+                android:text="010 1234 5678"
+                android:textColor="@color/disabled_widget_text_deep_gray_color"
+                android:textSize="17.5sp" />
+
+            <TextView
+                android:id="@+id/username_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/phoneNumber_editText"
+                android:layout_marginTop="32.5dp"
+                android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                android:text="닉네임" />
+
+            <EditText
+                android:id="@+id/username_editText"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_below="@+id/username_textView"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/light_gray_border"
+                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                android:hint="닉네임을 입력해 주세요."
+                android:maxLength="12"
+                android:paddingHorizontal="15dp"
+                android:textColorHint="@color/hint_color"
+                android:textSize="17.5sp" />
+
+            <!-- (개인정보 수집 및 이용에 동의) 확인란 -->
+            <RelativeLayout
+                android:id="@+id/agreeOurPolicies_relativeLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/username_editText"
+                android:layout_marginTop="10dp">
+
+                <RelativeLayout
+                    android:id="@+id/agreeOurPoliciesCheckbox_relativeLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true">
+
+                    <!-- 프로필 이미지 추가 이미지 배경(흰색) -->
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/photoIconPlusBackground_roundedImageView"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/white_filled_circle"
+                        app:riv_oval="true" />
+
+                    <com.makeramen.roundedimageview.RoundedImageView
+                        android:id="@+id/agreeOurPoliciesCheckbox_roundedImageView"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/check_circle_gray"
+                        app:riv_oval="true" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/agreeOurPoliciesText_relativeLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/agreeOurPoliciesCheckbox_relativeLayout"
+                    android:paddingVertical="5dp"
+                    android:paddingEnd="10dp">
+
+                    <TextView
+                        android:id="@+id/agreeOurPolicies_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="7.5dp"
+                        android:text="개인정보 수집 및 이용에 동의합니다"
+                        android:textColor="#9B9DA4" />
+
+                    <!-- 우측 화살표 버튼 -->
+                    <ImageButton
+                        android:id="@+id/arrowRight_imageButton"
+                        android:layout_width="15dp"
+                        android:layout_height="15dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="7.5dp"
+                        android:layout_toRightOf="@+id/agreeOurPolicies_textView"
+                        android:backgroundTint="@color/transparent"
+                        android:foregroundTint="@color/white"
+                        android:src="@drawable/arrow_right_gray" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/signUp_button"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_below="@+id/agreeOurPolicies_relativeLayout"
+                android:layout_marginTop="45dp"
+                android:background="@drawable/light_gray_border"
+                android:backgroundTint="@color/disabled_widget_background_light_gray_color"
+                android:enabled="false"
+                android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                android:outlineProvider="none"
+                android:text="회원가입"
+                android:textColor="@color/disabled_widget_text_deep_gray_color"
+                android:textSize="19sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>
