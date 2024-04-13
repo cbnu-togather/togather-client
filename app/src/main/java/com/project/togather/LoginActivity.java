@@ -8,13 +8,29 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.project.togather.databinding.ActivityLoginBinding;
+import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastWarning;
+import com.project.togather.utils.TokenManager;
 
+import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -25,6 +41,11 @@ public class LoginActivity extends AppCompatActivity {
 
     // 타이머 변수
     private CountDownTimer countDownTimer;
+
+    // Retrofit 객체
+    private UserAPI userAPI;
+    private TokenManager tokenManager;
+    private RetrofitService retrofitService;
 
     // 타이머 시작 메서드
     private void startTimer() {
@@ -52,11 +73,63 @@ public class LoginActivity extends AppCompatActivity {
         }.start();
     }
 
+    // 전화번호 중복 확인 메서드
+    private void checkPhoneNumber(String phoneNumber) {
+        Call<ResponseBody> call = userAPI.checkPhoneNumber(phoneNumber);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    // API 요청이 성공한 경우
+                    ResponseBody responseBody = response.body();
+                    if (responseBody != null) {
+                        // API 요청으로 받은 데이터가 null이 아닌 경우
+                        Gson gson = new Gson();
+                        try {
+                            String json = responseBody.string();
+                            JsonObject jsonObject = gson.fromJson(json, JsonObject.class);
+
+                            if(jsonObject != null && jsonObject.has("result")) {
+                                String result = jsonObject.get("result").getAsString();
+                                if("1".equals(result)) {
+                                    // 중복된 전화번호 정보가 있는 경우(이미 가입된 전화번호의 경우)
+                                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                    startActivity(intent);
+                                } else {
+                                    // 중복된 전화번호 정보가 없는 경우 (처음 가입하는 전화번호의 경우)
+                                    Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+                                    intent.putExtra("phoneNumber", binding.phoneNumberEditText.getText().toString());
+                                    startActivity(intent);
+                                }
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        // API 요청으로 받은 데이터가 null인 경우
+                    }
+                }
+                else {
+                    // 요청이 실패한 경우
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                // 네트워크 요청 오류
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+        retrofitService = new RetrofitService(tokenManager);
+        userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
         /** (뒤로가기 화살표 이미지) 버튼 클릭 시 */
         binding.backImageButton.setOnClickListener(new View.OnClickListener() {
@@ -186,9 +259,7 @@ public class LoginActivity extends AppCompatActivity {
                 String systemAuthCodeText = "909409";
 
                 if (usersAuthCodeText.equals(systemAuthCodeText)) {
-                    Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
-                    intent.putExtra("phoneNumber", binding.phoneNumberEditText.getText().toString());
-                    startActivity(intent);
+                    checkPhoneNumber(binding.phoneNumberEditText.getText().toString());
                     return;
                 }
 
