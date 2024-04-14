@@ -3,6 +3,7 @@
 
     <!-- Strings related to (Toast) -->
     <string name="toast_can_auth_code_confirm_daily_limit_warning">일일 문자 인증 가능 건수</string>
+    <string name="toast_server_error">서버 에러가 발생했어요</string>
 
     <!-- Strings related to (LoginActivity) -->
     <string name="auth_code_warning">어떤 경우에도 타인에게 공유하지 마세요!</string>
