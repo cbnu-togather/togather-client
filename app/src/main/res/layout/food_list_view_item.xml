@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="115dp"
+    android:background="@drawable/list_item_view_border_bottom">
+
+    <ImageView
+        android:id="@+id/foodIcon_imageView"
+        android:layout_width="80dp"
+        android:layout_height="85dp"
+        android:layout_centerVertical="true"
+        android:background="@drawable/food_icon_background"
+        android:padding="7.5dp"
+        android:src="@drawable/pizza" />
+
+    <RelativeLayout
+        android:id="@+id/postInfo_relativeLayout"
+        android:layout_width="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_height="80dp"
+        android:layout_marginStart="15dp"
+        android:layout_toRightOf="@+id/foodIcon_imageView">
+
+        <TextView
+            android:id="@+id/postTitle_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+            android:text="도미노 피자 드실분 구해요"
+            android:textSize="18sp" />
+
+        <RelativeLayout
+            android:id="@+id/postDetailInfo_relativeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/postTitle_textView">
+
+            <TextView
+                android:id="@+id/category_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                android:text="피자"
+                android:textColor="#9EA1A7"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/concatenation_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:layout_toRightOf="@+id/category_textView"
+                android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                android:text="·"
+                android:textColor="#9EA1A7"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/elapsedTime_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/concatenation_textView"
+                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                android:text="4분 전"
+                android:textColor="#9EA1A7"
+                android:textSize="12.5sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/currentPartyMemberNumState_relativeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/postDetailInfo_relativeLayout"
+            android:layout_alignParentBottom="true">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/currentPartyMemberNumFirstState_cardView"
+                android:layout_width="27.5dp"
+                android:layout_height="27.5dp"
+                android:layout_alignParentBottom="true"
+                app:cardCornerRadius="8dp">
+
+                <ImageView
+                    android:id="@+id/currentPartyMemberNumFirstState_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/one_person_logo_filled" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/currentPartyMemberNumSecondState_cardView"
+                android:layout_width="27.5dp"
+                android:layout_height="27.5dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="5dp"
+                android:layout_toRightOf="@+id/currentPartyMemberNumFirstState_cardView"
+                app:cardCornerRadius="8dp">
+
+                <ImageView
+                    android:id="@+id/currentPartyMemberSecondState_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/one_person_logo_filled" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/currentPartyMemberNumThirdState_cardView"
+                android:layout_width="27.5dp"
+                android:layout_height="27.5dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="5dp"
+                android:layout_toRightOf="@+id/currentPartyMemberNumSecondState_cardView"
+                app:cardCornerRadius="8dp">
+
+                <ImageView
+                    android:id="@+id/currentPartyMemberNumThirdState_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/one_person_logo_filled" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/currentPartyMemberNumFourthState_cardView"
+                android:layout_width="27.5dp"
+                android:layout_height="27.5dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="5dp"
+                android:layout_toRightOf="@+id/currentPartyMemberNumThirdState_cardView"
+                app:cardCornerRadius="8dp">
+
+                <ImageView
+                    android:id="@+id/currentPartyMemberNumFourthState_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/one_person_logo" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/currentPartyMemberNumFifthState_cardView"
+                android:layout_width="27.5dp"
+                android:layout_height="27.5dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="5dp"
+                android:layout_toRightOf="@+id/currentPartyMemberNumFourthState_cardView"
+                app:cardCornerRadius="8dp">
+
+                <ImageView
+                    android:id="@+id/currentPartyMemberNumFifthState_imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/one_person_logo" />
+            </androidx.cardview.widget.CardView>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/liked_relativeLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/postInfo_relativeLayout"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="2.5dp">
+
+        <ImageView
+            android:id="@+id/liked_imageView"
+            android:layout_width="18.25dp"
+            android:layout_height="18.25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="5dp"
+            android:src="@drawable/like_normal" />
+
+        <TextView
+            android:id="@+id/likedCnt_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2.5dp"
+            android:layout_toRightOf="@+id/liked_imageView"
+            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+            android:text="5"
+            android:textColor="#9EA1A7" />
+    </RelativeLayout>
+
+</RelativeLayout>
