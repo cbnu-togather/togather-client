@@ -269,7 +269,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 binding.authCodeEditText.setBackground(getResources().getDrawable(R.drawable.red_border));
                 binding.authCodeWarningTextView.setText(getResources().getString(R.string.fail_auth_code));
-                binding.authCodeWarningTextView.setTextColor(getResources().getColor(R.color.red));
+                binding.authCodeWarningTextView.setTextColor(getResources().getColor(R.color.invalid_red_color));
             }
         });
     }
