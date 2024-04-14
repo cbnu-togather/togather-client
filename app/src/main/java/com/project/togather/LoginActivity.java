@@ -74,7 +74,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // 전화번호 중복 확인 메서드
-    private void checkPhoneNumber(String phoneNumber) {
+        private void checkPhoneNumber(String phoneNumber) {
+        // 전화번호 문자열 내 공백을 제거
+        phoneNumber = phoneNumber.replaceAll("\\s", "");
         Call<ResponseBody> call = userAPI.checkPhoneNumber(phoneNumber);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -89,9 +91,9 @@ public class LoginActivity extends AppCompatActivity {
                             String json = responseBody.string();
                             JsonObject jsonObject = gson.fromJson(json, JsonObject.class);
 
-                            if(jsonObject != null && jsonObject.has("result")) {
+                            if (jsonObject != null && jsonObject.has("result")) {
                                 String result = jsonObject.get("result").getAsString();
-                                if("1".equals(result)) {
+                                if ("1".equals(result)) {
                                     // 중복된 전화번호 정보가 있는 경우(이미 가입된 전화번호의 경우)
                                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                     startActivity(intent);
@@ -108,15 +110,15 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         // API 요청으로 받은 데이터가 null인 경우
                     }
-                }
-                else {
+                } else {
                     // 요청이 실패한 경우
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                // 네트워크 요청 오류
+                // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
+                new ToastWarning(getResources().getString(R.string.toast_server_error), LoginActivity.this);
             }
         });
     }
