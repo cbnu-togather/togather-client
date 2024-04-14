@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // 전화번호 중복 확인 메서드
-        private void checkPhoneNumber(String phoneNumber) {
+    private void checkPhoneNumber(String phoneNumber) {
         // 전화번호 문자열 내 공백을 제거
         phoneNumber = phoneNumber.replaceAll("\\s", "");
         Call<ResponseBody> call = userAPI.checkPhoneNumber(phoneNumber);
@@ -93,16 +93,18 @@ public class LoginActivity extends AppCompatActivity {
 
                             if (jsonObject != null && jsonObject.has("result")) {
                                 String result = jsonObject.get("result").getAsString();
-                                if ("1".equals(result)) {
-                                    // 중복된 전화번호 정보가 있는 경우(이미 가입된 전화번호의 경우)
-                                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                                    startActivity(intent);
-                                } else {
+                                if (result.equals("null")) {
                                     // 중복된 전화번호 정보가 없는 경우 (처음 가입하는 전화번호의 경우)
                                     Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                                     intent.putExtra("phoneNumber", binding.phoneNumberEditText.getText().toString());
                                     startActivity(intent);
+                                    return;
                                 }
+
+                                // 중복된 전화번호 정보가 있는 경우(이미 가입된 전화번호의 경우)
+                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                                startActivity(intent);
+                                return;
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
