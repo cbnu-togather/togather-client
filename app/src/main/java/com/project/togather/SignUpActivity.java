@@ -7,12 +7,12 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 
 import com.project.togather.databinding.ActivityLoginBinding;
 import com.project.togather.databinding.ActivityMainBinding;
 import com.project.togather.databinding.ActivitySignUpBinding;
+import com.project.togather.home.HomeActivity;
 import com.project.togather.toast.ToastSuccess;
 import com.project.togather.toast.ToastWarning;
 

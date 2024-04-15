@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.project.togather.databinding.ActivityMainBinding;
+import com.project.togather.home.HomeActivity;
 
 public class MainActivity extends AppCompatActivity {
 

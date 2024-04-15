@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="theme_color">#3A8AF9</color>
+    <color name="focus_theme_color">#3262d2</color>
     <color name="text_color">#1a1f27</color>
     <color name="icon_color">#1b1f27</color>
     <color name="toast_bg">#888F9B</color>
@@ -8,9 +9,15 @@
     <color name='disabled_widget_text_light_gray_color'>#D2D3D8</color>
     <color name='disabled_widget_background_light_gray_color'>#DCDEE2</color>
     <color name='disabled_widget_text_deep_gray_color'>#B1B4BC</color>
+    <color name="not_selected_menu_item_gray_color">#7f8081</color>
+    <color name="tab_top_horizontal_line_gray_color">#cecece</color>
+    <color name="list_item_bottom_line_gray_color">#f4f4f8</color>
+    <color name="food_icon_background_color">#eff0f2</color>
+    <color name="invalid_red_color">#d53220</color>
+
     <color name="black">#000</color>
     <color name="white">#FFF</color>
-    <color name="red">#d53220</color>
+    <color name="red">#FF0000</color>
     <color name="yellow">#f6ca64</color>
     <color name="gray">#9B9DA4</color>
     <color name="lighter_gray">#eeeff1</color>
