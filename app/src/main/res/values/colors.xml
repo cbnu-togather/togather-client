@@ -13,7 +13,10 @@
     <color name="tab_top_horizontal_line_gray_color">#cecece</color>
     <color name="list_item_bottom_line_gray_color">#f4f4f8</color>
     <color name="food_icon_background_color">#eff0f2</color>
+    <color name="community_icon_background_color">#f8fafc</color>
     <color name="invalid_red_color">#d53220</color>
+    <color name="recruitment_complete_dark_gray">#4f5159</color>
+    <color name="post_clicked_gray_color">#f2f3f6</color>
 
     <color name="black">#000</color>
     <color name="white">#FFF</color>

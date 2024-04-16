@@ -4,59 +4,233 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity">
+    android:background="@color/white"
+    tools:context=".home.HomeActivity">
 
     <!-- activity (header) RelativeLayout -->
     <RelativeLayout
         android:id="@+id/activityHeader_relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/light_gray_border_bottom"
+        android:paddingBottom="12.5dp">
 
-        <!-- "뒤로가기" 버튼 -->
-        <ImageButton
-            android:id="@+id/back_imageButton"
-            android:layout_width="42.5dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="2.5dp"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="@color/transparent"
-            android:src="@drawable/arrow_back" />
+        <RelativeLayout
+            android:id="@+id/head1_relativeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/selectedPosition_relativeLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="30dp">
+
+                <TextView
+                    android:id="@+id/selectedPosition_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                    android:text="내 근처"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/radius_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBottom="@+id/selectedPosition_textView"
+                    android:layout_marginStart="7.5dp"
+                    android:layout_toRightOf="@+id/selectedPosition_textView"
+                    android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                    android:text="1.5km"
+                    android:textColor="@color/gray"
+                    android:textSize="17.5sp" />
+            </RelativeLayout>
+
+            <!-- "알림" 버튼 -->
+            <ImageView
+                android:id="@+id/notification_imageButton"
+                android:layout_width="42.5dp"
+                android:layout_height="42.5dp"
+                android:layout_alignBottom="@+id/selectedPosition_relativeLayout"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="25dp"
+                android:backgroundTint="@color/transparent"
+                android:padding="10dp"
+                android:src="@drawable/notification" />
+
+            <!-- "신규 알림" 버튼 -->
+            <ImageView
+                android:id="@+id/notificationNew_imageButton"
+                android:layout_width="47.5dp"
+                android:layout_height="47.5dp"
+                android:layout_alignBottom="@+id/selectedPosition_relativeLayout"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="19.5dp"
+                android:backgroundTint="@color/transparent"
+                android:padding="10dp"
+                android:src="@drawable/new_notification"
+                android:visibility="invisible" />
+        </RelativeLayout>
     </RelativeLayout>
-
 
     <!-- activity (body) RelativeLayout -->
     <RelativeLayout
         android:id="@+id/activityBody_relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_above="@+id/activityTab_relativeLayout"
         android:layout_below="@+id/activityHeader_relativeLayout">
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_marginTop="225dp"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/togather_LottieAnimationView"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/togather_logo" />
-
-        <TextView
+        <ListView
+            android:id="@+id/post_listView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:fontFamily="@font/spoqa_han_sans_neo_medium"
-            android:textSize="25sp"
-            android:layout_marginTop="5dp"
-            android:textColor="#999"
-            android:layout_below="@+id/togather_LottieAnimationView"
-            android:text="개발하는 중이에요"
-            />
+            android:divider="#FFFFFF"
+            android:dividerHeight="0px"
+            android:paddingHorizontal="15dp"
+            android:scrollbars="none" />
+    </RelativeLayout>
+
+    <!-- activity (tab) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityTab_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="90dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/tap_top_horizontal_line_border_top"
+        android:paddingTop="7.5dp">
+
+
+        <!-- 홈 버튼 영역 -->
+        <RelativeLayout
+            android:id="@+id/homeActivity_relativeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="45dp"
+            android:layout_toLeftOf="@+id/communityActivity_relativeLayout">
+
+            <ImageView
+                android:id="@+id/homeActivity_imageButton"
+                android:layout_width="37.5dp"
+                android:layout_height="37.5dp"
+                android:layout_centerHorizontal="true"
+                android:padding="7.5dp"
+                android:src="@drawable/home_normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/homeActivity_imageButton"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="-1dp"
+                android:text="홈"
+                android:textSize="12.5sp" />
+        </RelativeLayout>
+
+        <!-- 동네생활 버튼 영역 -->
+        <RelativeLayout
+            android:id="@+id/communityActivity_relativeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="45dp"
+            android:layout_toLeftOf="@+id/createPostActivity_relativeLayout">
+
+            <ImageView
+                android:id="@+id/communityActivity_imageButton"
+                android:layout_width="37.5dp"
+                android:layout_height="37.5dp"
+                android:layout_centerHorizontal="true"
+                android:padding="7.5dp"
+                android:src="@drawable/community_filled" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/communityActivity_imageButton"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="-1dp"
+                android:text="동네생활"
+                android:textSize="12.5sp" />
+        </RelativeLayout>
+
+        <!-- 글쓰기 버튼 영역 -->
+        <RelativeLayout
+            android:id="@+id/createPostActivity_relativeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true">
+
+            <ImageView
+                android:id="@+id/createPostActivity_imageButton"
+                android:layout_width="37.5dp"
+                android:layout_height="37.5dp"
+                android:layout_centerHorizontal="true"
+                android:padding="2.5dp"
+                android:src="@drawable/create_post_normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/createPostActivity_imageButton"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="-1dp"
+                android:text="글 쓰기"
+                android:textSize="12.5sp" />
+        </RelativeLayout>
+
+        <!-- 채팅 버튼 영역 -->
+        <RelativeLayout
+            android:id="@+id/chatActivity_relativeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="45dp"
+            android:layout_toRightOf="@+id/createPostActivity_relativeLayout">
+
+            <ImageView
+                android:id="@+id/chatActivity_imageButton"
+                android:layout_width="37.5dp"
+                android:layout_height="37.5dp"
+                android:layout_centerHorizontal="true"
+                android:padding="7.5dp"
+                android:src="@drawable/chat_normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/chatActivity_imageButton"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="-1dp"
+                android:text="채팅"
+                android:textSize="12.5sp" />
+        </RelativeLayout>
+
+        <!-- 내 정보 버튼 영역 -->
+        <RelativeLayout
+            android:id="@+id/profileActivity_relativeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="45dp"
+            android:layout_toRightOf="@+id/chatActivity_relativeLayout">
+
+            <ImageView
+                android:id="@+id/profileActivity_imageButton"
+                android:layout_width="37.5dp"
+                android:layout_height="37.5dp"
+                android:layout_centerHorizontal="true"
+                android:padding="7.5dp"
+                android:src="@drawable/profile_normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/profileActivity_imageButton"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="-1dp"
+                android:text="내 정보"
+                android:textSize="12.5sp" />
+        </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>
