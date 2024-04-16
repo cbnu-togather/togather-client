@@ -1,20 +1,32 @@
 package com.project.togather.home;
 
 public class PostInfoItem {
+    private String postThumbnailImageUrl;
     private String title;
     private String category;
     private long elapsedTime;
+    private int maxPartyMemberNum;
     private int currentPartyMemberNum;
     private boolean likedState;
     private int likedCnt;
 
-    public PostInfoItem(String title, String category, long elapsedTime, int currentPartyMemberNum, boolean likedState, int likedCnt) {
+    public PostInfoItem(String postThumbnailImageUrl, String title, String category, long elapsedTime, int maxPartyMemberNum, int currentPartyMemberNum, boolean likedState, int likedCnt) {
+        this.postThumbnailImageUrl = postThumbnailImageUrl;
         this.title = title;
         this.category = category;
         this.elapsedTime = elapsedTime;
+        this.maxPartyMemberNum = maxPartyMemberNum;
         this.currentPartyMemberNum = currentPartyMemberNum;
         this.likedState = likedState;
         this.likedCnt = likedCnt;
+    }
+
+    public String getPostThumbnailImageUrl() {
+        return postThumbnailImageUrl;
+    }
+
+    public void setPostThumbnailImageUrl(String postThumbnailImageUrl) {
+        this.postThumbnailImageUrl = postThumbnailImageUrl;
     }
 
     public String getTitle() {
@@ -39,6 +51,14 @@ public class PostInfoItem {
 
     public void setElapsedTime(long elapsedTime) {
         this.elapsedTime = elapsedTime;
+    }
+
+    public long getMaxPartyMemberNum() {
+        return maxPartyMemberNum;
+    }
+
+    public void setMaxPartyMemberNum(int maxPartyMemberNum) {
+        this.maxPartyMemberNum = maxPartyMemberNum;
     }
 
     public int getCurrentPartyMemberNum() {
