@@ -1,14 +1,13 @@
-package com.project.togather;
+package com.project.togather.home;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
 
-import com.project.togather.databinding.ActivityProfileBinding;
 import com.project.togather.databinding.ActivityRecruitmentPostDetailBinding;
 
-public class RecruitmentPostDetailActivity extends AppCompatActivity {
+public class HomePostDetailActivity extends AppCompatActivity {
 
     private ActivityRecruitmentPostDetailBinding binding;
 

@@ -3,7 +3,7 @@
     <!-- Button background -->
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
-            <solid android:color="@android:color/transparent" />
+            <solid android:color="@color/white" />
         </shape>
     </item>
     <!-- Bottom border -->
