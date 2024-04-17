@@ -84,13 +84,12 @@
         android:layout_above="@+id/activityTab_relativeLayout"
         android:layout_below="@+id/activityHeader_relativeLayout">
 
-        <ListView
-            android:id="@+id/post_listView"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/post_recyclerView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:divider="#FFFFFF"
             android:dividerHeight="0px"
-            android:paddingHorizontal="15dp"
             android:scrollbars="none" />
     </RelativeLayout>
 
