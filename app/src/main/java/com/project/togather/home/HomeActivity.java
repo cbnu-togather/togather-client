@@ -15,23 +15,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.project.togather.ChatActivity;
-import com.project.togather.LoginActivity;
+import com.project.togather.chat.ChatActivity;
 import com.project.togather.community.CommunityActivity;
 import com.project.togather.CreatePostActivity;
 import com.project.togather.NotificationActivity;
-import com.project.togather.ProfileActivity;
+import com.project.togather.profile.ProfileActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityHomeBinding;
-import com.project.togather.toast.ToastWarning;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -221,6 +216,8 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(HomeActivity.this, CommunityActivity.class);
                 startActivity(intent);
+                finish();
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -239,6 +236,8 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(HomeActivity.this, ChatActivity.class);
                 startActivity(intent);
+                finish();
+                overridePendingTransition(0, 0);
             }
         });
 
@@ -248,6 +247,7 @@ public class HomeActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
                 startActivity(intent);
+                overridePendingTransition(0, 0);
             }
         });
     }
@@ -370,7 +370,7 @@ public class HomeActivity extends AppCompatActivity {
                 postTitle_textView = itemView.findViewById(R.id.postTitle_textView);
                 category_textView = itemView.findViewById(R.id.category_textView);
                 elapsedTime_textView = itemView.findViewById(R.id.elapsedTime_textView);
-                recruitmentComplete_textView = itemView.findViewById(R.id.recruitmentComplete_textView);
+                recruitmentComplete_textView = itemView.findViewById(R.id.recruitmentCompleteTag_textView);
 
                 currentPartyMemberNumFirstState_cardView = itemView.findViewById(R.id.currentPartyMemberNumFirstState_cardView);
                 currentPartyMemberNumSecondState_cardView = itemView.findViewById(R.id.currentPartyMemberNumSecondState_cardView);
@@ -383,8 +383,6 @@ public class HomeActivity extends AppCompatActivity {
                 liked_imageView = itemView.findViewById(R.id.liked_imageView);
 
                 likedCnt_textView = itemView.findViewById(R.id.likedCnt_textView);
-
-                post_imageView.setImageResource(R.drawable.home_temp_image_1);
             }
 
             void onBind(PostInfoItem item) {
