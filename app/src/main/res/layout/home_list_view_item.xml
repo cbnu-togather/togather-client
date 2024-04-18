@@ -42,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/spoqa_han_sans_neo_regular"
                 android:text="도미노 피자 드실분 구해요"
-                android:textSize="18.25sp" />
+                android:textSize="17.5sp" />
 
             <RelativeLayout
                 android:id="@+id/postDetailInfo_relativeLayout"
@@ -57,7 +57,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/spoqa_han_sans_neo_regular"
                     android:text="피자"
-                    android:textColor="#9EA1A7"
+                    android:textColor="@color/gray_text"
                     android:textSize="15sp" />
 
                 <TextView
@@ -68,7 +68,7 @@
                     android:layout_toRightOf="@+id/category_textView"
                     android:fontFamily="@font/spoqa_han_sans_neo_bold"
                     android:text="·"
-                    android:textColor="#9EA1A7"
+                    android:textColor="@color/gray_text"
                     android:textSize="15sp" />
 
                 <TextView
@@ -78,21 +78,22 @@
                     android:layout_toRightOf="@+id/concatenation_textView"
                     android:fontFamily="@font/spoqa_han_sans_neo_regular"
                     android:text="4분 전"
-                    android:textColor="#9EA1A7"
+                    android:textColor="@color/gray_text"
                     android:textSize="15sp" />
 
                 <TextView
-                    android:id="@+id/recruitmentComplete_textView"
+                    android:id="@+id/recruitmentCompleteTag_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/elapsedTime_textView"
                     android:layout_marginTop="7.5dp"
-                    android:background="@drawable/recruitment_complete_dark_gray_background"
-                    android:paddingHorizontal="6.25dp"
+                    android:background="@drawable/recruitment_complete_tag_dark_gray_background"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:paddingHorizontal="7.25dp"
                     android:paddingVertical="2.5dp"
                     android:text="모집완료"
                     android:textColor="@color/white"
-                    android:textSize="12.5sp"
+                    android:textSize="12sp"
                     android:visibility="invisible" />
             </RelativeLayout>
 
@@ -115,6 +116,7 @@
                         android:id="@+id/currentPartyMemberNumFirstState_imageView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:scaleType="centerCrop"
                         android:src="@drawable/one_person_logo_filled" />
                 </androidx.cardview.widget.CardView>
 
@@ -132,6 +134,7 @@
                         android:id="@+id/currentPartyMemberSecondState_imageView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:scaleType="centerCrop"
                         android:src="@drawable/one_person_logo_filled" />
                 </androidx.cardview.widget.CardView>
 
@@ -149,6 +152,7 @@
                         android:id="@+id/currentPartyMemberNumThirdState_imageView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:scaleType="centerCrop"
                         android:src="@drawable/one_person_logo" />
                 </androidx.cardview.widget.CardView>
             </RelativeLayout>
@@ -164,22 +168,21 @@
 
             <ImageView
                 android:id="@+id/liked_imageView"
-                android:layout_width="22.5dp"
-                android:layout_height="22.5dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="5dp"
                 android:src="@drawable/like_normal" />
 
             <TextView
                 android:id="@+id/likedCnt_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="2.5dp"
+                android:layout_marginStart="1.5dp"
                 android:layout_toRightOf="@+id/liked_imageView"
                 android:fontFamily="@font/spoqa_han_sans_neo_regular"
                 android:text="5"
-                android:textColor="#9EA1A7"
-                android:textSize="15sp" />
+                android:textColor="@color/icon_label_text_color"
+                android:textSize="13sp" />
         </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>

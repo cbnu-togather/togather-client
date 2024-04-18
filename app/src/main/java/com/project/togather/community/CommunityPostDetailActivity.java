@@ -1,21 +1,20 @@
-package com.project.togather;
+package com.project.togather.community;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
 
-import com.project.togather.databinding.ActivityChatBinding;
-import com.project.togather.databinding.ActivityProfileBinding;
+import com.project.togather.databinding.ActivityCommunityPostDetailBinding;
 
-public class ProfileActivity extends AppCompatActivity {
+public class CommunityPostDetailActivity extends AppCompatActivity {
 
-    private ActivityProfileBinding binding;
+    private ActivityCommunityPostDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityProfileBinding.inflate(getLayoutInflater());
+        binding = ActivityCommunityPostDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         /** (뒤로가기 화살표 이미지) 버튼 클릭 시 */
