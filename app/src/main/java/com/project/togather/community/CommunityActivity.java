@@ -62,9 +62,9 @@ public class CommunityActivity extends AppCompatActivity {
         });
 
         // initiate recyclerview
-        binding.postRecyclerView.setAdapter(adapter);
-        binding.postRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        binding.postRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        binding.postsRecyclerView.setAdapter(adapter);
+        binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
         // Adapter 안에 아이템의 정보 담기 (하드 코딩)
         postInfoItems.add(new PostInfoItem("https://gd.image-gmkt.com/%EC%BD%94%EC%B9%98-%EC%BD%94%EC%B9%98-%EB%B8%8C%EB%9D%BC%EC%9A%B4-%EA%B0%80%EC%A3%BD-%EB%82%A8%EB%85%80-%ED%95%99%EC%83%9D-%EC%A7%81%EC%9E%A5%EC%9D%B8-%EB%B0%B1%ED%8C%A9-%EC%B1%85%EA%B0%80%EB%B0%A9-%EC%A4%91%EA%B3%A0-%EB%AA%85%ED%92%88-%EA%B0%80%EB%B0%A9-%EC%9D%80%ED%94%BC%EC%95%84%EB%85%B8/li/600/574/2388574600.g_350-w-et-pj_g.jpg", "나눔", "가방 나눔해요~~", "새거입니다.", "개신동", 320, 1));

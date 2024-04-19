@@ -63,13 +63,13 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         // initiate recyclerview
-        binding.postRecyclerView.setAdapter(adapter);
-        binding.postRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        binding.postRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        binding.postsRecyclerView.setAdapter(adapter);
+        binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
         // Adapter 안에 아이템의 정보 담기 (하드 코딩)
         postInfoItems.add(new PostInfoItem("https://cdn.mkhealth.co.kr/news/photo/202306/64253_68458_1153.png", "개신동 교촌치킨 파티 구함", "chicken", 320, 3, 2, false, 1));
-        postInfoItems.add(new PostInfoItem("https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 160, 2, 0, false, 0));
+        postInfoItems.add(new PostInfoItem("https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 160, 3, 3, false, 0));
         postInfoItems.add(new PostInfoItem("https://mblogthumb-phinf.pstatic.net/MjAyMjA3MjhfMTY5/MDAxNjU4OTkyODg0NTA3.z8WzaZAOKBvo4JkSm9lTMOTiNsKEUNHZJYRB-DPZCdEg.0WdqohiJPsSM5pXWYl-HvTE3JUVlUPe7LT-U6wvjUQwg.JPEG.duwlsrjdwb/KakaoTalk_20220728_151114228_10.jpg?type=w800", "사창동 우리집 닭강정 파티!!", " chicken ", 500, 1, 0, false, 0));
         postInfoItems.add(new PostInfoItem("https://image.kmib.co.kr/online_image/2024/0131/2024013114261427977_1706678775_0019120339.jpg", "맘스터치 배달 파티 999~~", "hamburger", 600, 3, 3, true, 2));
         postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6LTXILpqDk2KY425YAGSIAdF84ogxh-OFRz2P51EPvA&s", "행컵 그룹 구해용", "korean_food", 550, 2, 1, false, 0));
@@ -78,7 +78,7 @@ public class HomeActivity extends AppCompatActivity {
         postInfoItems.add(new PostInfoItem("https://d12zq4w4guyljn.cloudfront.net/750_750_20201122041810_photo1_5831aaf849cf.jpg", "파브리카 배달 구해용", "western_food", 700, 2, 2, false, 1));
         postInfoItems.add(new PostInfoItem("https://media-cdn.tripadvisor.com/media/photo-s/12/31/92/d9/1519804025288-largejpg.jpg", "신전 떡볶이 구해유", "snack", 900, 3, 2, false, 2));
         postInfoItems.add(new PostInfoItem("https://d12zq4w4guyljn.cloudfront.net/750_750_20230517093845_photo1_edd2f5913a1b.jpg", "메가커피 999", "cafe_and_dessert", 1000, 1, 0, false, 2));
-        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-1FF9Hpe-_ERtrBHcUDeeckMOeOzm6IWylD_mJJlJEQ&s", "컴포즈 배달 구해요!!!", "cafe_and_dessert", 1500, 1, 0, false, 1));
+        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-1FF9Hpe-_ERtrBHcUDeeckMOeOzm6IWylD_mJJlJEQ&s", "컴포즈 배달 구해요!!!", "cafe_and_dessert", 1500, 1, 1, false, 1));
 
         adapter.setPostInfoList(postInfoItems);
 
