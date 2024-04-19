@@ -222,7 +222,7 @@
         android:layout_below="@+id/activityHeader_relativeLayout">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/post_recyclerView"
+            android:id="@+id/posts_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="#FFFFFF"

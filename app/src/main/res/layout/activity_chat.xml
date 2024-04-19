@@ -77,39 +77,47 @@
         android:layout_above="@+id/activityTab_relativeLayout"
         android:layout_below="@+id/activityHeader_relativeLayout">
 
-        <!--        <androidx.recyclerview.widget.RecyclerView-->
-        <!--            android:id="@+id/post_recyclerView"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:divider="#FFFFFF"-->
-        <!--            android:dividerHeight="0px"-->
-        <!--            android:scrollbars="none" />-->
+<!--        <RelativeLayout-->
+<!--            android:id="@+id/filterPost_relativeLayout"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="20dp"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:layout_marginEnd="20dp"-->
+<!--            android:layout_marginBottom="20dp">-->
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/togather_LottieAnimationView"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="225dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/togather_logo" />
+<!--            <Button-->
+<!--                android:id="@+id/filterAllChat_button"-->
+<!--                android:layout_width="57.5dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:layout_marginVertical="1dp"-->
+<!--                android:background="@drawable/filter_active_button_background"-->
+<!--                android:fontFamily="@font/spoqa_han_sans_neo_regular"-->
+<!--                android:text="전체"-->
+<!--                android:textColor="@color/white"-->
+<!--                android:textSize="15sp" />-->
 
-        <TextView
+<!--            <Button-->
+<!--                android:id="@+id/filterUnreadChat_button"-->
+<!--                android:layout_width="110dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:layout_marginVertical="1dp"-->
+<!--                android:layout_marginStart="10dp"-->
+<!--                android:layout_toRightOf="@+id/filterAllChat_button"-->
+<!--                android:background="@drawable/filter_normal_button_background"-->
+<!--                android:fontFamily="@font/spoqa_han_sans_neo_regular"-->
+<!--                android:text="안 읽은 채팅방"-->
+<!--                android:textSize="15sp" />-->
+<!--        </RelativeLayout>-->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chats_recyclerView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/togather_LottieAnimationView"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:fontFamily="@font/spoqa_han_sans_neo_medium"
-            android:text="개발하는 중이에요"
-            android:textColor="#999"
-            android:textSize="25sp" />
+            android:divider="#FFFFFF"
+            android:dividerHeight="0px"
+            android:scrollbars="none" />
     </RelativeLayout>
 
     <!-- activity (tab) RelativeLayout -->
