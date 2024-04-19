@@ -7,13 +7,22 @@ import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 
 import com.project.togather.R;
 import com.project.togather.databinding.ActivitySignUpBinding;
 import com.project.togather.home.HomeActivity;
+import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastSuccess;
 import com.project.togather.toast.ToastWarning;
+import com.project.togather.utils.TokenManager;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -21,11 +30,22 @@ public class SignUpActivity extends AppCompatActivity {
 
     private boolean isAgreeOurPolicies = false;
 
+    // Retrofit 객체
+    private UserAPI userAPI;
+    private TokenManager tokenManager;
+    private RetrofitService retrofitService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivitySignUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // Retrofit 객체 초기화
+        tokenManager = TokenManager.getInstance(this);
+        retrofitService = new RetrofitService(tokenManager);
+        userAPI = retrofitService.getRetrofit().create(UserAPI.class);
+
 
         String phoneNumber = getIntent().getStringExtra("phoneNumber");
 
@@ -106,15 +126,39 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String username = binding.usernameEditText.getText().toString();
+                String phoneNumber = binding.phoneNumberEditText.getText().toString();
 
-                if (username.equals("success")) {
-                    new ToastSuccess("회원가입 완료", SignUpActivity.this);
-                    Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
-                    startActivity(intent);
+                // 전화번호 문자열 내 공백을 제거
+                phoneNumber = phoneNumber.replaceAll("\\s", "");
+
+                // 닉네임 중복 시
+                if (username.equals("exist")) {
+                    new ToastWarning("이미 존재하는 유저 이름입니다.", SignUpActivity.this);
                     return;
                 }
+                Call<ResponseBody> call = userAPI.signUp(phoneNumber, username);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            // API 요청이 성공한 경우
+                            new ToastSuccess("회원가입 완료", SignUpActivity.this);
+                            Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
+                            startActivity(intent);
+                            return;
+                        } else {
+                            // API 요청이 실패한 경우
+                            return;
+                        }
+                    }
 
-                new ToastWarning("서버 에러가 발생했어요", SignUpActivity.this);
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                        new ToastWarning(getResources().getString(R.string.toast_server_error), SignUpActivity.this);
+                        return;
+                    }
+                });
+
             }
         });
     }
