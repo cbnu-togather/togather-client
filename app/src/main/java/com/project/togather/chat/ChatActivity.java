@@ -29,6 +29,7 @@ import com.project.togather.home.HomeActivity;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class ChatActivity extends AppCompatActivity {
@@ -293,44 +294,68 @@ public class ChatActivity extends AppCompatActivity {
 
                 chatMemberNum_textView.setText("" + (item.getCurrentPartyMemberNum() + 1));
 
-                long lastChatElapsedTime = item.getLastChatElapsedTime();
-                String elapsedTime_str;
-
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(lastChatElapsedTime * 1000); // 초 단위를 밀리초 단위로 변환
-
-                Calendar now = Calendar.getInstance();
-                now.setTimeInMillis(System.currentTimeMillis()); // 현재 시간을 밀리초 단위로 가져옴
-
-                SimpleDateFormat sdf = new SimpleDateFormat("a h:mm", Locale.getDefault());
-
-                if (calendar.get(Calendar.YEAR) == now.get(Calendar.YEAR)
-                        && calendar.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR)) {
-                    // 오늘
-                    elapsedTime_str = "오늘 " + sdf.format(calendar.getTime());
-                } else if (calendar.get(Calendar.YEAR) == now.get(Calendar.YEAR)
-                        && calendar.get(Calendar.DAY_OF_YEAR) == now.get(Calendar.DAY_OF_YEAR) - 1) {
-                    // 어제
-                    elapsedTime_str = "어제 " + sdf.format(calendar.getTime());
-                } else {
-                    // 그 이전
-                    SimpleDateFormat dateFormat;
-                    if (calendar.get(Calendar.YEAR) == now.get(Calendar.YEAR)) {
-                        // 올해
-                        dateFormat = new SimpleDateFormat("M월 d일", Locale.getDefault());
-                    } else {
-                        // 작년 이전
-                        dateFormat = new SimpleDateFormat("yyyy. M. d.", Locale.getDefault());
-                    }
-                    elapsedTime_str = dateFormat.format(calendar.getTime());
-                }
-
+                long lastChatElapsedTime = item.getLastChatElapsedTime(); // 이 부분은 기존 코드에서 가져왔다고 가정합니다.
+                String elapsedTime_str = getFormattedElapsedTime(lastChatElapsedTime);
                 lastChatElapsedTime_textView.setText(elapsedTime_str);
 
 
                 int unreadMsgNum = item.getUnreadMsgNum();
                 unreadMsgNum_relativeLayout.setVisibility(unreadMsgNum == 0 ? View.INVISIBLE : View.VISIBLE);
                 unreadMsgNum_textView.setText("" + item.getUnreadMsgNum());
+            }
+
+            private String getFormattedElapsedTime(long elapsedTimeSeconds) {
+                // 현재 시간
+                Calendar currentCalendar = Calendar.getInstance();
+                currentCalendar.setTimeInMillis(System.currentTimeMillis());
+
+                // 경과 시간을 더한 시간
+                Calendar elapsedTimeCalendar = Calendar.getInstance();
+                elapsedTimeCalendar.setTimeInMillis(System.currentTimeMillis());
+                elapsedTimeCalendar.add(Calendar.SECOND, (int) -elapsedTimeSeconds); // 시간을 빼서 과거의 시간을 나타냄
+
+                // 날짜 포맷을 정의
+                SimpleDateFormat todayFormat = new SimpleDateFormat("a hh:mm", Locale.getDefault());
+                SimpleDateFormat yesterdayFormat = new SimpleDateFormat("'어제' a hh:mm", Locale.getDefault());
+                SimpleDateFormat sameYearFormat = new SimpleDateFormat("MM월 dd일", Locale.getDefault());
+                SimpleDateFormat differentYearFormat = new SimpleDateFormat("yyyy. MM. dd.", Locale.getDefault());
+
+                // 현재 시간과 경과 시간의 년도 비교
+                int currentYear = currentCalendar.get(Calendar.YEAR);
+                int elapsedTimeYear = elapsedTimeCalendar.get(Calendar.YEAR);
+
+                // 경과 시간이 현재 시간과 같은 년도인 경우
+                if (currentYear == elapsedTimeYear) {
+                    // 경과 시간이 오늘인 경우
+                    if (isSameDay(currentCalendar, elapsedTimeCalendar)) {
+                        return todayFormat.format(new Date(elapsedTimeCalendar.getTimeInMillis()));
+                    }
+                    // 경과 시간이 어제인 경우
+                    else if (isYesterday(currentCalendar, elapsedTimeCalendar)) {
+                        return "어제";
+                    }
+                    // 그 외의 경우 (2일 이상 경과)
+                    else {
+                        return sameYearFormat.format(new Date(elapsedTimeCalendar.getTimeInMillis()));
+                    }
+                }
+                // 경과 시간이 다른 년도인 경우
+                else {
+                    return differentYearFormat.format(new Date(elapsedTimeCalendar.getTimeInMillis()));
+                }
+            }
+
+            // 두 날짜가 같은 날인지 확인하는 메서드
+            private boolean isSameDay(Calendar cal1, Calendar cal2) {
+                return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                        cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
+                        cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
+            }
+
+            // 두 날짜가 어제인지 확인하는 메서드
+            private boolean isYesterday(Calendar cal1, Calendar cal2) {
+                cal1.add(Calendar.DAY_OF_MONTH, -1);
+                return isSameDay(cal1, cal2);
             }
         }
     }
