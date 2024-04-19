@@ -23,6 +23,9 @@
     <color name="gray_text">#9EA1A7</color>
     <color name="hot_post_tag_background_color">#edf7fa</color>
     <color name="hot_post_tag_text_color">#286095</color>
+    <color name="filter_active_background_color">#393a3f</color>
+    <color name="filter_normal_border_color">#eaebef</color>
+    <color name="filled_icon_background_color">#ec5e2b</color>
 
     <color name="black">#000</color>
     <color name="white">#FFF</color>

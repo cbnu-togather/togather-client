@@ -85,7 +85,7 @@
         android:layout_below="@+id/activityHeader_relativeLayout">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/post_recyclerView"
+            android:id="@+id/posts_recyclerView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:divider="#FFFFFF"

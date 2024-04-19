@@ -147,7 +147,7 @@
         </RelativeLayout>
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/foodIcon_cardView"
+            android:id="@+id/postImage_cardView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/postInfo_relativeLayout"
