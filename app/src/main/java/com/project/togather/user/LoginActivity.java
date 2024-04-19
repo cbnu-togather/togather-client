@@ -1,4 +1,4 @@
-package com.project.togather;
+package com.project.togather.user;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,11 +8,11 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.project.togather.R;
 import com.project.togather.databinding.ActivityLoginBinding;
 import com.project.togather.home.HomeActivity;
 import com.project.togather.retrofit.RetrofitService;
@@ -28,10 +28,6 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.GET;
-import retrofit2.http.Path;
 
 public class LoginActivity extends AppCompatActivity {
 

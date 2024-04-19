@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.project.togather.databinding.ActivityMainBinding;
-import com.project.togather.home.HomeActivity;
+import com.project.togather.user.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 

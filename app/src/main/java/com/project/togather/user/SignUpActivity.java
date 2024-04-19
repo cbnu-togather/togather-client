@@ -1,4 +1,4 @@
-package com.project.togather;
+package com.project.togather.user;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,8 +9,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 
-import com.project.togather.databinding.ActivityLoginBinding;
-import com.project.togather.databinding.ActivityMainBinding;
+import com.project.togather.R;
 import com.project.togather.databinding.ActivitySignUpBinding;
 import com.project.togather.home.HomeActivity;
 import com.project.togather.toast.ToastSuccess;

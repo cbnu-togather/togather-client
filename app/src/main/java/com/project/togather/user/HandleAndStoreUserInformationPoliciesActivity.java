@@ -1,4 +1,4 @@
-package com.project.togather;
+package com.project.togather.user;
 
 import androidx.appcompat.app.AppCompatActivity;
 
