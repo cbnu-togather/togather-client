@@ -235,11 +235,12 @@
 
                     <TextView
                         android:id="@+id/agreeOurPolicies_textView"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/etc_textView"
                         android:layout_marginTop="25dp"
                         android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                        android:paddingVertical="10dp"
                         android:text="이용약관"
                         android:textSize="16sp" />
 
@@ -248,7 +249,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_below="@+id/agreeOurPolicies_textView"
-                        android:layout_marginTop="25dp">
+                        android:layout_marginTop="15dp">
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -285,22 +286,24 @@
 
                     <TextView
                         android:id="@+id/logout_textView"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/appVersionInfoGroup_relativeLayout"
-                        android:layout_marginTop="25dp"
+                        android:layout_marginTop="15dp"
                         android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                        android:paddingVertical="10dp"
                         android:text="로그아웃"
                         android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/unsubscribe_textView"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/logout_textView"
-                        android:layout_marginTop="25dp"
-                        android:layout_marginBottom="32.5dp"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="25dp"
                         android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                        android:paddingVertical="10dp"
                         android:text="탈퇴하기"
                         android:textSize="16sp" />
                 </RelativeLayout>
