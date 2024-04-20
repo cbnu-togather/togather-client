@@ -17,23 +17,17 @@
         <RelativeLayout
             android:id="@+id/head1_relativeLayout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="30dp">
 
-            <RelativeLayout
-                android:id="@+id/selectedPosition_relativeLayout"
+            <TextView
+                android:id="@+id/activityTitle_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="30dp">
-
-                <TextView
-                    android:id="@+id/activityTitle_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/spoqa_han_sans_neo_bold"
-                    android:text="내 정보"
-                    android:textSize="20sp" />
-            </RelativeLayout>
+                android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                android:text="내 정보"
+                android:textSize="20sp" />
         </RelativeLayout>
     </RelativeLayout>
 
