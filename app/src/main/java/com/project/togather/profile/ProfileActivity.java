@@ -12,6 +12,8 @@ import com.project.togather.community.CommunityActivity;
 import com.project.togather.databinding.ActivityChatBinding;
 import com.project.togather.databinding.ActivityProfileBinding;
 import com.project.togather.home.HomeActivity;
+import com.project.togather.user.HandleAndStoreUserInformationPoliciesActivity;
+import com.project.togather.user.SignUpActivity;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -61,6 +63,15 @@ public class ProfileActivity extends AppCompatActivity {
                 Intent intent = new Intent(ProfileActivity.this, ChatActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
+            }
+        });
+
+        /** "이용약관" 레이아웃 클릭 시 */
+        binding.agreeOurPoliciesTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ProfileActivity.this, HandleAndStoreUserInformationPoliciesActivity.class);
+                startActivity(intent);
             }
         });
     }
