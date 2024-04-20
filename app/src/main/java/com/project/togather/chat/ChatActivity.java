@@ -193,7 +193,7 @@ public class ChatActivity extends AppCompatActivity {
                             if (onItemClickListener != null) {
                                 onItemClickListener.onItemClick(position);
 
-                                // 빨간색 배경으로 변경
+                                // 클릭된 배경으로 변경
                                 root_relativeLayout.setBackgroundColor(itemView.getResources().getColor(R.color.post_clicked_gray_color));
                                 content_relativeLayout.setBackgroundColor(itemView.getResources().getColor(R.color.post_clicked_gray_color));
 
