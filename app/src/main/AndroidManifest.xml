@@ -18,6 +18,27 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".profile.likedPost.LikedPostListActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".profile.myCommunityPost.MyCommunityPostListActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".profile.myRecruitmentPartyPost.MyRecruitmentPartyPostListActivity"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".EditMyProfile"
             android:exported="false">
             <meta-data
@@ -111,5 +132,4 @@
         <activity android:name="com.project.togather.community.CommunityPostDetailActivity" />
         <activity android:name="com.project.togather.profile.EditMyProfile" />
     </application>
-
 </manifest>
