@@ -49,6 +49,15 @@ public class SignUpActivity extends AppCompatActivity {
 
         binding.backImageButton.setOnClickListener(view -> finish());
 
+        /** (닉네임) 입력란 포커스 시 */
+        binding.usernameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                binding.usernameEditText.setBackground(getResources().getDrawable(hasFocus ? R.drawable.black_border : R.drawable.light_gray_border));
+            }
+        });
+
+        /** (닉네임) 입력란 텍스트 입력 시 */
         binding.usernameEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
