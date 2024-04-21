@@ -133,12 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
         /** (뒤로가기 화살표 이미지) 버튼 클릭 시 */
-        binding.backImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish(); // 현재 액티비티 종료
-            }
-        });
+        binding.backImageButton.setOnClickListener(view -> finish());
 
         /** (휴대폰 번호 입력란) 포커스 시 */
         binding.phoneNumberEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -195,20 +190,17 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         /** (인증문자 받기) 버튼 클릭 시 */
-        binding.receiveAuthCodeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                binding.confirmAuthCodeRelativeLayout.setVisibility(View.VISIBLE);
+        binding.receiveAuthCodeButton.setOnClickListener(view -> {
+            binding.confirmAuthCodeRelativeLayout.setVisibility(View.VISIBLE);
 
-                if (limitNum == -1) {
-                    new ToastWarning("일일 문자 인증 가능 건수 초과", LoginActivity.this);
-                    return;
-                }
-
-                // 5분 타이머 시작
-                startTimer();
-                new ToastWarning(getResources().getString(R.string.toast_can_auth_code_confirm_daily_limit_warning) + " " + limitNum-- + "건 남음", LoginActivity.this);
+            if (limitNum == -1) {
+                new ToastWarning("일일 문자 인증 가능 건수 초과", LoginActivity.this);
+                return;
             }
+
+            // 5분 타이머 시작
+            startTimer();
+            new ToastWarning(getResources().getString(R.string.toast_can_auth_code_confirm_daily_limit_warning) + " " + limitNum-- + "건 남음", LoginActivity.this);
         });
 
         binding.authCodeEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -253,21 +245,18 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         /** (인증문자 확인) 버튼 클릭 시 */
-        binding.confirmAuthCodeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String usersAuthCodeText = binding.authCodeEditText.getText().toString();
-                String systemAuthCodeText = "909409";
+        binding.confirmAuthCodeButton.setOnClickListener(view -> {
+            String usersAuthCodeText = binding.authCodeEditText.getText().toString();
+            String systemAuthCodeText = "909409";
 
-                if (usersAuthCodeText.equals(systemAuthCodeText)) {
-                    checkPhoneNumber(binding.phoneNumberEditText.getText().toString());
-                    return;
-                }
-
-                binding.authCodeEditText.setBackground(getResources().getDrawable(R.drawable.red_border));
-                binding.authCodeWarningTextView.setText(getResources().getString(R.string.fail_auth_code));
-                binding.authCodeWarningTextView.setTextColor(getResources().getColor(R.color.invalid_red_color));
+            if (usersAuthCodeText.equals(systemAuthCodeText)) {
+                checkPhoneNumber(binding.phoneNumberEditText.getText().toString());
+                return;
             }
+
+            binding.authCodeEditText.setBackground(getResources().getDrawable(R.drawable.red_border));
+            binding.authCodeWarningTextView.setText(getResources().getString(R.string.fail_auth_code));
+            binding.authCodeWarningTextView.setTextColor(getResources().getColor(R.color.invalid_red_color));
         });
     }
 }

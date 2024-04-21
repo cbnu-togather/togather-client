@@ -81,44 +81,27 @@ public class CommunityActivity extends AppCompatActivity {
         adapter.setPostInfoList(postInfoItems);
 
         /** "홈" 레이아웃 클릭 시 */
-        binding.homeActivityRelativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CommunityActivity.this, HomeActivity.class);
-                startActivity(intent);
-                finish();
-                overridePendingTransition(0, 0);
-            }
+        binding.homeActivityRelativeLayout.setOnClickListener(view -> {
+            startActivity(new Intent(CommunityActivity.this, HomeActivity.class));
+            finish();
+            overridePendingTransition(0, 0);
         });
 
         /** "글 쓰기" 레이아웃 클릭 시 */
-        binding.createPostActivityRelativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CommunityActivity.this, CreatePostActivity.class);
-                startActivity(intent);
-            }
-        });
+        binding.createPostActivityRelativeLayout.setOnClickListener(view ->
+                startActivity(new Intent(CommunityActivity.this, CreatePostActivity.class)));
 
         /** "채팅" 레이아웃 클릭 시 */
-        binding.chatActivityRelativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CommunityActivity.this, ChatActivity.class);
-                startActivity(intent);
-                finish();
-                overridePendingTransition(0, 0);
-            }
+        binding.chatActivityRelativeLayout.setOnClickListener(view -> {
+            startActivity(new Intent(CommunityActivity.this, ChatActivity.class));
+            finish();
+            overridePendingTransition(0, 0);
         });
 
         /** "내 정보" 레이아웃 클릭 시 */
-        binding.profileActivityRelativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CommunityActivity.this, ProfileActivity.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-            }
+        binding.profileActivityRelativeLayout.setOnClickListener(view -> {
+            startActivity(new Intent(CommunityActivity.this, ProfileActivity.class));
+            overridePendingTransition(0, 0);
         });
     }
 
@@ -194,13 +177,8 @@ public class CommunityActivity extends AppCompatActivity {
             likedCnt_textView.setText("" + postInfoItem.getLikedCnt());
 
             //각 아이템 선택 event
-            convertView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(CommunityActivity.this, CommunityPostDetailActivity.class);
-                    startActivity(intent);
-                }
-            });
+            convertView.setOnClickListener(view ->
+                    startActivity(new Intent(CommunityActivity.this, CommunityPostDetailActivity.class)));
 
             return convertView;  //뷰 객체 반환
         }
@@ -351,7 +329,8 @@ public class CommunityActivity extends AppCompatActivity {
                 postTitle_textView.setText(postTitle);
 
                 String postContent = item.getContent();
-                if (postContent.length() >= 29) postContent = postContent.substring(0, 29) + "...";
+                if (postContent.length() >= 29)
+                    postContent = postContent.substring(0, 29) + "...";
                 postContent_textView.setText(postContent);
 
                 district_textView.setText(item.getDistrict());

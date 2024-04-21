@@ -83,172 +83,121 @@ public class HomeActivity extends AppCompatActivity {
         adapter.setPostInfoList(postInfoItems);
 
         /** "알림" 버튼 클릭 시 */
-        binding.notificationImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, NotificationActivity.class);
-                startActivity(intent);
-            }
-        });
+        binding.notificationImageButton.setOnClickListener(view ->
+                startActivity(new Intent(HomeActivity.this, NotificationActivity.class)));
 
         /** "신규 알림" 버튼 클릭 시 */
-        binding.notificationNewImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, NotificationActivity.class);
-                startActivity(intent);
-            }
-        });
+        binding.notificationNewImageButton.setOnClickListener(view ->
+                startActivity(new Intent(HomeActivity.this, NotificationActivity.class)));
 
         /** "전체" 탭 버튼 클릭 시 */
-        binding.allFoodTabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                allTabStyleClear();
-                binding.allFoodTabButton.setTypeface(null, Typeface.BOLD);
-                binding.allFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
-                binding.allFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            }
+        binding.allFoodTabButton.setOnClickListener(view -> {
+            allTabStyleClear();
+            binding.allFoodTabButton.setTypeface(null, Typeface.BOLD);
+            binding.allFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
+            binding.allFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
         });
 
         /** "치킨" 탭 버튼 클릭 시 */
-        binding.chickenTabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                allTabStyleClear();
-                binding.chickenTabButton.setTypeface(null, Typeface.BOLD);
-                binding.chickenTabButton.setTextColor(getResources().getColor(R.color.text_color));
-                binding.chickenTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            }
+        binding.chickenTabButton.setOnClickListener(view -> {
+            allTabStyleClear();
+            binding.chickenTabButton.setTypeface(null, Typeface.BOLD);
+            binding.chickenTabButton.setTextColor(getResources().getColor(R.color.text_color));
+            binding.chickenTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
         });
 
         /** "피자" 탭 버튼 클릭 시 */
-        binding.pizzaTabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                allTabStyleClear();
-                binding.pizzaTabButton.setTypeface(null, Typeface.BOLD);
-                binding.pizzaTabButton.setTextColor(getResources().getColor(R.color.text_color));
-                binding.pizzaTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            }
+        binding.pizzaTabButton.setOnClickListener(view -> {
+            allTabStyleClear();
+            binding.pizzaTabButton.setTypeface(null, Typeface.BOLD);
+            binding.pizzaTabButton.setTextColor(getResources().getColor(R.color.text_color));
+            binding.pizzaTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
         });
 
         /** "햄버거" 탭 버튼 클릭 시 */
-        binding.hamburgerTabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                allTabStyleClear();
-                binding.hamburgerTabButton.setTypeface(null, Typeface.BOLD);
-                binding.hamburgerTabButton.setTextColor(getResources().getColor(R.color.text_color));
-                binding.hamburgerTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            }
+        binding.hamburgerTabButton.setOnClickListener(view -> {
+            allTabStyleClear();
+            binding.hamburgerTabButton.setTypeface(null, Typeface.BOLD);
+            binding.hamburgerTabButton.setTextColor(getResources().getColor(R.color.text_color));
+            binding.hamburgerTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
         });
 
         /** "한식" 탭 버튼 클릭 시 */
-        binding.koreanFoodTabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                allTabStyleClear();
-                binding.koreanFoodTabButton.setTypeface(null, Typeface.BOLD);
-                binding.koreanFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
-                binding.koreanFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            }
+        binding.koreanFoodTabButton.setOnClickListener(view -> {
+            allTabStyleClear();
+            binding.koreanFoodTabButton.setTypeface(null, Typeface.BOLD);
+            binding.koreanFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
+            binding.koreanFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
         });
 
         /** "일식" 탭 버튼 클릭 시 */
-        binding.japaneseFoodTabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                allTabStyleClear();
-                binding.japaneseFoodTabButton.setTypeface(null, Typeface.BOLD);
-                binding.japaneseFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
-                binding.japaneseFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            }
+        binding.japaneseFoodTabButton.setOnClickListener(view -> {
+            allTabStyleClear();
+            binding.japaneseFoodTabButton.setTypeface(null, Typeface.BOLD);
+            binding.japaneseFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
+            binding.japaneseFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
         });
 
         /** "중식" 탭 버튼 클릭 시 */
-        binding.chineseFoodTabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                allTabStyleClear();
-                binding.chineseFoodTabButton.setTypeface(null, Typeface.BOLD);
-                binding.chineseFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
-                binding.chineseFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            }
+        binding.chineseFoodTabButton.setOnClickListener(view -> {
+            allTabStyleClear();
+            binding.chineseFoodTabButton.setTypeface(null, Typeface.BOLD);
+            binding.chineseFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
+            binding.chineseFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
         });
 
         /** "양식" 탭 버튼 클릭 시 */
-        binding.westernFoodTabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                allTabStyleClear();
-                binding.westernFoodTabButton.setTypeface(null, Typeface.BOLD);
-                binding.westernFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
-                binding.westernFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            }
+        binding.westernFoodTabButton.setOnClickListener(view -> {
+            allTabStyleClear();
+            binding.westernFoodTabButton.setTypeface(null, Typeface.BOLD);
+            binding.westernFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
+            binding.westernFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
         });
 
         /** "분식" 탭 버튼 클릭 시 */
-        binding.snackTabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                allTabStyleClear();
-                binding.snackTabButton.setTypeface(null, Typeface.BOLD);
-                binding.snackTabButton.setTextColor(getResources().getColor(R.color.text_color));
-                binding.snackTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            }
+        binding.snackTabButton.setOnClickListener(view -> {
+            allTabStyleClear();
+            binding.snackTabButton.setTypeface(null, Typeface.BOLD);
+            binding.snackTabButton.setTextColor(getResources().getColor(R.color.text_color));
+            binding.snackTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
         });
 
         /** "카페·디저트" 탭 버튼 클릭 시 */
-        binding.cafeAndDessertTabButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                allTabStyleClear();
-                binding.cafeAndDessertTabButton.setTypeface(null, Typeface.BOLD);
-                binding.cafeAndDessertTabButton.setTextColor(getResources().getColor(R.color.text_color));
-                binding.cafeAndDessertTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            }
+        binding.cafeAndDessertTabButton.setOnClickListener(view -> {
+            allTabStyleClear();
+            binding.cafeAndDessertTabButton.setTypeface(null, Typeface.BOLD);
+            binding.cafeAndDessertTabButton.setTextColor(getResources().getColor(R.color.text_color));
+            binding.cafeAndDessertTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
         });
 
         /** "동네생활" 레이아웃 클릭 시 */
-        binding.communityActivityRelativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, CommunityActivity.class);
-                startActivity(intent);
-                finish();
-                overridePendingTransition(0, 0);
-            }
+        binding.communityActivityRelativeLayout.setOnClickListener(view -> {
+            startActivity(new Intent(HomeActivity.this, CommunityActivity.class));
+            finish();
+            overridePendingTransition(0, 0);
         });
 
         /** "글 쓰기" 레이아웃 클릭 시 */
-        binding.createPostActivityRelativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, CreatePostActivity.class);
-                startActivity(intent);
-            }
-        });
+        binding.createPostActivityRelativeLayout.setOnClickListener(view ->
+                startActivity(new Intent(HomeActivity.this, CreatePostActivity.class)));
 
         /** "채팅" 레이아웃 클릭 시 */
-        binding.chatActivityRelativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, ChatActivity.class);
-                startActivity(intent);
-                finish();
-                overridePendingTransition(0, 0);
-            }
+        binding.chatActivityRelativeLayout.setOnClickListener(view ->
+
+        {
+            Intent intent = new Intent(HomeActivity.this, ChatActivity.class);
+            startActivity(intent);
+            finish();
+            overridePendingTransition(0, 0);
         });
 
         /** "내 정보" 레이아웃 클릭 시 */
-        binding.profileActivityRelativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-            }
+        binding.profileActivityRelativeLayout.setOnClickListener(view ->
+
+        {
+            Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
+            startActivity(intent);
+            overridePendingTransition(0, 0);
         });
     }
 
@@ -461,6 +410,7 @@ public class HomeActivity extends AppCompatActivity {
                 likedCnt_textView.setText("" + item.getLikedCnt());
             }
         }
+
     }
 
     // 음식 카테고리 탭에 설정된 스타일을 제거하는 함수
