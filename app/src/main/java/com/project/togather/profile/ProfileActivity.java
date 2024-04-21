@@ -15,14 +15,14 @@ import com.project.togather.CreatePostActivity;
 import com.project.togather.R;
 import com.project.togather.chat.ChatActivity;
 import com.project.togather.community.CommunityActivity;
-import com.project.togather.databinding.ActivityChatBinding;
 import com.project.togather.databinding.ActivityProfileBinding;
 import com.project.togather.home.HomeActivity;
 import com.project.togather.toast.ToastSuccess;
-import com.project.togather.toast.ToastWarning;
 import com.project.togather.user.HandleAndStoreUserInformationPoliciesActivity;
 import com.project.togather.user.LoginActivity;
-import com.project.togather.user.SignUpActivity;
+import com.project.togather.profile.likedPost.LikedPostListActivity;
+import com.project.togather.profile.myCommunityPost.MyCommunityPostListActivity;
+import com.project.togather.profile.myRecruitmentPartyPost.MyRecruitmentPartyPostListActivity;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -54,6 +54,18 @@ public class ProfileActivity extends AppCompatActivity {
         /** (프로필 수정) 레이아웃 클릭 시 */
         binding.editProfileButton.setOnClickListener(view ->
                 startActivity(new Intent(ProfileActivity.this, EditMyProfile.class)));
+
+        /** (파티원 모집글) 레이아웃 클릭 시 */
+        binding.myRecruitmentPartyPostRelativeLayout.setOnClickListener(view ->
+                startActivity(new Intent(ProfileActivity.this, MyRecruitmentPartyPostListActivity.class)));
+
+        /** (커뮤니티 작성글) 레이아웃 클릭 시 */
+        binding.myCommunityPostRelativeLayout.setOnClickListener(view ->
+                startActivity(new Intent(ProfileActivity.this, MyCommunityPostListActivity.class)));
+
+        /** (관심목록) 레이아웃 클릭 시 */
+        binding.likedPostRelativeLayout.setOnClickListener(view ->
+                startActivity(new Intent(ProfileActivity.this, LikedPostListActivity.class)));
 
         /** (이용약관) 레이아웃 클릭 시 */
         binding.agreeOurPoliciesTextView.setOnClickListener(view ->
