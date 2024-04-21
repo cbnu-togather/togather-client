@@ -61,14 +61,14 @@
 
                         <com.makeramen.roundedimageview.RoundedImageView
                             android:id="@+id/userProfileImage_roundedImageView"
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
+                            android:layout_width="57.5dp"
+                            android:layout_height="57.5dp"
                             android:layout_marginStart="0dp"
                             android:layout_marginTop="0dp"
                             android:layout_marginEnd="0dp"
                             android:layout_marginBottom="0dp"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/user_default_profile"
+                            android:src="@drawable/user_profile_image_temp_image_1"
                             app:riv_oval="true" />
 
                         <TextView
@@ -77,16 +77,17 @@
                             android:layout_centerVertical="true"
                             android:layout_marginLeft="12.5dp"
                             android:layout_toRightOf="@+id/userProfileImage_roundedImageView"
-                            android:text="홍길동"
+                            android:text="김감자"
                             android:textSize="20sp" />
                     </RelativeLayout>
 
 
                     <Button
+                        android:id="@+id/editProfile_button"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/userProfileInfo_relativeLayout"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="15dp"
                         android:backgroundTint="@color/post_clicked_gray_color"
                         android:outlineProvider="none"
                         android:paddingVertical="16dp"
@@ -128,7 +129,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_below="@+id/myActivity_textView"
-                            android:layout_marginTop="25dp">
+                            android:layout_marginTop="12.5dp"
+                            android:paddingVertical="12.5dp">
 
                             <ImageView
                                 android:id="@+id/recruitmentParty_imageView"
@@ -153,7 +155,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/recruitmentParty_relativeLayout"
-                            android:layout_marginTop="20dp">
+                            android:paddingVertical="12.5dp">
 
                             <ImageView
                                 android:id="@+id/community_imageView"
@@ -179,7 +181,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/community_relativeLayout"
-                            android:layout_marginTop="20dp">
+                            android:paddingVertical="12.5dp">
 
                             <ImageView
                                 android:id="@+id/likedPost_imageView"
@@ -232,9 +234,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/etc_textView"
-                        android:layout_marginTop="25dp"
+                        android:layout_marginTop="12.5dp"
                         android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                        android:paddingVertical="10dp"
+                        android:paddingVertical="17.5dp"
                         android:text="이용약관"
                         android:textSize="16sp" />
 
@@ -243,7 +245,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_below="@+id/agreeOurPolicies_textView"
-                        android:layout_marginTop="15dp">
+                        android:paddingVertical="17.5dp">
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -283,9 +285,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/appVersionInfoGroup_relativeLayout"
-                        android:layout_marginTop="15dp"
                         android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                        android:paddingVertical="10dp"
+                        android:paddingVertical="17.5dp"
                         android:text="로그아웃"
                         android:textSize="16sp" />
 
@@ -294,10 +295,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/logout_textView"
-                        android:layout_marginTop="15dp"
                         android:layout_marginBottom="25dp"
                         android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                        android:paddingVertical="10dp"
+                        android:paddingVertical="17.5dp"
                         android:text="탈퇴하기"
                         android:textSize="16sp" />
                 </RelativeLayout>
