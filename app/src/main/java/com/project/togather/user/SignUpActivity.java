@@ -77,12 +77,53 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private void validateUsername(String username) {
-        boolean isValid = username.matches("[a-zA-Z0-9가-힣]+") && username.length() >= 2 && !username.contains(" ") && isAgreeOurPolicies;
-        binding.signUpButton.setEnabled(isValid);
-        binding.signUpButton.setTextColor(getResources().getColor(isValid ? R.color.white : R.color.disabled_widget_text_deep_gray_color));
-        binding.signUpButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(isValid ? R.color.theme_color : R.color.disabled_widget_background_light_gray_color)));
-        binding.usernameEditTextHelperTextView.setVisibility(isValid ? View.GONE : View.VISIBLE);
-        binding.usernameEditTextHelperTextView.setText(username.length() < 2 ? "닉네임은 2자 이상 입력해 주세요." : "닉네임은 띄어쓰기 없이 한글, 영문, 숫자만 가능해요.");
+        boolean isValidUsername = username.matches("[a-zA-Z0-9가-힣]+") && username.length() >= 2 && !username.contains(" ");
+        updateUsernameHelperText(isValidUsername, username);
+
+        // 버튼 활성화는 닉네임 유효성과 동의란 체크를 모두 고려
+        updateSignUpButtonState(isValidUsername && isAgreeOurPolicies);
+    }
+
+    private void updateUsernameHelperText(boolean isValidUsername, String username) {
+        if (isValidUsername) {
+            binding.usernameEditTextHelperTextView.setVisibility(View.GONE);
+        } else {
+            binding.usernameEditTextHelperTextView.setVisibility(View.VISIBLE);
+            binding.usernameEditTextHelperTextView.setText(username.length() < 2 ? "닉네임은 2자 이상 입력해 주세요." : "닉네임은 띄어쓰기 없이 한글, 영문, 숫자만 가능해요.");
+        }
+    }
+
+    private void updateSignUpButtonState(boolean enable) {
+        binding.signUpButton.setEnabled(enable);
+        binding.signUpButton.setTextColor(getResources().getColor(enable ? R.color.white : R.color.disabled_widget_text_deep_gray_color));
+        binding.signUpButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(enable ? R.color.theme_color : R.color.disabled_widget_background_light_gray_color)));
+    }
+
+    private void setupListeners() {
+        binding.backImageButton.setOnClickListener(view -> finish());
+
+        binding.usernameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                validateUsername(s.toString());
+            }
+        });
+
+        binding.agreeOurPoliciesCheckboxRoundedImageView.setOnClickListener(view -> {
+            isAgreeOurPolicies = !isAgreeOurPolicies;
+            binding.agreeOurPoliciesCheckboxRoundedImageView.setImageResource(isAgreeOurPolicies ? R.drawable.check_circle_green : R.drawable.check_circle_gray);
+            // 버튼 활성화 상태 업데이트
+            updateSignUpButtonState(binding.usernameEditText.getText().toString().matches("[a-zA-Z0-9가-힣]+") && binding.usernameEditText.getText().length() >= 2 && !binding.usernameEditText.getText().toString().contains(" ") && isAgreeOurPolicies);
+        });
+
+        binding.agreeOurPoliciesTextRelativeLayout.setOnClickListener(this::openPolicyActivity);
+        binding.arrowRightImageButton.setOnClickListener(this::openPolicyActivity);
+
+        binding.signUpButton.setOnClickListener(view -> performSignUp());
     }
 
     private void performSignUp() {
