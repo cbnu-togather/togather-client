@@ -28,6 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
+            android:textColor="@color/text_color"
             android:fontFamily="@font/spoqa_han_sans_neo_bold"
             android:text="프로필 수정"
             android:textSize="20sp" />
