@@ -299,8 +299,11 @@ public class MyCommunityPostListActivity extends AppCompatActivity {
                 postTitle_textView.setText(postTitle);
 
                 String postContent = item.getContent();
-                if (postContent.length() >= 29)
+                if (item.getPostThumbnailImageUrl().equals("") && postContent.length() >= 29)
                     postContent = postContent.substring(0, 29) + "...";
+                else if(!item.getPostThumbnailImageUrl().equals("") && postContent.length() >= 24)
+                    postContent = postContent.substring(0, 24) + "...";
+
                 postContent_textView.setText(postContent);
 
                 district_textView.setText(item.getDistrict());
