@@ -41,7 +41,8 @@
 
         <ScrollView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -125,7 +126,7 @@
                             android:textStyle="bold" />
 
                         <RelativeLayout
-                            android:id="@+id/recruitmentParty_relativeLayout"
+                            android:id="@+id/myRecruitmentPartyPost_relativeLayout"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:layout_below="@+id/myActivity_textView"
@@ -151,10 +152,10 @@
                         </RelativeLayout>
 
                         <RelativeLayout
-                            android:id="@+id/community_relativeLayout"
+                            android:id="@+id/myCommunityPost_relativeLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/recruitmentParty_relativeLayout"
+                            android:layout_below="@+id/myRecruitmentPartyPost_relativeLayout"
                             android:paddingVertical="12.5dp">
 
                             <ImageView
@@ -180,7 +181,7 @@
                             android:id="@+id/likedPost_relativeLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/community_relativeLayout"
+                            android:layout_below="@+id/myCommunityPost_relativeLayout"
                             android:paddingVertical="12.5dp">
 
                             <ImageView

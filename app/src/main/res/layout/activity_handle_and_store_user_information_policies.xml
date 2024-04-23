@@ -10,7 +10,9 @@
     <RelativeLayout
         android:id="@+id/activityHeader_relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/light_gray_border_bottom"
+        android:paddingBottom="7.5dp">
 
         <!-- "뒤로가기" 버튼 -->
         <ImageButton
@@ -27,11 +29,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="27.5dp"
+            android:fontFamily="@font/spoqa_han_sans_neo_bold"
             android:letterSpacing="-0.01"
             android:text="개인정보 수집 및 이용 방침"
-            android:textColor="@color/dark_gray"
-            android:textSize="17.5sp" />
+            android:textColor="@color/text_color"
+            android:textSize="20sp" />
     </RelativeLayout>
 
     <!-- activity (body) RelativeLayout -->
