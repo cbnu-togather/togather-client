@@ -18,11 +18,6 @@ public class HandleAndStoreUserInformationPoliciesActivity extends AppCompatActi
         setContentView(binding.getRoot());
 
         /** 뒤로가기 버튼 기능 */
-        binding.backImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish(); // 현재 액티비티 종료
-            }
-        });
+        binding.backImageButton.setOnClickListener(view -> finish());
     }
 }

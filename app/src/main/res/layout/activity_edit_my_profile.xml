@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".profile.EditMyProfile">
+
+    <!-- activity (header) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityHeader_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="67.5dp"
+        android:background="@drawable/light_gray_border_bottom">
+
+        <ImageView
+            android:id="@+id/closeActivity_imageView"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12.5dp"
+            android:src="@drawable/close" />
+
+        <TextView
+            android:id="@+id/activityTitle_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/spoqa_han_sans_neo_bold"
+            android:text="프로필 수정"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/editMyProfileComplete_button"
+            android:layout_width="55dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:enabled="false"
+            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+            android:textColor="@color/gray_text"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="5dp"
+            android:background="@color/transparent"
+            android:text="완료"
+            android:textSize="17.5sp" />
+    </RelativeLayout>
+
+    <!-- activity (body) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityBody_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/activityHeader_relativeLayout">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="35dp">
+
+            <RelativeLayout
+                android:id="@+id/userProfileImageGroup_relativeLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true">
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/userProfileImage_roundedImageView"
+                    android:layout_width="125dp"
+                    android:layout_height="125dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/user_profile_image_temp_image_1"
+                    app:riv_oval="true" />
+
+                <com.makeramen.roundedimageview.RoundedImageView
+                    android:id="@+id/camera_roundedImageView"
+                    android:layout_width="37.5dp"
+                    android:layout_height="37.5dp"
+                    android:layout_alignRight="@+id/userProfileImage_roundedImageView"
+                    android:layout_alignBottom="@+id/userProfileImage_roundedImageView"
+                    android:layout_marginBottom="5dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/camera"
+                    app:riv_oval="true" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/userProfileImageGroup_relativeLayout">
+
+                <TextView
+                    android:id="@+id/username_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32.5dp"
+                    android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                    android:text="닉네임" />
+
+                <EditText
+                    android:id="@+id/username_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_below="@+id/username_textView"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/light_gray_border"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:hint="닉네임을 입력해 주세요."
+                    android:maxLength="12"
+                    android:paddingHorizontal="15dp"
+                    android:text="김감자"
+                    android:textColorHint="@color/hint_color"
+                    android:textSize="17.5sp" />
+
+                <TextView
+                    android:id="@+id/usernameEditTextHelper_textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/username_editText"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/invalid_red_color"
+                    android:visibility="invisible"
+                    android:text="닉네임은 띄어쓰기 없이 한글, 영문, 숫자만 가능해요."/>
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+</RelativeLayout>

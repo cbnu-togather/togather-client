@@ -31,7 +31,9 @@
     <color name="white">#FFF</color>
     <color name="red">#FF0000</color>
     <color name="yellow">#f6ca64</color>
+    <color name="blue">#427FFF</color>
     <color name="gray">#9B9DA4</color>
+    <color name="lighter_grey">#eeeff1</color>
     <color name="lighter_gray">#eeeff1</color>
     <color name="light_gray">#BCBDBF</color>
     <color name="dark_gray">#212836</color>

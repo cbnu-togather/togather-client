@@ -70,7 +70,7 @@ public class ChatActivity extends AppCompatActivity {
         binding.chatsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
         // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-        chatInfoItems.add(new ChatInfoItem("", "https://mblogthumb-phinf.pstatic.net/MjAyMjAzMjlfMSAg/MDAxNjQ4NDgwNzgwMzkw.yDLPqC9ouJxYoJSgicANH0CPNvFdcixexP7hZaPlCl4g.n7yZDyGC06_gRTwEnAKIhj5bM04laVpNuKRz29dP83wg.JPEG.38qudehd/IMG_8635.JPG?type=w800", "https://image.newsis.com/2023/07/12/NISI20230712_0001313626_web.jpg?rnd=20230712163021", "https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "도착했습니다! 모여용", 300, 3, 3, 3));
+        chatInfoItems.add(new ChatInfoItem("", "https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/product/5400941752/B.jpg?481000000", "https://image.newsis.com/2023/07/12/NISI20230712_0001313626_web.jpg?rnd=20230712163021", "https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "도착했습니다! 모여용", 300, 3, 3, 3));
         chatInfoItems.add(new ChatInfoItem("http://image.dongascience.com/Photo/2020/03/5bddba7b6574b95d37b6079c199d7101.jpg", "https://www.sisajournal.com/news/photo/first/200508/img_102658_1.jpg", "", "https://d12zq4w4guyljn.cloudfront.net/750_750_20201122041810_photo1_5831aaf849cf.jpg", "파브리카 배달 구해용", "솔못에서 모일게요", 30000, 1, 2, 3));
         chatInfoItems.add(new ChatInfoItem("", "https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/9mqM/image/6vuarJpov779Xfo2EdNhLhmaPgI.JPG", "", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-1FF9Hpe-_ERtrBHcUDeeckMOeOzm6IWylD_mJJlJEQ&s", "컴포즈 배달 구해요!!!", "맛나게 드셔요~", 100000, 0, 1, 1));
         chatInfoItems.add(new ChatInfoItem("", "", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutGBoBGvVLOofPQ8mNAAKDpgD7NiHKzAyRSAL35gRQA&s", "", "밥버거 드실분", "넹", 300000, 0, 2, 1));
@@ -78,44 +78,27 @@ public class ChatActivity extends AppCompatActivity {
         adapter.setChatInfoList(chatInfoItems);
 
         /** "홈" 레이아웃 클릭 시 */
-        binding.homeActivityRelativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ChatActivity.this, HomeActivity.class);
-                startActivity(intent);
-                finish();
-                overridePendingTransition(0, 0);
-            }
+        binding.homeActivityRelativeLayout.setOnClickListener(view -> {
+            startActivity(new Intent(ChatActivity.this, HomeActivity.class));
+            finish();
+            overridePendingTransition(0, 0);
         });
 
         /** "동네생활" 레이아웃 클릭 시 */
-        binding.communityActivityRelativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ChatActivity.this, CommunityActivity.class);
-                startActivity(intent);
-                finish();
-                overridePendingTransition(0, 0);
-            }
+        binding.communityActivityRelativeLayout.setOnClickListener(view -> {
+            startActivity(new Intent(ChatActivity.this, CommunityActivity.class));
+            finish();
+            overridePendingTransition(0, 0);
         });
 
         /** "글 쓰기" 레이아웃 클릭 시 */
-        binding.createPostActivityRelativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ChatActivity.this, CreatePostActivity.class);
-                startActivity(intent);
-            }
-        });
+        binding.createPostActivityRelativeLayout.setOnClickListener(view ->
+                startActivity(new Intent(ChatActivity.this, CreatePostActivity.class)));
 
         /** "내 정보" 레이아웃 클릭 시 */
-        binding.profileActivityRelativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ChatActivity.this, ProfileActivity.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-            }
+        binding.profileActivityRelativeLayout.setOnClickListener(view -> {
+            startActivity(new Intent(ChatActivity.this, ProfileActivity.class));
+            overridePendingTransition(0, 0);
         });
     }
 
@@ -193,7 +176,7 @@ public class ChatActivity extends AppCompatActivity {
                             if (onItemClickListener != null) {
                                 onItemClickListener.onItemClick(position);
 
-                                // 빨간색 배경으로 변경
+                                // 클릭된 배경으로 변경
                                 root_relativeLayout.setBackgroundColor(itemView.getResources().getColor(R.color.post_clicked_gray_color));
                                 content_relativeLayout.setBackgroundColor(itemView.getResources().getColor(R.color.post_clicked_gray_color));
 

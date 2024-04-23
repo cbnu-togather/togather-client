@@ -11,61 +11,23 @@
     <RelativeLayout
         android:id="@+id/activityHeader_relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:background="@drawable/light_gray_border_bottom">
 
         <RelativeLayout
             android:id="@+id/head1_relativeLayout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="30dp">
 
-            <RelativeLayout
-                android:id="@+id/selectedPosition_relativeLayout"
+            <TextView
+                android:id="@+id/activityTitle_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="20dp"
-                android:layout_marginTop="30dp">
-
-                <TextView
-                    android:id="@+id/activityTitle_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/spoqa_han_sans_neo_bold"
-                    android:text="내 정보"
-                    android:textSize="20sp" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-
-            </RelativeLayout>
-
-            <!-- "알림" 버튼 -->
-            <ImageView
-                android:id="@+id/notification_imageButton"
-                android:layout_width="42.5dp"
-                android:layout_height="42.5dp"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="22.5dp"
-                android:layout_marginEnd="25dp"
-                android:backgroundTint="@color/transparent"
-                android:padding="10dp"
-                android:src="@drawable/notification" />
-
-            <!-- "신규 알림" 버튼 -->
-            <ImageView
-                android:id="@+id/notificationNew_imageButton"
-                android:layout_width="47.5dp"
-                android:layout_height="47.5dp"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="22.5dp"
-                android:layout_marginEnd="19.5dp"
-                android:backgroundTint="@color/transparent"
-                android:padding="10dp"
-                android:src="@drawable/new_notification"
-                android:visibility="invisible" />
+                android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                android:text="내 정보"
+                android:textSize="20sp" />
         </RelativeLayout>
     </RelativeLayout>
 
@@ -73,43 +35,274 @@
     <RelativeLayout
         android:id="@+id/activityBody_relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_above="@+id/activityTab_relativeLayout"
         android:layout_below="@+id/activityHeader_relativeLayout">
 
-        <!--        <androidx.recyclerview.widget.RecyclerView-->
-        <!--            android:id="@+id/post_recyclerView"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:divider="#FFFFFF"-->
-        <!--            android:dividerHeight="0px"-->
-        <!--            android:scrollbars="none" />-->
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/togather_LottieAnimationView"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="225dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/togather_logo" />
-
-        <TextView
+        <ScrollView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/togather_LottieAnimationView"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:fontFamily="@font/spoqa_han_sans_neo_medium"
-            android:text="개발하는 중이에요"
-            android:textColor="#999"
-            android:textSize="25sp" />
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <RelativeLayout
+                    android:id="@+id/userProfileInfoGroup_relativeLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_marginTop="20dp">
+
+                    <RelativeLayout
+                        android:id="@+id/userProfileInfo_relativeLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <com.makeramen.roundedimageview.RoundedImageView
+                            android:id="@+id/userProfileImage_roundedImageView"
+                            android:layout_width="57.5dp"
+                            android:layout_height="57.5dp"
+                            android:layout_marginStart="0dp"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginEnd="0dp"
+                            android:layout_marginBottom="0dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/user_profile_image_temp_image_1"
+                            app:riv_oval="true" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="12.5dp"
+                            android:layout_toRightOf="@+id/userProfileImage_roundedImageView"
+                            android:text="김감자"
+                            android:textSize="20sp" />
+                    </RelativeLayout>
+
+
+                    <Button
+                        android:id="@+id/editProfile_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/userProfileInfo_relativeLayout"
+                        android:layout_marginTop="15dp"
+                        android:backgroundTint="@color/post_clicked_gray_color"
+                        android:outlineProvider="none"
+                        android:paddingVertical="16dp"
+                        android:text="프로필 수정" />
+                </RelativeLayout>
+
+                <!-- 가로 구분선 #1 -->
+                <RelativeLayout
+                    android:id="@+id/dividingLine1_relativeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/userProfileInfoGroup_relativeLayout"
+                    android:layout_marginVertical="12.5dp"
+                    android:background="@color/list_item_bottom_line_gray_color" />
+
+                <RelativeLayout
+                    android:id="@+id/myActivityListGroup_relativeLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/dividingLine1_relativeLayout"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_marginTop="15dp">
+
+                    <RelativeLayout
+                        android:id="@+id/myActivityList_relativeLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/myActivity_textView"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="나의 활동"
+                            android:textSize="17sp"
+                            android:textStyle="bold" />
+
+                        <RelativeLayout
+                            android:id="@+id/recruitmentParty_relativeLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_below="@+id/myActivity_textView"
+                            android:layout_marginTop="12.5dp"
+                            android:paddingVertical="12.5dp">
+
+                            <ImageView
+                                android:id="@+id/recruitmentParty_imageView"
+                                android:layout_width="32.5dp"
+                                android:layout_height="32.5dp"
+                                android:backgroundTint="@color/transparent"
+                                android:src="@drawable/group" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="10dp"
+                                android:layout_toRightOf="@+id/recruitmentParty_imageView"
+                                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                                android:text="파티원 모집글"
+                                android:textSize="16sp" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/community_relativeLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/recruitmentParty_relativeLayout"
+                            android:paddingVertical="12.5dp">
+
+                            <ImageView
+                                android:id="@+id/community_imageView"
+                                android:layout_width="32.5dp"
+                                android:layout_height="32.5dp"
+                                android:backgroundTint="@color/transparent"
+                                android:padding="3dp"
+                                android:src="@drawable/community_normal" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="10dp"
+                                android:layout_toRightOf="@+id/community_imageView"
+                                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                                android:text="동네생활 작성글"
+                                android:textSize="16sp" />
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/likedPost_relativeLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/community_relativeLayout"
+                            android:paddingVertical="12.5dp">
+
+                            <ImageView
+                                android:id="@+id/likedPost_imageView"
+                                android:layout_width="32.5dp"
+                                android:layout_height="32.5dp"
+                                android:backgroundTint="@color/transparent"
+                                android:padding="3dp"
+                                android:src="@drawable/like_bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="10dp"
+                                android:layout_toRightOf="@+id/likedPost_imageView"
+                                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                                android:text="관심목록"
+                                android:textSize="16sp" />
+                        </RelativeLayout>
+                    </RelativeLayout>
+                </RelativeLayout>
+
+                <!-- 가로 구분선 #2 -->
+                <RelativeLayout
+                    android:id="@+id/dividingLine2_relativeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_below="@+id/myActivityListGroup_relativeLayout"
+                    android:layout_marginVertical="17.5dp"
+                    android:background="@color/list_item_bottom_line_gray_color" />
+
+                <RelativeLayout
+                    android:id="@+id/etcListGroup_relativeLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/dividingLine2_relativeLayout"
+                    android:layout_marginHorizontal="15dp"
+                    android:layout_marginTop="5dp">
+
+                    <TextView
+                        android:id="@+id/etc_textView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="기타"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/agreeOurPolicies_textView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/etc_textView"
+                        android:layout_marginTop="12.5dp"
+                        android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                        android:paddingVertical="17.5dp"
+                        android:text="이용약관"
+                        android:textSize="16sp" />
+
+                    <RelativeLayout
+                        android:id="@+id/appVersionInfoGroup_relativeLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/agreeOurPolicies_textView"
+                        android:paddingVertical="17.5dp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <TextView
+                                android:id="@+id/appVersionInfo_textView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                                android:text="버전 정보"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_below="@+id/appVersionInfo_textView"
+                                android:layout_marginTop="2.5dp"
+                                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                                android:text="최신버전: 1.0.0"
+                                android:textColor="@color/gray_text"
+                                android:textSize="11sp" />
+                        </RelativeLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                            android:text="1.0.0(240601)"
+                            android:textColor="@color/theme_color" />
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/logout_textView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/appVersionInfoGroup_relativeLayout"
+                        android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                        android:paddingVertical="17.5dp"
+                        android:text="로그아웃"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/unsubscribe_textView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/logout_textView"
+                        android:layout_marginBottom="10dp"
+                        android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                        android:paddingVertical="17.5dp"
+                        android:text="탈퇴하기"
+                        android:textSize="16sp" />
+                </RelativeLayout>
+            </RelativeLayout>
+        </ScrollView>
     </RelativeLayout>
 
     <!-- activity (tab) RelativeLayout -->

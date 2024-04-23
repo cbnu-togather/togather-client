@@ -1,14 +1,14 @@
 package com.project.togather.user;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
+import android.content.res.ColorStateList;
 
 import com.project.togather.R;
 import com.project.togather.databinding.ActivitySignUpBinding;
@@ -30,7 +30,6 @@ public class SignUpActivity extends AppCompatActivity {
 
     private boolean isAgreeOurPolicies = false;
 
-    // Retrofit 객체
     private UserAPI userAPI;
     private TokenManager tokenManager;
     private RetrofitService retrofitService;
@@ -41,26 +40,16 @@ public class SignUpActivity extends AppCompatActivity {
         binding = ActivitySignUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        // Retrofit 객체 초기화
         tokenManager = TokenManager.getInstance(this);
         retrofitService = new RetrofitService(tokenManager);
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
-
         String phoneNumber = getIntent().getStringExtra("phoneNumber");
-
-        // 로그인 액티비티에서 인증 완료된 전화번호를 phoneNumberEditText 위젯 텍스트로 설정
         binding.phoneNumberEditText.setText(phoneNumber);
 
-        /** (뒤로가기 화살표 이미지) 버튼 클릭 시 */
-        binding.backImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish(); // 현재 액티비티 종료
-            }
-        });
+        binding.backImageButton.setOnClickListener(view -> finish());
 
-        /** (닉네임 입력란) 포커스 시 */
+        /** (닉네임) 입력란 포커스 시 */
         binding.usernameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -68,98 +57,111 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-        /** (닉네임 입력란) 내용 입력 시 */
+        /** (닉네임) 입력란 텍스트 입력 시 */
         binding.usernameEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // 입력하기 전에 호출됩니다.
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
             @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                // 입력이 변경될 때 호출됩니다.
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-                String usernameText = editable.toString();
-
-                binding.signUpButton.setEnabled(!binding.usernameEditText.getText().toString().equals("") && isAgreeOurPolicies);
-                binding.signUpButton.setTextColor(getResources().getColor(!binding.usernameEditText.getText().toString().equals("") && isAgreeOurPolicies ? R.color.white : R.color.disabled_widget_text_deep_gray_color));
-                binding.signUpButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(!binding.usernameEditText.getText().toString().equals("") && isAgreeOurPolicies ? R.color.theme_color : R.color.disabled_widget_background_light_gray_color)));
+            public void afterTextChanged(Editable s) {
+                validateUsername(s.toString());
             }
         });
 
-        /** (개인정보 수집 및 이용 체크박스 이미지) 클릭 시 */
-        binding.agreeOurPoliciesCheckboxRoundedImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                binding.agreeOurPoliciesCheckboxRoundedImageView.setImageResource(isAgreeOurPolicies ? R.drawable.check_circle_gray : R.drawable.check_circle_green);
-                isAgreeOurPolicies = !isAgreeOurPolicies;
+        binding.agreeOurPoliciesCheckboxRoundedImageView.setOnClickListener(view -> {
+            isAgreeOurPolicies = !isAgreeOurPolicies;
+            binding.agreeOurPoliciesCheckboxRoundedImageView.setImageResource(isAgreeOurPolicies ? R.drawable.check_circle_green : R.drawable.check_circle_gray);
+            validateUsername(binding.usernameEditText.getText().toString());
+        });
 
-                binding.signUpButton.setEnabled(!binding.usernameEditText.getText().toString().equals("") && isAgreeOurPolicies);
-                binding.signUpButton.setTextColor(getResources().getColor(!binding.usernameEditText.getText().toString().equals("") && isAgreeOurPolicies ? R.color.white : R.color.disabled_widget_text_deep_gray_color));
-                binding.signUpButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(!binding.usernameEditText.getText().toString().equals("") && isAgreeOurPolicies ? R.color.theme_color : R.color.disabled_widget_background_light_gray_color)));
+        binding.agreeOurPoliciesTextRelativeLayout.setOnClickListener(this::openPolicyActivity);
+        binding.arrowRightImageButton.setOnClickListener(this::openPolicyActivity);
+
+        binding.signUpButton.setOnClickListener(view -> performSignUp());
+    }
+
+    private void validateUsername(String username) {
+        boolean isValidUsername = username.matches("[a-zA-Z0-9가-힣]+") && username.length() >= 2 && !username.contains(" ");
+        updateUsernameHelperText(isValidUsername, username);
+
+        // 버튼 활성화는 닉네임 유효성과 동의란 체크를 모두 고려
+        updateSignUpButtonState(isValidUsername && isAgreeOurPolicies);
+    }
+
+    private void updateUsernameHelperText(boolean isValidUsername, String username) {
+        if (isValidUsername) {
+            binding.usernameEditTextHelperTextView.setVisibility(View.GONE);
+        } else {
+            binding.usernameEditTextHelperTextView.setVisibility(View.VISIBLE);
+            binding.usernameEditTextHelperTextView.setText(username.length() < 2 ? "닉네임은 2자 이상 입력해 주세요." : "닉네임은 띄어쓰기 없이 한글, 영문, 숫자만 가능해요.");
+        }
+    }
+
+    private void updateSignUpButtonState(boolean enable) {
+        binding.signUpButton.setEnabled(enable);
+        binding.signUpButton.setTextColor(getResources().getColor(enable ? R.color.white : R.color.disabled_widget_text_deep_gray_color));
+        binding.signUpButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(enable ? R.color.theme_color : R.color.disabled_widget_background_light_gray_color)));
+    }
+
+    private void setupListeners() {
+        binding.backImageButton.setOnClickListener(view -> finish());
+
+        binding.usernameEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                validateUsername(s.toString());
             }
         });
 
-        /** (개인정보 수집 및 이용 텍스트) 클릭 시 */
-        binding.agreeOurPoliciesTextRelativeLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SignUpActivity.this, HandleAndStoreUserInformationPoliciesActivity.class);
-                startActivity(intent);
-            }
+        binding.agreeOurPoliciesCheckboxRoundedImageView.setOnClickListener(view -> {
+            isAgreeOurPolicies = !isAgreeOurPolicies;
+            binding.agreeOurPoliciesCheckboxRoundedImageView.setImageResource(isAgreeOurPolicies ? R.drawable.check_circle_green : R.drawable.check_circle_gray);
+            // 버튼 활성화 상태 업데이트
+            updateSignUpButtonState(binding.usernameEditText.getText().toString().matches("[a-zA-Z0-9가-힣]+") && binding.usernameEditText.getText().length() >= 2 && !binding.usernameEditText.getText().toString().contains(" ") && isAgreeOurPolicies);
         });
 
-        /** (개인정보 수집 및 이용 텍스트 우측 화살표 이미지) 클릭 시 */
-        binding.arrowRightImageButton.setOnClickListener(new View.OnClickListener() {
+        binding.agreeOurPoliciesTextRelativeLayout.setOnClickListener(this::openPolicyActivity);
+        binding.arrowRightImageButton.setOnClickListener(this::openPolicyActivity);
+
+        binding.signUpButton.setOnClickListener(view -> performSignUp());
+    }
+
+    private void performSignUp() {
+        String username = binding.usernameEditText.getText().toString().trim();
+        String phoneNumber = binding.phoneNumberEditText.getText().toString().replaceAll("\\s", "");
+
+        if (username.equals("exist")) {
+            new ToastWarning("이미 존재하는 유저 이름입니다.", this);
+            return;
+        }
+
+        Call<ResponseBody> call = userAPI.signUp(phoneNumber, username);
+        call.enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SignUpActivity.this, HandleAndStoreUserInformationPoliciesActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        /** (회원가입) 버튼 클릭 시 */
-        binding.signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String username = binding.usernameEditText.getText().toString();
-                String phoneNumber = binding.phoneNumberEditText.getText().toString();
-
-                // 전화번호 문자열 내 공백을 제거
-                phoneNumber = phoneNumber.replaceAll("\\s", "");
-
-                // 닉네임 중복 시
-                if (username.equals("exist")) {
-                    new ToastWarning("이미 존재하는 유저 이름입니다.", SignUpActivity.this);
-                    return;
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    new ToastSuccess("회원가입 완료", SignUpActivity.this);
+                    startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
                 }
-                Call<ResponseBody> call = userAPI.signUp(phoneNumber, username);
-                call.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.isSuccessful()) {
-                            // API 요청이 성공한 경우
-                            new ToastSuccess("회원가입 완료", SignUpActivity.this);
-                            Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
-                            startActivity(intent);
-                            return;
-                        } else {
-                            // API 요청이 실패한 경우
-                            return;
-                        }
-                    }
+            }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                        new ToastWarning(getResources().getString(R.string.toast_server_error), SignUpActivity.this);
-                        return;
-                    }
-                });
-
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), SignUpActivity.this);
             }
         });
+    }
+
+    private void openPolicyActivity(View view) {
+        startActivity(new Intent(this, HandleAndStoreUserInformationPoliciesActivity.class));
     }
 }

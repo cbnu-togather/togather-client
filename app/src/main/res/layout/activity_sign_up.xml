@@ -88,12 +88,23 @@
                 android:textColorHint="@color/hint_color"
                 android:textSize="17.5sp" />
 
+            <TextView
+                android:id="@+id/usernameEditTextHelper_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/username_editText"
+                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                android:layout_marginTop="10dp"
+                android:textColor="@color/invalid_red_color"
+                android:visibility="gone"
+                android:text="닉네임은 띄어쓰기 없이 한글, 영문, 숫자만 가능해요."/>
+
             <!-- (개인정보 수집 및 이용에 동의) 확인란 -->
             <RelativeLayout
                 android:id="@+id/agreeOurPolicies_relativeLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/username_editText"
+                android:layout_below="@+id/usernameEditTextHelper_textView"
                 android:layout_marginTop="10dp">
 
                 <RelativeLayout
