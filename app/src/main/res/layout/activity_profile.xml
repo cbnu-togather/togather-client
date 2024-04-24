@@ -11,23 +11,31 @@
     <RelativeLayout
         android:id="@+id/activityHeader_relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="@drawable/light_gray_border_bottom">
+        android:layout_height="wrap_content"
+        android:background="@drawable/light_gray_border_bottom"
+        android:paddingBottom="12.5dp">
 
         <RelativeLayout
             android:id="@+id/head1_relativeLayout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginTop="30dp">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/activityTitle_textView"
+            <RelativeLayout
+                android:id="@+id/tabTitle_relativeLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/spoqa_han_sans_neo_bold"
-                android:text="내 정보"
-                android:textSize="20sp" />
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="30dp">
+
+                <TextView
+                    android:id="@+id/tabTitle_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                    android:text="내 정보"
+                    android:textSize="20sp" />
+            </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>
 

@@ -67,7 +67,8 @@
                 android:layout_marginEnd="25dp"
                 android:backgroundTint="@color/transparent"
                 android:padding="10dp"
-                android:src="@drawable/notification" />
+                android:src="@drawable/notification"
+                android:visibility="invisible" />
 
             <!-- "신규 알림" 버튼 -->
             <ImageView
@@ -80,7 +81,7 @@
                 android:backgroundTint="@color/transparent"
                 android:padding="10dp"
                 android:src="@drawable/new_notification"
-                android:visibility="invisible" />
+                android:visibility="visible" />
         </RelativeLayout>
 
         <HorizontalScrollView
@@ -221,13 +222,19 @@
         android:layout_above="@+id/activityTab_relativeLayout"
         android:layout_below="@+id/activityHeader_relativeLayout">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/posts_recyclerView"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="#FFFFFF"
-            android:dividerHeight="0px"
-            android:scrollbars="none" />
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/posts_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#FFFFFF"
+                android:dividerHeight="0px"
+                android:scrollbars="none" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </RelativeLayout>
 
     <!-- activity (tab) RelativeLayout -->

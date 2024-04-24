@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="320dp"
+    android:layout_height="135dp"
+    android:layout_centerVertical="true"
+    android:layout_gravity="center"
+    android:background="@drawable/dialog_radius">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/spoqa_han_sans_neo_regular"
+        android:letterSpacing="-0.025"
+        android:paddingLeft="20dp"
+        android:paddingTop="27.5dp"
+        android:text="요청을 수락하시겠습니까?"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp">
+
+        <Button
+            android:id="@+id/noBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="3.5dp"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_no_button_background"
+            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+            android:insetTop="2dp"
+            android:insetBottom="2dp"
+            android:outlineProvider="none"
+            android:text="취소"
+            android:textColor="@color/dark_gray"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/yesBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3.5dp"
+            android:layout_weight="1"
+            android:background="@drawable/dialog_yes_button_background"
+            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+            android:insetTop="2dp"
+            android:insetBottom="2dp"
+            android:outlineProvider="none"
+            android:text="확인"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:cornerRadius="10dp" />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -4,13 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity">
+    android:background="@color/white"
+    tools:context=".notification.NotificationActivity">
 
     <!-- activity (header) RelativeLayout -->
     <RelativeLayout
         android:id="@+id/activityHeader_relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/light_gray_border_bottom"
+        android:paddingBottom="7.5dp">
 
         <!-- "뒤로가기" 버튼 -->
         <ImageButton
@@ -21,42 +24,33 @@
             android:layout_marginTop="20dp"
             android:backgroundTint="@color/transparent"
             android:src="@drawable/arrow_back" />
-    </RelativeLayout>
 
+        <TextView
+            android:id="@+id/head_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="27.5dp"
+            android:letterSpacing="-0.01"
+            android:text="알림"
+            android:textColor="@color/text_color"
+            android:fontFamily="@font/spoqa_han_sans_neo_bold"
+            android:textSize="20sp" />
+    </RelativeLayout>
 
     <!-- activity (body) RelativeLayout -->
     <RelativeLayout
         android:id="@+id/activityBody_relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:layout_below="@+id/activityHeader_relativeLayout">
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_marginTop="225dp"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/togather_LottieAnimationView"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/togather_logo" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:fontFamily="@font/spoqa_han_sans_neo_medium"
-            android:textSize="25sp"
-            android:layout_marginTop="5dp"
-            android:textColor="#999"
-            android:layout_below="@+id/togather_LottieAnimationView"
-            android:text="개발하는 중이에요"
-            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/notifications_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#FFFFFF"
+            android:dividerHeight="0px"
+            android:scrollbars="none" />
     </RelativeLayout>
 </RelativeLayout>
