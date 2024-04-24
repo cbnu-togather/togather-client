@@ -13,7 +13,7 @@
         android:fontFamily="@font/spoqa_han_sans_neo_regular"
         android:letterSpacing="-0.025"
         android:paddingLeft="20dp"
-        android:paddingTop="27.5dp"
+        android:paddingTop="22.5dp"
         android:text="요청을 수락하시겠습니까?"
         android:textSize="20sp" />
 
@@ -28,7 +28,7 @@
         <Button
             android:id="@+id/noBtn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             android:layout_marginRight="3.5dp"
             android:layout_weight="1"
             android:background="@drawable/dialog_no_button_background"
@@ -43,7 +43,7 @@
         <Button
             android:id="@+id/yesBtn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             android:layout_marginLeft="3.5dp"
             android:layout_weight="1"
             android:background="@drawable/dialog_yes_button_background"

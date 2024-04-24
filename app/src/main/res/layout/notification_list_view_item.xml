@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_relativeLayout"
     android:layout_width="match_parent"
-    android:layout_height="135dp"
+    android:layout_height="125dp"
     android:paddingHorizontal="17.5dp">
 
     <RelativeLayout
@@ -16,8 +16,8 @@
             android:id="@+id/userProfile_roundedImageView"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_alignTop="@+id/postInfo_relativeLayout"
             android:scaleType="centerCrop"
+            android:layout_alignTop="@+id/postInfo_relativeLayout"
             android:src="@drawable/user_profile_image_temp_image_1"
             app:riv_oval="true" />
 
@@ -45,107 +45,107 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginStart="15dp"
+            android:layout_marginStart="20dp"
             android:layout_toRightOf="@+id/userProfile_roundedImageView">
 
-            <TextView
-                android:id="@+id/postTitle_textView"
+            <RelativeLayout
+                android:id="@+id/notificationMessaage_relativeLayout"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                android:maxWidth="270dp"
-                android:maxLines="1"
-                android:text="도미노 피자 드실분 구해요"
-                android:textSize="17.5sp" />
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/username_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:maxWidth="280dp"
+                    android:maxLines="1"
+                    android:textStyle="bold"
+                    android:text="성열암"
+                    android:textSize="17.5sp" />
+
+                <TextView
+                    android:id="@+id/notificationMessaage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:maxWidth="280dp"
+                    android:layout_toRightOf="@+id/username_textView"
+                    android:layout_marginLeft="0.75dp"
+                    android:maxLines="1"
+                    android:text="님의 손 들기 요청이 도착했어요!"
+                    android:textSize="17.5sp" />
+            </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/postDetailInfo_relativeLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/postTitle_textView"
-                android:layout_marginTop="5dp">
+                android:layout_below="@+id/notificationMessaage_relativeLayout"
+                android:layout_marginTop="6dp">
 
                 <TextView
-                    android:id="@+id/category_textView"
+                    android:id="@+id/postTitle_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                    android:text="피자"
-                    android:textColor="@color/gray_text"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/concatenation_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="5dp"
-                    android:layout_toRightOf="@+id/category_textView"
                     android:fontFamily="@font/spoqa_han_sans_neo_bold"
-                    android:text="·"
-                    android:textColor="@color/gray_text"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/elapsedTime_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@+id/concatenation_textView"
-                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                    android:text="4분 전"
-                    android:textColor="@color/gray_text"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/concatenation2_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="5dp"
-                    android:layout_toRightOf="@+id/elapsedTime_textView"
-                    android:fontFamily="@font/spoqa_han_sans_neo_bold"
-                    android:text="·"
+                    android:text="도미노 피자 드실분 구해요"
+                    android:maxLines="1"
                     android:textColor="@color/gray_text"
                     android:textSize="15sp" />
 
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/concatenation2_textView">
-
-                    <ImageView
-                        android:id="@+id/avatar_imageView"
-                        android:layout_width="12.5dp"
-                        android:layout_height="12.5dp"
-                        android:layout_centerVertical="true"
-                        android:src="@drawable/avatar" />
+                    android:layout_marginTop="2.5dp"
+                    android:layout_below="@+id/postTitle_textView">
 
                     <TextView
-                        android:id="@+id/currentPartyMemberNum_textView"
+                        android:id="@+id/elapsedTime_textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="5dp"
-                        android:layout_toRightOf="@+id/avatar_imageView"
                         android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                        android:text="2/3명"
+                        android:text="4분 전"
                         android:textColor="@color/gray_text"
-                        android:textSize="12.5sp" />
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/concatenation2_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="5dp"
+                        android:layout_toRightOf="@+id/elapsedTime_textView"
+                        android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                        android:text="·"
+                        android:textColor="@color/gray_text"
+                        android:textSize="15sp" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/concatenation2_textView">
+
+                        <ImageView
+                            android:id="@+id/avatar_imageView"
+                            android:layout_width="12.5dp"
+                            android:layout_height="12.5dp"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/avatar" />
+
+                        <TextView
+                            android:id="@+id/currentPartyMemberNum_textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_toRightOf="@+id/avatar_imageView"
+                            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                            android:text="2/3명"
+                            android:textColor="@color/gray_text"
+                            android:textSize="12.5sp" />
+                    </RelativeLayout>
                 </RelativeLayout>
             </RelativeLayout>
-
-            <TextView
-                android:id="@+id/message_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/postDetailInfo_relativeLayout"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                android:maxWidth="280dp"
-                android:maxLines="2"
-                android:text="저 같이 주문하고 싶어용!"
-                android:maxLength="70"
-                android:textColor="@color/gray_text"
-                android:textSize="13sp"
-                android:textStyle="bold" />
         </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>

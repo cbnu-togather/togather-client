@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".chat.ChatDetailActivity">
+
+    <!-- activity (header) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityHeader_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/light_gray_border_bottom"
+        android:paddingBottom="7.5dp">
+
+        <!-- "뒤로가기" 버튼 -->
+        <ImageButton
+            android:id="@+id/back_imageButton"
+            android:layout_width="42.5dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2.5dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/transparent"
+            android:src="@drawable/arrow_back" />
+
+        <RelativeLayout
+            android:id="@+id/headTitle_relativeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp">
+
+            <TextView
+                android:id="@+id/head_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/spoqa_han_sans_neo_medium"
+                android:letterSpacing="-0.01"
+                android:singleLine="true"
+                android:text="도미노 피자 드실분 구해요"
+                android:textColor="@color/text_color"
+                android:textSize="17.5sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/head_textView"
+                android:layout_toRightOf="@+id/head_textView"
+                android:letterSpacing="-0.01"
+                android:text=" 전체방"
+                android:textColor="@color/text_color"
+                android:textSize="17.5sp" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/currentPartyMemberNum_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/headTitle_relativeLayout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="7.5dp"
+            android:layout_toRightOf="@+id/headTitle_relativeLayout"
+            android:fontFamily="@font/spoqa_han_sans_neo_bold"
+            android:letterSpacing="-0.01"
+            android:text="4"
+            android:textColor="@color/gray_text"
+            android:textSize="17.5sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/moreMenu_imageView"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="10dp"
+            android:padding="5dp"
+            android:src="@drawable/more" />
+    </RelativeLayout>
+
+    <!-- activity (body) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityBody_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/addMenu_relativeLayout"
+        android:layout_below="@+id/activityHeader_relativeLayout">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chatRoom_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#FFFFFF"
+            android:dividerHeight="0px"
+            android:scrollbars="none" />
+    </RelativeLayout>
+
+    <!-- activity (addExtraInfo) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/addMenu_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="5dp"
+        android:minHeight="70dp"
+        android:paddingTop="10dp">
+
+        <ImageView
+            android:id="@+id/addMenu_imageView"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="4dp"
+            android:padding="2.5dp"
+            android:src="@drawable/plus" />
+
+        <EditText
+            android:id="@+id/message_editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="2.5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_toLeftOf="@+id/sendMessage_imageView"
+            android:layout_toRightOf="@+id/addMenu_imageView"
+            android:background="@drawable/message_input_background"
+            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+            android:hint="메시지 보내기"
+            android:maxHeight="110dp"
+            android:minHeight="45dp"
+            android:paddingHorizontal="15dp"
+            android:paddingVertical="10dp"
+            android:textColorHint="@color/hint_color"
+            android:textSize="17.5sp" />
+
+        <ImageView
+            android:id="@+id/sendMessage_imageView"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"
+            android:padding="10dp"
+            android:src="@drawable/send_normal" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/background_dimmer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <!-- bottom sheet 레이아웃 -->
+        <include layout="@layout/chat_room_more_menu_bottom_sheet" />
+        <include layout="@layout/chat_room_add_menu_bottom_sheet" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>
