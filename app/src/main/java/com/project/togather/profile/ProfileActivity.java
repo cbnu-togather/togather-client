@@ -1,5 +1,7 @@
 package com.project.togather.profile;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
@@ -31,11 +33,20 @@ public class ProfileActivity extends AppCompatActivity {
     private Dialog askLogout_dialog,
             askUnsubscribe_dialog;
 
+    private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                finishAffinity();  // 현재 액티비티와 같은 작업에 있는 모든 액티비티를 종료
+            }
+        });
 
         /** (로그아웃 확인) 다이얼로그 변수 초기화 및 설정 */
         askLogout_dialog = new Dialog(ProfileActivity.this);  // Dialog 초기화

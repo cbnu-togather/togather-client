@@ -4,14 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import com.project.togather.databinding.ActivityMainBinding;
 import com.project.togather.home.HomeActivity;
-import com.project.togather.profile.EditMyProfile;
-import com.project.togather.profile.ProfileActivity;
-import com.project.togather.user.LoginActivity;
-import com.project.togather.user.SignUpActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,6 +20,6 @@ public class MainActivity extends AppCompatActivity {
 
         /** (시작하기) 버튼 클릭 시 */
         binding.startButton.setOnClickListener(view ->
-                startActivity(new Intent(MainActivity.this, LoginActivity.class)));
+                startActivity(new Intent(MainActivity.this, HomeActivity.class)));
     }
 }

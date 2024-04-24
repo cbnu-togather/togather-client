@@ -57,7 +57,6 @@ public class MyRecruitmentPartyPostListActivity extends AppCompatActivity {
 
         // initiate recyclerview
         binding.postsRecyclerView.setAdapter(adapter);
-        binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
         // Adapter 안에 아이템의 정보 담기 (하드 코딩)
@@ -115,6 +114,11 @@ public class MyRecruitmentPartyPostListActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return items.size();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return position;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
@@ -276,7 +280,7 @@ public class MyRecruitmentPartyPostListActivity extends AppCompatActivity {
                     currentPartyMemberNumThirdState_imageView.setImageResource(item.getCurrentPartyMemberNum() >= 3 ? R.drawable.one_person_logo_filled : R.drawable.one_person_logo);
                 }
 
-                liked_imageView.setImageResource(item.getLikedState() ? R.drawable.like_filled : R.drawable.like_normal);
+                liked_imageView.setImageResource(item.isLikedState() ? R.drawable.like_filled : R.drawable.like_normal);
                 likedCnt_textView.setText("" + item.getLikedCnt());
             }
         }
