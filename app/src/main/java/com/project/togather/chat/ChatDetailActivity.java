@@ -228,7 +228,8 @@ public class ChatDetailActivity extends AppCompatActivity {
             }
         });
 
-        // 더 보기 -> (채팅방 나가기) 레이아웃 클릭 이벤트 설정
+        // 더 보기 -> (채팅방 나가기) 아이콘, 버튼 클릭 이벤트 설정
+        findViewById(R.id.leaveChatRoom_imageView).setOnClickListener(view -> showDialog_askLeaveChatRoom_dialog());
         findViewById(R.id.leaveChatRoom_button).setOnClickListener(view -> showDialog_askLeaveChatRoom_dialog());
 
         // 더 보기 -> (취소) 버튼 클릭 이벤트 설정
