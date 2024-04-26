@@ -24,7 +24,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.project.togather.chat.ChatActivity;
-import com.project.togather.chat.GroupChatActivity;
 import com.project.togather.community.CommunityActivity;
 import com.project.togather.CreatePostActivity;
 import com.project.togather.notification.NotificationActivity;

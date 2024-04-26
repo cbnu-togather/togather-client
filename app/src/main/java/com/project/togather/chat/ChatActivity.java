@@ -63,16 +63,14 @@ public class ChatActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
-                Intent intent = new Intent(ChatActivity.this, CommunityPostDetailActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(ChatActivity.this, ChatDetailActivity.class));
             }
         });
 
         adapter.setOnLongItemClickListener(new RecyclerViewAdapter.OnLongItemClickListener() {
             @Override
             public void onLongItemClick(int pos) {
-                Intent intent = new Intent(ChatActivity.this, CommunityPostDetailActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(ChatActivity.this, ChatDetailActivity.class));
             }
         });
 

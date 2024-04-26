@@ -10,8 +10,8 @@ import lombok.Setter;
 public class NotificationInfoItem {
     private String userProfileImageUrl;
     private String postThumbnailImageUrl;
+    private String username;
     private String title;
-    private String category;
     private long elapsedTime;
     private int maxPartyMemberNum;
     private int currentPartyMemberNum;

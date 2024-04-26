@@ -13,7 +13,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -31,16 +30,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.makeramen.roundedimageview.RoundedImageView;
 import com.project.togather.R;
-import com.project.togather.chat.GroupChatActivity;
-import com.project.togather.community.CommunityPostDetailActivity;
-import com.project.togather.databinding.ActivityDevelopingBinding;
+import com.project.togather.chat.ChatDetailActivity;
 import com.project.togather.databinding.ActivityNotificationBinding;
-import com.project.togather.databinding.ActivityProfileBinding;
-import com.project.togather.profile.ProfileActivity;
 import com.project.togather.toast.ToastSuccess;
-import com.project.togather.user.LoginActivity;
 
 import java.util.ArrayList;
 
@@ -93,9 +86,9 @@ public class NotificationActivity extends AppCompatActivity {
         binding.notificationsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
         // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-        notificationInfoItems.add(new NotificationInfoItem("https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/product/5400941752/B.jpg?481000000", "https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 30000, 3, 2, "저 같이 주문하고 싶어요..!"));
-        notificationInfoItems.add(new NotificationInfoItem("https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/9mqM/image/6vuarJpov779Xfo2EdNhLhmaPgI.JPG", "", "짚신 스시 & 롤 배달 구해요", "japanese_food", 70000, 2, 1, "저 같이 주문 가능할까용?"));
-        notificationInfoItems.add(new NotificationInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutGBoBGvVLOofPQ8mNAAKDpgD7NiHKzAyRSAL35gRQA&s", "https://media-cdn.tripadvisor.com/media/photo-s/12/31/92/d9/1519804025288-largejpg.jpg", "신전 떡볶이 구해유", "snack", 90000, 1, 0, "같이 드시져!😎😎"));
+        notificationInfoItems.add(new NotificationInfoItem("https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/product/5400941752/B.jpg?481000000", "https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "김하늘", "도미노 피자 드실분 구해요", 30000, 3, 2, "저 같이 주문하고 싶어요..!"));
+        notificationInfoItems.add(new NotificationInfoItem("https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/9mqM/image/6vuarJpov779Xfo2EdNhLhmaPgI.JPG", "", "아무개", "짚신 스시 & 롤 배달 구해요", 70000, 2, 1, "저 같이 주문 가능할까용?"));
+        notificationInfoItems.add(new NotificationInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutGBoBGvVLOofPQ8mNAAKDpgD7NiHKzAyRSAL35gRQA&s", "https://media-cdn.tripadvisor.com/media/photo-s/12/31/92/d9/1519804025288-largejpg.jpg", "크루키", "신전 떡볶이 구해유", 90000, 1, 0, "같이 드시져!😎😎"));
 
         adapter.setNotificationInfoList(notificationInfoItems);
 
@@ -174,11 +167,11 @@ public class NotificationActivity extends AppCompatActivity {
             ImageView userProfile_roundedImageView;
             ImageView post_imageView;
 
+            TextView username_textView;
             TextView postTitle_textView;
             TextView category_textView;
             TextView elapsedTime_textView;
             TextView currentPartyMemberNum_textView;
-            TextView message_textView;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -236,11 +229,11 @@ public class NotificationActivity extends AppCompatActivity {
                 userProfile_roundedImageView = itemView.findViewById(R.id.userProfile_roundedImageView);
                 post_imageView = itemView.findViewById(R.id.post_imageView);
 
+                username_textView = itemView.findViewById(R.id.username_textView);
                 postTitle_textView = itemView.findViewById(R.id.postTitle_textView);
                 category_textView = itemView.findViewById(R.id.category_textView);
                 elapsedTime_textView = itemView.findViewById(R.id.elapsedTime_textView);
                 currentPartyMemberNum_textView = itemView.findViewById(R.id.currentPartyMemberNum_textView);
-                message_textView = itemView.findViewById(R.id.message_textView);
             }
 
             void onBind(NotificationInfoItem item) {
@@ -264,38 +257,8 @@ public class NotificationActivity extends AppCompatActivity {
                             .into(post_imageView); // ImageView에 이미지 설정
                 }
 
+                username_textView.setText(item.getUsername());
                 postTitle_textView.setText(item.getTitle());
-                switch (item.getCategory()) {
-                    case "chicken":
-                        category_textView.setText("치킨");
-                        break;
-                    case "pizza":
-                        category_textView.setText("피자");
-                        break;
-                    case "hamburger":
-                        category_textView.setText("햄버거");
-                        break;
-                    case "korean_food":
-                        category_textView.setText("한식");
-                        break;
-                    case "japanese_food":
-                        category_textView.setText("일식");
-                        break;
-                    case "chinese_food":
-                        category_textView.setText("중식");
-                        break;
-                    case "western_food":
-                        category_textView.setText("양식");
-                        break;
-                    case "snack":
-                        category_textView.setText("분식");
-                        break;
-                    case "cafe_and_dessert":
-                        category_textView.setText("카페·디저트");
-                        break;
-                    default:
-                        Log.d("로그: ", item.getCategory() + "는 존재하지 않는 카테고리입니다.");
-                }
 
                 long elapsedTime = item.getElapsedTime();
                 String elapsedTime_str;
@@ -313,7 +276,6 @@ public class NotificationActivity extends AppCompatActivity {
                 elapsedTime_textView.setText(elapsedTime_str);
 
                 currentPartyMemberNum_textView.setText("" + item.getCurrentPartyMemberNum() + '/' + item.getMaxPartyMemberNum());
-                message_textView.setText(item.getMessage());
             }
         }
     }
@@ -372,7 +334,7 @@ public class NotificationActivity extends AppCompatActivity {
         }
 
         // GroupChatActivity 이동하는 인텐트 생성
-        Intent intent = new Intent(this, GroupChatActivity.class);
+        Intent intent = new Intent(this, ChatDetailActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
@@ -380,7 +342,7 @@ public class NotificationActivity extends AppCompatActivity {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.logo)  // 이 부분에서 smallIcon 설정
                 .setColor(getResources().getColor(R.color.theme_color))
-                .setContentTitle("❤️손들기 요청 수락❤️") // 알림 제목 설정
+                .setContentTitle("❤️파티가 생성됐어요❤️") // 알림 제목 설정
                 .setContentText("\"도미노 피자 드실분 구해요\" 채팅방에서 지금 바로 이야기 나눠보세요!") // 알림 내용 설정
                 .setPriority(NotificationCompat.PRIORITY_HIGH) // 우선순위 설정 (필수는 아님)
                 .setContentIntent(pendingIntent)  // PendingIntent 추가

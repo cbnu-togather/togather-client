@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.project.togather.chat.ChatDetailActivity;
 import com.project.togather.databinding.ActivityMainBinding;
 import com.project.togather.home.HomeActivity;
 
@@ -20,6 +21,6 @@ public class MainActivity extends AppCompatActivity {
 
         /** (시작하기) 버튼 클릭 시 */
         binding.startButton.setOnClickListener(view ->
-                startActivity(new Intent(MainActivity.this, HomeActivity.class)));
+                startActivity(new Intent(MainActivity.this, ChatDetailActivity.class)));
     }
 }
