@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- retrofit 통신을 위해 추가 -->
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <application
         android:allowBackup="true"
@@ -81,7 +87,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".NotificationActivity"
+            android:name=".notification.NotificationActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -129,7 +135,9 @@
                 android:value="" />
         </activity>
         <activity android:name=".user.LoginActivity" />
-        <activity android:name="com.project.togather.community.CommunityPostDetailActivity" />
-        <activity android:name="com.project.togather.profile.EditMyProfile" />
+        <activity android:name=".community.CommunityPostDetailActivity" />
+        <activity android:name=".profile.EditMyProfile" />
+        <activity android:name="com.project.togather.chat.ChatDetailActivity" />
     </application>
+
 </manifest>

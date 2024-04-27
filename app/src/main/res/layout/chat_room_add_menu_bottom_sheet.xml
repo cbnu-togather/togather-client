@@ -1,0 +1,100 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/chatRoomAddMenuBottomSheet_layout"
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:layout_alignParentBottom="true"
+    android:background="@drawable/chat_room_bottom_sheet_background"
+    android:orientation="vertical"
+    android:paddingHorizontal="40dp"
+    app:behavior_peekHeight="0dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <!-- 상단 Minus Bar -->
+    <ImageView
+        android:id="@+id/minusBar_iv"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="5dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bottom_sheet_minus_bar"
+        app:tint="#d2d3d6" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp">
+
+        <RelativeLayout
+            android:id="@+id/gallery_relativeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/gallery_imageView"
+                android:layout_width="52.5dp"
+                android:layout_height="52.5dp"
+                android:src="@drawable/menu_gallery" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/gallery_imageView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="9dp"
+                android:text="사진"
+                android:textColor="@color/gray_text"
+                android:textSize="13.5sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/camera_relativeLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="40dp"
+            android:layout_toRightOf="@+id/gallery_relativeLayout">
+
+            <ImageView
+                android:id="@+id/camera_imageView"
+                android:layout_width="52.5dp"
+                android:layout_height="52.5dp"
+                android:src="@drawable/menu_camera" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/camera_imageView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="9dp"
+                android:text="카메라"
+                android:textColor="@color/gray_text"
+                android:textSize="13.5sp" />
+        </RelativeLayout>
+
+<!--        <RelativeLayout-->
+<!--            android:id="@+id/location_relativeLayout"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="40dp"-->
+<!--            android:layout_toRightOf="@+id/camera_relativeLayout">-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/location_imageView"-->
+<!--                android:layout_width="52.5dp"-->
+<!--                android:layout_height="52.5dp"-->
+<!--                android:src="@drawable/menu_location" />-->
+
+<!--            <TextView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_below="@+id/location_imageView"-->
+<!--                android:layout_centerHorizontal="true"-->
+<!--                android:layout_marginTop="9dp"-->
+<!--                android:text="장소"-->
+<!--                android:textColor="@color/gray_text"-->
+<!--                android:textSize="13.5sp" />-->
+<!--        </RelativeLayout>-->
+    </RelativeLayout>
+</RelativeLayout>

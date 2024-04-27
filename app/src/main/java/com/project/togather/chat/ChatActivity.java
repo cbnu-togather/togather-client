@@ -1,5 +1,7 @@
 package com.project.togather.chat;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.project.togather.CreatePostActivity;
 import com.project.togather.R;
 import com.project.togather.community.CommunityPostDetailActivity;
+import com.project.togather.notification.NotificationActivity;
 import com.project.togather.profile.ProfileActivity;
 import com.project.togather.community.CommunityActivity;
 import com.project.togather.databinding.ActivityChatBinding;
@@ -38,11 +41,20 @@ public class ChatActivity extends AppCompatActivity {
 
     private RecyclerViewAdapter adapter;
 
+    private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityChatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                finishAffinity();  // 현재 액티비티와 같은 작업에 있는 모든 액티비티를 종료
+            }
+        });
 
         adapter = new RecyclerViewAdapter();
 
@@ -51,22 +63,19 @@ public class ChatActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
-                Intent intent = new Intent(ChatActivity.this, CommunityPostDetailActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(ChatActivity.this, ChatDetailActivity.class));
             }
         });
 
         adapter.setOnLongItemClickListener(new RecyclerViewAdapter.OnLongItemClickListener() {
             @Override
             public void onLongItemClick(int pos) {
-                Intent intent = new Intent(ChatActivity.this, CommunityPostDetailActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(ChatActivity.this, ChatDetailActivity.class));
             }
         });
 
         // initiate recyclerview
         binding.chatsRecyclerView.setAdapter(adapter);
-        binding.chatsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.chatsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
         // Adapter 안에 아이템의 정보 담기 (하드 코딩)
@@ -76,6 +85,14 @@ public class ChatActivity extends AppCompatActivity {
         chatInfoItems.add(new ChatInfoItem("", "", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutGBoBGvVLOofPQ8mNAAKDpgD7NiHKzAyRSAL35gRQA&s", "", "밥버거 드실분", "넹", 300000, 0, 2, 1));
 
         adapter.setChatInfoList(chatInfoItems);
+
+        /** "알림" 버튼 클릭 시 */
+        binding.notificationImageButton.setOnClickListener(view ->
+                startActivity(new Intent(ChatActivity.this, NotificationActivity.class)));
+
+        /** "신규 알림" 버튼 클릭 시 */
+        binding.notificationNewImageButton.setOnClickListener(view ->
+                startActivity(new Intent(ChatActivity.this, NotificationActivity.class)));
 
         /** "홈" 레이아웃 클릭 시 */
         binding.homeActivityRelativeLayout.setOnClickListener(view -> {
@@ -146,6 +163,11 @@ public class ChatActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return items.size();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return position;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {

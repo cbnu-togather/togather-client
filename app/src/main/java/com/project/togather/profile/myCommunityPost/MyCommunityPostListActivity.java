@@ -62,7 +62,6 @@ public class MyCommunityPostListActivity extends AppCompatActivity {
 
         // initiate recyclerview
         binding.postsRecyclerView.setAdapter(adapter);
-        binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
         // Adapter 안에 아이템의 정보 담기 (하드 코딩)
@@ -198,6 +197,11 @@ public class MyCommunityPostListActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return items.size();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return position;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {

@@ -12,7 +12,8 @@
         android:id="@+id/activityHeader_relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/light_gray_border_bottom">
+        android:background="@drawable/light_gray_border_bottom"
+        android:paddingBottom="12.5dp">
 
         <RelativeLayout
             android:id="@+id/head1_relativeLayout"
@@ -20,26 +21,20 @@
             android:layout_height="wrap_content">
 
             <RelativeLayout
-                android:id="@+id/selectedPosition_relativeLayout"
+                android:id="@+id/tabTitle_relativeLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="30dp">
 
                 <TextView
-                    android:id="@+id/activityTitle_textView"
+                    android:id="@+id/tabTitle_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:fontFamily="@font/spoqa_han_sans_neo_bold"
                     android:text="채팅"
                     android:textSize="20sp" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-
             </RelativeLayout>
 
             <!-- "알림" 버튼 -->
@@ -47,25 +42,28 @@
                 android:id="@+id/notification_imageButton"
                 android:layout_width="42.5dp"
                 android:layout_height="42.5dp"
+                android:layout_alignBottom="@+id/tabTitle_relativeLayout"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="22.5dp"
                 android:layout_marginEnd="25dp"
+                android:layout_marginBottom="-6.5dp"
                 android:backgroundTint="@color/transparent"
                 android:padding="10dp"
-                android:src="@drawable/notification" />
+                android:src="@drawable/notification"
+                android:visibility="invisible"/>
 
             <!-- "신규 알림" 버튼 -->
             <ImageView
                 android:id="@+id/notificationNew_imageButton"
                 android:layout_width="47.5dp"
                 android:layout_height="47.5dp"
+                android:layout_alignBottom="@+id/tabTitle_relativeLayout"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="22.5dp"
                 android:layout_marginEnd="19.5dp"
+                android:layout_marginBottom="-6.5dp"
                 android:backgroundTint="@color/transparent"
                 android:padding="10dp"
                 android:src="@drawable/new_notification"
-                android:visibility="invisible" />
+                android:visibility="visible" />
         </RelativeLayout>
     </RelativeLayout>
 
@@ -77,39 +75,39 @@
         android:layout_above="@+id/activityTab_relativeLayout"
         android:layout_below="@+id/activityHeader_relativeLayout">
 
-<!--        <RelativeLayout-->
-<!--            android:id="@+id/filterPost_relativeLayout"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="20dp"-->
-<!--            android:layout_marginStart="20dp"-->
-<!--            android:layout_marginTop="20dp"-->
-<!--            android:layout_marginEnd="20dp"-->
-<!--            android:layout_marginBottom="20dp">-->
+        <!--        <RelativeLayout-->
+        <!--            android:id="@+id/filterPost_relativeLayout"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_margin="20dp"-->
+        <!--            android:layout_marginStart="20dp"-->
+        <!--            android:layout_marginTop="20dp"-->
+        <!--            android:layout_marginEnd="20dp"-->
+        <!--            android:layout_marginBottom="20dp">-->
 
-<!--            <Button-->
-<!--                android:id="@+id/filterAllChat_button"-->
-<!--                android:layout_width="57.5dp"-->
-<!--                android:layout_height="40dp"-->
-<!--                android:layout_marginVertical="1dp"-->
-<!--                android:background="@drawable/filter_active_button_background"-->
-<!--                android:fontFamily="@font/spoqa_han_sans_neo_regular"-->
-<!--                android:text="전체"-->
-<!--                android:textColor="@color/white"-->
-<!--                android:textSize="15sp" />-->
+        <!--            <Button-->
+        <!--                android:id="@+id/filterAllChat_button"-->
+        <!--                android:layout_width="57.5dp"-->
+        <!--                android:layout_height="40dp"-->
+        <!--                android:layout_marginVertical="1dp"-->
+        <!--                android:background="@drawable/filter_active_button_background"-->
+        <!--                android:fontFamily="@font/spoqa_han_sans_neo_regular"-->
+        <!--                android:text="전체"-->
+        <!--                android:textColor="@color/white"-->
+        <!--                android:textSize="15sp" />-->
 
-<!--            <Button-->
-<!--                android:id="@+id/filterUnreadChat_button"-->
-<!--                android:layout_width="110dp"-->
-<!--                android:layout_height="40dp"-->
-<!--                android:layout_marginVertical="1dp"-->
-<!--                android:layout_marginStart="10dp"-->
-<!--                android:layout_toRightOf="@+id/filterAllChat_button"-->
-<!--                android:background="@drawable/filter_normal_button_background"-->
-<!--                android:fontFamily="@font/spoqa_han_sans_neo_regular"-->
-<!--                android:text="안 읽은 채팅방"-->
-<!--                android:textSize="15sp" />-->
-<!--        </RelativeLayout>-->
+        <!--            <Button-->
+        <!--                android:id="@+id/filterUnreadChat_button"-->
+        <!--                android:layout_width="110dp"-->
+        <!--                android:layout_height="40dp"-->
+        <!--                android:layout_marginVertical="1dp"-->
+        <!--                android:layout_marginStart="10dp"-->
+        <!--                android:layout_toRightOf="@+id/filterAllChat_button"-->
+        <!--                android:background="@drawable/filter_normal_button_background"-->
+        <!--                android:fontFamily="@font/spoqa_han_sans_neo_regular"-->
+        <!--                android:text="안 읽은 채팅방"-->
+        <!--                android:textSize="15sp" />-->
+        <!--        </RelativeLayout>-->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/chats_recyclerView"

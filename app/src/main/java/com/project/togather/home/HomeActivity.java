@@ -1,10 +1,13 @@
 package com.project.togather.home;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -23,7 +26,7 @@ import com.bumptech.glide.Glide;
 import com.project.togather.chat.ChatActivity;
 import com.project.togather.community.CommunityActivity;
 import com.project.togather.CreatePostActivity;
-import com.project.togather.NotificationActivity;
+import com.project.togather.notification.NotificationActivity;
 import com.project.togather.profile.ProfileActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityHomeBinding;
@@ -36,15 +39,25 @@ public class HomeActivity extends AppCompatActivity {
 
     private RecyclerViewAdapter adapter;
 
+    private ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
+
+    private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        adapter = new RecyclerViewAdapter();
+        // Add callback listener
+        onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                finishAffinity();  // 현재 액티비티와 같은 작업에 있는 모든 액티비티를 종료
+            }
+        });
 
-        ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
+        adapter = new RecyclerViewAdapter();
 
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
@@ -64,23 +77,17 @@ public class HomeActivity extends AppCompatActivity {
 
         // initiate recyclerview
         binding.postsRecyclerView.setAdapter(adapter);
-        binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
-        // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-        postInfoItems.add(new PostInfoItem("https://cdn.mkhealth.co.kr/news/photo/202306/64253_68458_1153.png", "개신동 교촌치킨 파티 구함", "chicken", 320, 3, 2, false, 1));
-        postInfoItems.add(new PostInfoItem("https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 160, 3, 3, false, 0));
-        postInfoItems.add(new PostInfoItem("https://mblogthumb-phinf.pstatic.net/MjAyMjA3MjhfMTY5/MDAxNjU4OTkyODg0NTA3.z8WzaZAOKBvo4JkSm9lTMOTiNsKEUNHZJYRB-DPZCdEg.0WdqohiJPsSM5pXWYl-HvTE3JUVlUPe7LT-U6wvjUQwg.JPEG.duwlsrjdwb/KakaoTalk_20220728_151114228_10.jpg?type=w800", "사창동 우리집 닭강정 파티!!", " chicken ", 500, 1, 0, false, 0));
-        postInfoItems.add(new PostInfoItem("https://image.kmib.co.kr/online_image/2024/0131/2024013114261427977_1706678775_0019120339.jpg", "맘스터치 배달 파티 999~~", "hamburger", 600, 3, 3, true, 2));
-        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6LTXILpqDk2KY425YAGSIAdF84ogxh-OFRz2P51EPvA&s", "행컵 그룹 구해용", "korean_food", 550, 2, 1, false, 0));
-        postInfoItems.add(new PostInfoItem("", "짚신 스시 & 롤 배달 구해요", "japanese_food", 555, 1, 0, true, 1));
-        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRj0BYs-iE7kn3fmdg0eVBxtqO89kwVRBFe_3Y8uZrgMA&s", "대장집 파티 구", "chinese_food", 560, 2, 1, false, 0));
-        postInfoItems.add(new PostInfoItem("https://d12zq4w4guyljn.cloudfront.net/750_750_20201122041810_photo1_5831aaf849cf.jpg", "파브리카 배달 구해용", "western_food", 700, 2, 2, false, 1));
-        postInfoItems.add(new PostInfoItem("https://media-cdn.tripadvisor.com/media/photo-s/12/31/92/d9/1519804025288-largejpg.jpg", "신전 떡볶이 구해유", "snack", 900, 3, 2, false, 2));
-        postInfoItems.add(new PostInfoItem("https://d12zq4w4guyljn.cloudfront.net/750_750_20230517093845_photo1_edd2f5913a1b.jpg", "메가커피 999", "cafe_and_dessert", 1000, 1, 0, false, 2));
-        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-1FF9Hpe-_ERtrBHcUDeeckMOeOzm6IWylD_mJJlJEQ&s", "컴포즈 배달 구해요!!!", "cafe_and_dessert", 1500, 1, 1, false, 1));
+        binding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshData(); // 데이터 새로고침 메소드 호출
+            }
+        });
 
-        adapter.setPostInfoList(postInfoItems);
+        // 초기 데이터 로드
+        loadData();
 
         /** "알림" 버튼 클릭 시 */
         binding.notificationImageButton.setOnClickListener(view ->
@@ -96,6 +103,7 @@ public class HomeActivity extends AppCompatActivity {
             binding.allFoodTabButton.setTypeface(null, Typeface.BOLD);
             binding.allFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.allFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
+            filterPostsByCategory("all");
         });
 
         /** "치킨" 탭 버튼 클릭 시 */
@@ -104,6 +112,7 @@ public class HomeActivity extends AppCompatActivity {
             binding.chickenTabButton.setTypeface(null, Typeface.BOLD);
             binding.chickenTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.chickenTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
+            filterPostsByCategory("chicken");
         });
 
         /** "피자" 탭 버튼 클릭 시 */
@@ -112,6 +121,7 @@ public class HomeActivity extends AppCompatActivity {
             binding.pizzaTabButton.setTypeface(null, Typeface.BOLD);
             binding.pizzaTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.pizzaTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
+            filterPostsByCategory("pizza");
         });
 
         /** "햄버거" 탭 버튼 클릭 시 */
@@ -120,6 +130,7 @@ public class HomeActivity extends AppCompatActivity {
             binding.hamburgerTabButton.setTypeface(null, Typeface.BOLD);
             binding.hamburgerTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.hamburgerTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
+            filterPostsByCategory("hamburger");
         });
 
         /** "한식" 탭 버튼 클릭 시 */
@@ -128,6 +139,7 @@ public class HomeActivity extends AppCompatActivity {
             binding.koreanFoodTabButton.setTypeface(null, Typeface.BOLD);
             binding.koreanFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.koreanFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
+            filterPostsByCategory("korean_food");
         });
 
         /** "일식" 탭 버튼 클릭 시 */
@@ -136,6 +148,7 @@ public class HomeActivity extends AppCompatActivity {
             binding.japaneseFoodTabButton.setTypeface(null, Typeface.BOLD);
             binding.japaneseFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.japaneseFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
+            filterPostsByCategory("japanese_food");
         });
 
         /** "중식" 탭 버튼 클릭 시 */
@@ -144,6 +157,7 @@ public class HomeActivity extends AppCompatActivity {
             binding.chineseFoodTabButton.setTypeface(null, Typeface.BOLD);
             binding.chineseFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.chineseFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
+            filterPostsByCategory("chinese_food");
         });
 
         /** "양식" 탭 버튼 클릭 시 */
@@ -152,6 +166,7 @@ public class HomeActivity extends AppCompatActivity {
             binding.westernFoodTabButton.setTypeface(null, Typeface.BOLD);
             binding.westernFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.westernFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
+            filterPostsByCategory("western_food");
         });
 
         /** "분식" 탭 버튼 클릭 시 */
@@ -160,6 +175,7 @@ public class HomeActivity extends AppCompatActivity {
             binding.snackTabButton.setTypeface(null, Typeface.BOLD);
             binding.snackTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.snackTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
+            filterPostsByCategory("snack");
         });
 
         /** "카페·디저트" 탭 버튼 클릭 시 */
@@ -168,6 +184,7 @@ public class HomeActivity extends AppCompatActivity {
             binding.cafeAndDessertTabButton.setTypeface(null, Typeface.BOLD);
             binding.cafeAndDessertTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.cafeAndDessertTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
+            filterPostsByCategory("cafe_and_dessert");
         });
 
         /** "동네생활" 레이아웃 클릭 시 */
@@ -245,6 +262,11 @@ public class HomeActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return items.size();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return position;
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
@@ -340,8 +362,8 @@ public class HomeActivity extends AppCompatActivity {
                 } else {
                     Glide.with(itemView)
                             .load(item.getPostThumbnailImageUrl()) // 이미지 URL 가져오기
-                            .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
-                            .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
+                            .placeholder(R.drawable.post_thumbnail_background_logo) // 로딩 중에 표시할 이미지
+                            .error(R.drawable.post_thumbnail_background_logo) // 에러 발생 시 표시할 이미지
                             .into(post_imageView); // ImageView에 이미지 설정
                 }
 
@@ -406,11 +428,10 @@ public class HomeActivity extends AppCompatActivity {
                     currentPartyMemberNumThirdState_imageView.setImageResource(item.getCurrentPartyMemberNum() >= 3 ? R.drawable.one_person_logo_filled : R.drawable.one_person_logo);
                 }
 
-                liked_imageView.setImageResource(item.getLikedState() ? R.drawable.like_filled : R.drawable.like_normal);
+                liked_imageView.setImageResource(item.isLikedState() ? R.drawable.like_filled : R.drawable.like_normal);
                 likedCnt_textView.setText("" + item.getLikedCnt());
             }
         }
-
     }
 
     // 음식 카테고리 탭에 설정된 스타일을 제거하는 함수
@@ -454,5 +475,61 @@ public class HomeActivity extends AppCompatActivity {
         binding.cafeAndDessertTabButton.setBackground(null);
         binding.cafeAndDessertTabButton.setTypeface(null, Typeface.NORMAL);
         binding.cafeAndDessertTabButton.setTextColor(getResources().getColor(R.color.not_selected_menu_item_gray_color));
+    }
+
+    /** 음식 카테고리 탭에 맞게 게시글을 필터링하고 UI를 새로고침하는 함수 */
+    private void filterPostsByCategory(String category) {
+        ArrayList<PostInfoItem> filteredItems = new ArrayList<>();
+        if (!category.equals("all")) {
+            for (PostInfoItem item : postInfoItems) {
+                if (item.getCategory().equals(category)) {
+                    filteredItems.add(item);
+                }
+            }
+        } else {
+            filteredItems.addAll(postInfoItems);
+        }
+
+        adapter.setPostInfoList(filteredItems); // 필터링된 리스트를 리사이클러 뷰에 설정
+        binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        binding.postsRecyclerView.setAdapter(adapter); // 어댑터를 다시 설정하여 갱신
+    }
+
+    // 데이터 새로고침 함수
+    private void refreshData() {
+        // 기존 데이터를 비우는 로직 추가
+        postInfoItems.clear();
+
+        // 새 데이터 추가 (하드 코딩) : 새로고침 했더니 게시글이 두 개만 남았다는 가정
+        postInfoItems.add(new PostInfoItem("https://cdn.mkhealth.co.kr/news/photo/202306/64253_68458_1153.png", "개신동 교촌치킨 파티 구함", "chicken", 320, 3, 2, false, 1));
+        postInfoItems.add(new PostInfoItem("https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 160, 3, 3, false, 0));
+
+        // 어댑터에 변경된 데이터 리스트를 설정
+        adapter.setPostInfoList(postInfoItems);
+
+        // RecyclerView의 레이아웃 매니저와 어댑터를 다시 설정하여 UI를 갱신
+        binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+        binding.postsRecyclerView.setAdapter(adapter);
+
+        // 새로고침 아이콘을 숨김 (새로고침이 끝났음을 의미)
+        binding.swipeRefreshLayout.setRefreshing(false);
+    }
+
+    // 초기 데이터 로딩 함수
+    private void loadData() {
+        // Adapter 안에 아이템의 정보 담기 (하드 코딩)
+        postInfoItems.add(new PostInfoItem("https://cdn.mkhealth.co.kr/news/photo/202306/64253_68458_1153.png", "개신동 교촌치킨 파티 구함", "chicken", 320, 3, 2, false, 1));
+        postInfoItems.add(new PostInfoItem("https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 160, 3, 3, false, 0));
+        postInfoItems.add(new PostInfoItem("https://mblogthumb-phinf.pstatic.net/MjAyMjA3MjhfMTY5/MDAxNjU4OTkyODg0NTA3.z8WzaZAOKBvo4JkSm9lTMOTiNsKEUNHZJYRB-DPZCdEg.0WdqohiJPsSM5pXWYl-HvTE3JUVlUPe7LT-U6wvjUQwg.JPEG.duwlsrjdwb/KakaoTalk_20220728_151114228_10.jpg?type=w800", "사창동 우리집 닭강정 파티!!", "chicken", 500, 1, 0, false, 0));
+        postInfoItems.add(new PostInfoItem("https://image.kmib.co.kr/online_image/2024/0131/2024013114261427977_1706678775_0019120339.jpg", "맘스터치 배달 파티 999~~", "hamburger", 600, 3, 3, true, 2));
+        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6LTXILpqDk2KY425YAGSIAdF84ogxh-OFRz2P51EPvA&s", "행컵 그룹 구해용", "korean_food", 550, 2, 1, false, 0));
+        postInfoItems.add(new PostInfoItem("", "짚신 스시 & 롤 배달 구해요", "japanese_food", 555, 1, 0, true, 1));
+        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRj0BYs-iE7kn3fmdg0eVBxtqO89kwVRBFe_3Y8uZrgMA&s", "대장집 파티 구", "chinese_food", 560, 2, 1, false, 0));
+        postInfoItems.add(new PostInfoItem("https://d12zq4w4guyljn.cloudfront.net/750_750_20201122041810_photo1_5831aaf849cf.jpg", "파브리카 배달 구해용", "western_food", 700, 2, 2, false, 1));
+        postInfoItems.add(new PostInfoItem("https://media-cdn.tripadvisor.com/media/photo-s/12/31/92/d9/1519804025288-largejpg.jpg", "신전 떡볶이 구해유", "snack", 900, 3, 2, false, 2));
+        postInfoItems.add(new PostInfoItem("https://d12zq4w4guyljn.cloudfront.net/750_750_20230517093845_photo1_edd2f5913a1b.jpg", "메가커피 999", "cafe_and_dessert", 1000, 1, 0, false, 2));
+        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-1FF9Hpe-_ERtrBHcUDeeckMOeOzm6IWylD_mJJlJEQ&s", "컴포즈 배달 구해요!!!", "cafe_and_dessert", 1500, 1, 1, false, 1));
+
+        adapter.setPostInfoList(postInfoItems);
     }
 }

@@ -1,0 +1,76 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/chatRoomMoreMenuBottomSheet_layout"
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:layout_alignParentBottom="true"
+    android:background="@drawable/chat_room_bottom_sheet_background"
+    android:orientation="vertical"
+    android:padding="20dp"
+    app:behavior_peekHeight="0dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/contentGroup1_CardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp">
+
+        <RelativeLayout
+            android:id="@+id/leaveChatRoom_relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/leaveChatRoom_imageView"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="15dp"
+                android:src="@drawable/trash_bin" />
+
+            <Button
+                android:id="@+id/leaveChatRoom_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/leaveChatRoom_imageView"
+                android:backgroundTint="@color/transparent"
+                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                android:outlineProvider="none"
+                android:text="채팅방 나가기"
+                android:textAlignment="textStart"
+                android:textSize="16sp"
+                android:textColor="#e63e2b" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/contentGroup2_CardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="7.5dp">
+
+        <RelativeLayout
+            android:id="@+id/contentGroup2_relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+
+            <Button
+                android:id="@+id/cancel_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:backgroundTint="@color/transparent"
+                android:textSize="16sp"
+                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                android:outlineProvider="none"
+                android:text="취소" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>
