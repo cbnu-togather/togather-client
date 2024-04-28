@@ -1,0 +1,55 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/selectCreatePostTypeBottomSheet_layout"
+    android:layout_width="match_parent"
+    android:layout_height="220dp"
+    android:layout_alignParentBottom="true"
+    android:background="@drawable/bottom_sheet_background"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical"
+    android:padding="20dp"
+    app:behavior_peekHeight="0dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <TextView
+        android:id="@+id/bottomSheetTitle_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="작성하실 게시글 유형을 선택해 주세요."
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/bottomSheetTitle_textView"
+        android:layout_marginTop="22.5dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/createRecruitmentPost_button"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:background="@color/transparent"
+                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                android:text="배달 멤버 모집"
+                android:textAlignment="textStart"
+                android:textSize="17.5sp" />
+
+            <Button
+                android:id="@+id/createCommunityPost_button"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_below="@+id/createRecruitmentPost_button"
+                android:background="@color/transparent"
+                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                android:text="동네생활"
+                android:textAlignment="textStart"
+                android:textSize="17.5sp" />
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

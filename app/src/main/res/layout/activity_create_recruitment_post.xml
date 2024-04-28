@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".createPost.community.CreateCommunityPostActivity">
+
+    <!-- activity (header) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityHeader_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginTop="12.5dp"
+        android:background="@drawable/light_gray_border_bottom">
+
+        <ImageView
+            android:id="@+id/closeActivity_imageView"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12.5dp"
+            android:src="@drawable/close" />
+
+        <TextView
+            android:id="@+id/activityTitle_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="배달 멤버 모집 글쓰기"
+            android:textColor="@color/text_color"
+            android:textSize="19sp" />
+    </RelativeLayout>
+
+    <!-- activity (body) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityBody_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/activityHeader_relativeLayout">
+
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/createRecruitmentPost_button"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="15dp">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="17.5dp">
+
+                <RelativeLayout
+                    android:id="@+id/selectCategory_relativeLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:background="@drawable/light_gray_border_bottom">
+
+                    <TextView
+                        android:id="@+id/postCategory_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                        android:text="음식의 종류를 선택해 주세요"
+                        android:textSize="18dp" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="-15dp"
+                        android:src="@drawable/arrow_right_200_gray" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/postThumbnail_relativeLayout"
+                    android:layout_width="67.5dp"
+                    android:layout_height="67.5dp"
+                    android:layout_below="@+id/selectCategory_relativeLayout"
+                    android:layout_marginTop="25dp"
+                    android:background="@drawable/icon_gray_background">
+
+                    <ImageView
+                        android:id="@+id/postThumbnail_imageView"
+                        android:layout_width="27.5dp"
+                        android:layout_height="27.5dp"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="12.5dp"
+                        android:padding="5dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/camera_normal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/postThumbnail_imageView"
+                        android:layout_centerHorizontal="true"
+                        android:text="0/1"
+                        android:textColor="@color/gray_text"
+                        android:textSize="12.5sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/postTitle_relativeLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/postThumbnail_relativeLayout">
+
+                    <TextView
+                        android:id="@+id/postTitle_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="30dp"
+                        android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                        android:text="제목" />
+
+                    <EditText
+                        android:id="@+id/postTitle_editText"
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:layout_below="@+id/postTitle_textView"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/light_gray_border_rounded_sm"
+                        android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                        android:hint="제목"
+                        android:paddingHorizontal="15dp"
+                        android:textColorHint="@color/hint_color"
+                        android:textSize="17.5sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/content_relativeLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/postTitle_relativeLayout"
+                    android:layout_marginTop="32.5dp">
+
+                    <TextView
+                        android:id="@+id/content_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                        android:text="설명" />
+
+                    <EditText
+                        android:id="@+id/content_editText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/content_textView"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/light_gray_border_rounded_sm"
+                        android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                        android:gravity="start"
+                        android:hint="게시글 내용을 작성해 주세요."
+                        android:minHeight="140dp"
+                        android:padding="15dp"
+                        android:textColorHint="@color/hint_color"
+                        android:textSize="17.5sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/selectRecruitmentNum_relativeLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/content_relativeLayout"
+                    android:layout_marginTop="32.5dp">
+
+                    <TextView
+                        android:id="@+id/selectRecruitmentNum_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                        android:text="모집 인원" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="55dp"
+                        android:layout_below="@+id/selectRecruitmentNum_textView"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/light_gray_border_rounded_sm">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="10dp"
+                            android:padding="5dp"
+                            android:src="@drawable/minus_light_gray" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerHorizontal="true"
+                            android:layout_centerVertical="true"
+                            android:text="1명"
+                            android:textSize="18sp" />
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="10dp"
+                            android:padding="5dp"
+                            android:src="@drawable/plus_300" />
+                    </RelativeLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/deliverySpot_relativeLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/selectRecruitmentNum_relativeLayout"
+                    android:layout_marginTop="32.5dp"
+                    android:layout_marginBottom="20dp">
+
+                    <TextView
+                        android:id="@+id/deliverySpot_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                        android:text="모임 희망 장소" />
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="55dp"
+                        android:layout_below="@+id/deliverySpot_textView"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/light_gray_border_rounded_sm">
+
+                        <TextView
+                            android:id="@+id/selectDeliverySpot_textView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                            android:hint="위치 추가"
+                            android:paddingHorizontal="15dp"
+                            android:textColorHint="@color/hint_color"
+                            android:textSize="17.5sp" />
+
+                        <ImageView
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="2.5dp"
+                            android:src="@drawable/arrow_right_200_gray" />
+                    </RelativeLayout>
+                </RelativeLayout>
+            </RelativeLayout>
+        </ScrollView>
+
+        <Button
+            android:id="@+id/createRecruitmentPost_button"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/light_gray_border"
+            android:backgroundTint="@color/theme_color"
+            android:fontFamily="@font/spoqa_han_sans_neo_bold"
+            android:outlineProvider="none"
+            android:text="작성 완료"
+            android:textColor="@color/white"
+            android:textSize="19sp" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/background_dimmer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <!-- bottom sheet 레이아웃 -->
+        <include layout="@layout/bottom_sheet_create_recruitment_post_select_food_category" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

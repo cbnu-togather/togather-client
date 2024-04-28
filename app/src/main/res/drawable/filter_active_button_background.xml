@@ -3,7 +3,7 @@
     android:shape="rectangle">
 
     <!-- 배경색 설정-->
-    <solid android:color="@color/theme_color" />
+    <solid android:color="#393a40" />
 
     <!-- 모서리 라운드 설정 -->
     <corners android:radius="100dp" /> <!-- 반지름 값 -->

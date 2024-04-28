@@ -11,7 +11,8 @@
     <RelativeLayout
         android:id="@+id/activityHeader_relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="67.5dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="12.5dp"
         android:background="@drawable/light_gray_border_bottom">
 
         <ImageView
@@ -28,9 +29,9 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:textColor="@color/text_color"
             android:fontFamily="@font/spoqa_han_sans_neo_bold"
             android:text="프로필 수정"
+            android:textColor="@color/text_color"
             android:textSize="20sp" />
 
         <Button
@@ -38,13 +39,13 @@
             android:layout_width="55dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:enabled="false"
-            android:fontFamily="@font/spoqa_han_sans_neo_regular"
-            android:textColor="@color/gray_text"
             android:layout_centerVertical="true"
             android:layout_marginEnd="5dp"
             android:background="@color/transparent"
+            android:enabled="false"
+            android:fontFamily="@font/spoqa_han_sans_neo_regular"
             android:text="완료"
+            android:textColor="@color/gray_text"
             android:textSize="17.5sp" />
     </RelativeLayout>
 
@@ -120,11 +121,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/username_editText"
-                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
                     android:layout_marginTop="10dp"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="닉네임은 띄어쓰기 없이 한글, 영문, 숫자만 가능해요."
                     android:textColor="@color/invalid_red_color"
-                    android:visibility="invisible"
-                    android:text="닉네임은 띄어쓰기 없이 한글, 영문, 숫자만 가능해요."/>
+                    android:visibility="invisible" />
             </RelativeLayout>
         </RelativeLayout>
     </RelativeLayout>

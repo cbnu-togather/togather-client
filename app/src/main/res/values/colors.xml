@@ -7,7 +7,7 @@
     <color name="icon_gray_color">#82858d</color>
     <color name="icon_label_text_color">#595c63</color>
     <color name="toast_bg">#888F9B</color>
-    <color name='hint_color'>#B5B7BF</color>
+    <color name='hint_color'>#878b93</color>
     <color name='disabled_widget_text_light_gray_color'>#D2D3D8</color>
     <color name='disabled_widget_background_light_gray_color'>#DCDEE2</color>
     <color name='disabled_widget_text_deep_gray_color'>#B1B4BC</color>
