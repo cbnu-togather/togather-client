@@ -79,38 +79,102 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:id="@+id/postThumbnail_relativeLayout"
+                    android:id="@+id/gallery_relativeLayout"
                     android:layout_width="67.5dp"
-                    android:layout_height="67.5dp"
+                    android:layout_height="82.5dp"
                     android:layout_below="@+id/selectCategory_relativeLayout"
-                    android:layout_marginTop="25dp"
-                    android:background="@drawable/icon_gray_background">
+                    android:layout_marginTop="15dp">
 
-                    <ImageView
-                        android:id="@+id/postThumbnail_imageView"
-                        android:layout_width="27.5dp"
-                        android:layout_height="27.5dp"
-                        android:layout_centerHorizontal="true"
-                        android:layout_marginTop="12.5dp"
-                        android:padding="5dp"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/camera_normal" />
+                    <RelativeLayout
+                        android:id="@+id/galleryContent_relativeLayout"
+                        android:layout_width="67.5dp"
+                        android:layout_height="67.5dp"
+                        android:layout_alignParentBottom="true"
+                        android:background="@drawable/icon_gray_background">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/postThumbnail_imageView"
-                        android:layout_centerHorizontal="true"
-                        android:text="0/1"
-                        android:textColor="@color/gray_text"
-                        android:textSize="12.5sp" />
+                        <ImageView
+                            android:id="@+id/gallery_imageView"
+                            android:layout_width="27.5dp"
+                            android:layout_height="27.5dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="12.5dp"
+                            android:padding="5dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/camera_normal" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/gallery_imageView"
+                            android:layout_centerHorizontal="true"
+                            android:text="0/1"
+                            android:textColor="@color/gray_text"
+                            android:textSize="12.5sp" />
+                    </RelativeLayout>
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/postThumbnail_relativeLayout"
+                    android:layout_width="82.5dp"
+                    android:layout_height="82.5dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_alignTop="@+id/gallery_relativeLayout"
+                    android:layout_toRightOf="@+id/gallery_relativeLayout"
+                    android:visibility="invisible">
+
+                    <RelativeLayout
+                        android:id="@+id/postThumbnailContent_relativeLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentBottom="true">
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/postThumbnail_cardView"
+                            android:layout_width="67.5dp"
+                            android:layout_height="67.5dp"
+                            android:layout_alignParentBottom="true"
+                            app:cardCornerRadius="5dp"
+                            app:cardElevation="0dp">
+
+                            <ImageView
+                                android:id="@+id/postThumbnail_imageView"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/community_temp_image_1" />
+
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/deleteImage_cardView"
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_alignTop="@+id/postThumbnail_cardView"
+                            android:layout_alignRight="@+id/postThumbnail_cardView"
+                            android:layout_marginTop="-8dp"
+                            android:layout_marginEnd="-8dp"
+                            android:backgroundTint="@color/black"
+                            android:padding="2.5dp"
+                            app:cardCornerRadius="100dp"
+                            app:cardElevation="0dp">
+
+                            <com.makeramen.roundedimageview.RoundedImageView
+                                android:id="@+id/camera_roundedImageView"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:layout_marginStart="0.5dp"
+                                android:src="@drawable/close_white"
+                                app:riv_oval="true" />
+                        </androidx.cardview.widget.CardView>
+                    </RelativeLayout>
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/postTitle_relativeLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/postThumbnail_relativeLayout">
+                    android:layout_below="@+id/gallery_relativeLayout">
 
                     <TextView
                         android:id="@+id/postTitle_textView"
@@ -186,6 +250,7 @@
                         android:background="@drawable/light_gray_border_rounded_sm">
 
                         <ImageView
+                            android:id="@+id/decreaseRecruitmentNum_imageView"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:layout_centerVertical="true"
@@ -194,6 +259,7 @@
                             android:src="@drawable/minus_light_gray" />
 
                         <TextView
+                            android:id="@+id/recruitmentNum_textView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerHorizontal="true"
@@ -202,6 +268,7 @@
                             android:textSize="18sp" />
 
                         <ImageView
+                            android:id="@+id/increaseRecruitmentNum_imageView"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:layout_alignParentRight="true"
@@ -228,7 +295,8 @@
                         android:text="모임 희망 장소" />
 
                     <RelativeLayout
-                        android:layout_width="wrap_content"
+                        android:id="@+id/selectDeliverySpot_relativeLayout"
+                        android:layout_width="match_parent"
                         android:layout_height="55dp"
                         android:layout_below="@+id/deliverySpot_textView"
                         android:layout_marginTop="10dp"
@@ -267,9 +335,10 @@
             android:layout_marginEnd="15dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/light_gray_border"
-            android:backgroundTint="@color/theme_color"
+            android:backgroundTint="@color/disabled_widget_background_light_gray_color"
             android:fontFamily="@font/spoqa_han_sans_neo_bold"
             android:outlineProvider="none"
+            android:enabled="false"
             android:text="작성 완료"
             android:textColor="@color/white"
             android:textSize="19sp" />

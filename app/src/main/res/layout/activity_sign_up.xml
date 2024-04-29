@@ -24,7 +24,6 @@
             android:src="@drawable/arrow_back" />
     </RelativeLayout>
 
-
     <!-- activity (body) RelativeLayout -->
     <RelativeLayout
         android:id="@+id/activityBody_relativeLayout"
