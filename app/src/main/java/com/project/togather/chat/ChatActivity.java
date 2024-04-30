@@ -11,7 +11,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +19,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.project.togather.CreatePostActivity;
+import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.R;
-import com.project.togather.community.CommunityPostDetailActivity;
 import com.project.togather.notification.NotificationActivity;
 import com.project.togather.profile.ProfileActivity;
 import com.project.togather.community.CommunityActivity;
-import com.project.togather.databinding.ActivityChatBinding;
 import com.project.togather.home.HomeActivity;
 
 import java.text.SimpleDateFormat;
@@ -34,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import com.project.togather.databinding.ActivityChatBinding;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -110,7 +109,7 @@ public class ChatActivity extends AppCompatActivity {
 
         /** "글 쓰기" 레이아웃 클릭 시 */
         binding.createPostActivityRelativeLayout.setOnClickListener(view ->
-                startActivity(new Intent(ChatActivity.this, CreatePostActivity.class)));
+                startActivity(new Intent(ChatActivity.this, CreateCommunityPostActivity.class)));
 
         /** "내 정보" 레이아웃 클릭 시 */
         binding.profileActivityRelativeLayout.setOnClickListener(view -> {
@@ -146,7 +145,7 @@ public class ChatActivity extends AppCompatActivity {
         @NonNull
         @Override
         public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_list_view_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view_item_chat, parent, false);
             return new RecyclerViewAdapter.ViewHolder(view);
         }
 

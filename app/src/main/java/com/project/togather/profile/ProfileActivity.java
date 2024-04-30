@@ -9,11 +9,10 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 
-import com.project.togather.CreatePostActivity;
+import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.R;
 import com.project.togather.chat.ChatActivity;
 import com.project.togather.community.CommunityActivity;
@@ -104,7 +103,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         /** (글 쓰기) 레이아웃 클릭 시 */
         binding.createPostActivityRelativeLayout.setOnClickListener(view -> {
-            Intent intent = new Intent(ProfileActivity.this, CreatePostActivity.class);
+            Intent intent = new Intent(ProfileActivity.this, CreateCommunityPostActivity.class);
             startActivity(intent);
         });
 

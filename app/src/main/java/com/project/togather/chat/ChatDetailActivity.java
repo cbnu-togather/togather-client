@@ -2,7 +2,6 @@ package com.project.togather.chat;
 
 import static com.google.android.material.internal.ViewUtils.hideKeyboard;
 
-import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -13,11 +12,9 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -32,26 +29,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedDispatcher;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import android.Manifest;
 
 import com.project.togather.R;
-import com.project.togather.chat.ChatActivity;
-import com.project.togather.chat.ChatDetailInfoItem;
-import com.project.togather.databinding.ActivityChatRoomBinding;
+import com.project.togather.databinding.ActivityChatDetailBinding;
 import com.project.togather.home.HomeActivity;
-import com.project.togather.home.HomePostDetailActivity;
-import com.project.togather.profile.ProfileActivity;
-import com.project.togather.toast.ToastSuccess;
-import com.project.togather.user.LoginActivity;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.cardview.widget.CardView;
@@ -59,8 +47,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -70,7 +56,7 @@ import java.util.Locale;
 
 public class ChatDetailActivity extends AppCompatActivity {
 
-    private ActivityChatRoomBinding binding;
+    private ActivityChatDetailBinding binding;
 
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
 
@@ -89,7 +75,7 @@ public class ChatDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityChatRoomBinding.inflate(getLayoutInflater());
+        binding = ActivityChatDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         /** (로그아웃 확인) 다이얼로그 변수 초기화 및 설정 */
@@ -207,7 +193,31 @@ public class ChatDetailActivity extends AppCompatActivity {
         addMenuBottomSheetBehavior = BottomSheetBehavior.from(
                 findViewById(R.id.chatRoomAddMenuBottomSheet_layout));
 
+        moreMenuBottomSheetBehavior.setDraggable(false);
+        addMenuBottomSheetBehavior.setDraggable(false);
+
         moreMenuBottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        binding.backgroundDimmer.setVisibility(View.VISIBLE);
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        binding.backgroundDimmer.setVisibility(View.GONE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                binding.backgroundDimmer.setAlpha(slideOffset);
+                binding.backgroundDimmer.setVisibility(View.VISIBLE);
+            }
+        });
+
+        addMenuBottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 switch (newState) {
@@ -275,17 +285,14 @@ public class ChatDetailActivity extends AppCompatActivity {
             }
         });
 
-        // 배경 클릭 이벤트 설정
-        binding.rootRelativeLayout.setOnClickListener(view -> {
-            if (addMenuBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
-                addMenuBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            }
-        });
-
         // 어두운 배경 클릭 이벤트 설정
         binding.backgroundDimmer.setOnClickListener(view -> {
             if (moreMenuBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
                 moreMenuBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+
+            if (addMenuBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                addMenuBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
 
@@ -326,7 +333,7 @@ public class ChatDetailActivity extends AppCompatActivity {
         @NonNull
         @Override
         public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.chat_detail_list_view_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view_item_chat_detail, parent, false);
             return new RecyclerViewAdapter.ViewHolder(view);
         }
 
@@ -455,8 +462,8 @@ public class ChatDetailActivity extends AppCompatActivity {
                     if (!item.getImageUrl().equals("")) {
                         Glide.with(itemView)
                                 .load(item.getImageUrl()) // 이미지 URL 가져오기
-                                .placeholder(R.drawable.user_default_profile) // 로딩 중에 표시할 이미지
-                                .error(R.drawable.user_default_profile) // 에러 발생 시 표시할 이미지
+                                .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
+                                .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
                                 .into(myImage_imageView); // ImageView에 이미지 설정
                         myImage_cardView.setVisibility(View.VISIBLE);
                         myMessage_textView.setVisibility(View.GONE);

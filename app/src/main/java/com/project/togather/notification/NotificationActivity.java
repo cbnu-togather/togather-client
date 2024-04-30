@@ -19,7 +19,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -129,7 +128,7 @@ public class NotificationActivity extends AppCompatActivity {
         @NonNull
         @Override
         public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.notification_list_view_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view_item_notification, parent, false);
             return new ViewHolder(view);
         }
 

@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +20,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.project.togather.R;
-import com.project.togather.community.CommunityActivity;
 import com.project.togather.community.CommunityPostDetailActivity;
 import com.project.togather.databinding.ActivityMyCommunityPostListBinding;
-import com.project.togather.databinding.ActivityMyRecruitmentPartyListBinding;
 
 import java.util.ArrayList;
 
@@ -107,7 +104,7 @@ public class MyCommunityPostListActivity extends AppCompatActivity {
 
             if (convertView == null) {
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.community_list_view_item, viewGroup, false);
+                convertView = inflater.inflate(R.layout.list_view_item_community, viewGroup, false);
             } else {
                 View view = new View(context);
                 view = (View) convertView;
@@ -180,7 +177,7 @@ public class MyCommunityPostListActivity extends AppCompatActivity {
         @NonNull
         @Override
         public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.community_list_view_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view_item_community, parent, false);
             return new RecyclerViewAdapter.ViewHolder(view);
         }
 
