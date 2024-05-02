@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -23,6 +25,9 @@
         android:theme="@style/Theme.Togather"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <activity
+            android:name=".createPost.recruitment.SelectMeetingSpotActivity"
+            android:exported="false" />
         <activity
             android:name=".profile.likedPost.LikedPostListActivity"
             android:exported="false">
@@ -73,7 +78,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".CreatePostActivity"
+            android:name=".createPost.community.CreateCommunityPostActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
@@ -137,7 +142,12 @@
         <activity android:name=".user.LoginActivity" />
         <activity android:name=".community.CommunityPostDetailActivity" />
         <activity android:name=".profile.EditMyProfile" />
-        <activity android:name="com.project.togather.chat.ChatDetailActivity" />
+        <activity android:name=".chat.ChatDetailActivity" />
+        <activity android:name=".createPost.recruitment.CreateRecruitmentPostActivity" />
+
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="99750d222c2693d2226b5ee1cf1faa7b" />
     </application>
 
 </manifest>
