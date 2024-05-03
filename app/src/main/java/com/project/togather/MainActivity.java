@@ -17,6 +17,7 @@ import android.os.Bundle;
 import com.project.togather.createPost.recruitment.CreateRecruitmentPostActivity;
 import com.project.togather.databinding.ActivityMainBinding;
 import com.project.togather.home.HomeActivity;
+import com.project.togather.user.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            startActivity(new Intent(MainActivity.this, HomeActivity.class));
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
         });
 
         /** 앱 초기 실행 시 위치 권한 동의 여부에 따라서
