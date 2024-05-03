@@ -209,6 +209,16 @@ public class HomeActivity extends AppCompatActivity {
             overridePendingTransition(0, 0);
         });
 
+        // 어두운 배경 클릭 이벤트 설정
+        binding.backgroundDimmer.setOnClickListener(view -> {
+            if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+
+            if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        });
 
         selectCreatePostTypeBottomSheetBehavior = BottomSheetBehavior.from(
                 findViewById(R.id.selectCreatePostTypeBottomSheet_layout));
