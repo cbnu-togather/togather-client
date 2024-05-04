@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".user.HandleAndStoreUserInformationPoliciesActivity">
+
+    <!-- activity (header) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityHeader_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="7.5dp">
+
+        <!-- "뒤로가기" 버튼 -->
+        <ImageButton
+            android:id="@+id/back_imageButton"
+            android:layout_width="42.5dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2.5dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/transparent"
+            android:src="@drawable/arrow_back" />
+
+        <TextView
+            android:id="@+id/head_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="27.5dp"
+            android:fontFamily="@font/spoqa_han_sans_neo_bold"
+            android:letterSpacing="-0.01"
+            android:text="모임 희망 장소"
+            android:textColor="@color/text_color"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <!-- activity (body) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityBody_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/activityHeader_relativeLayout">
+
+        <RelativeLayout
+            android:id="@+id/map_relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/markerTag_cardView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/centerPoint_textView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="52.5dp"
+                app:cardElevation="0.01dp">
+
+                <TextView
+                    android:id="@+id/markerTag_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/light_gray_border"
+                    android:backgroundTint="#212124"
+                    android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                    android:paddingHorizontal="12.5dp"
+                    android:paddingVertical="10dp"
+                    android:text="학연산 출입문 앞"
+                    android:textColor="@color/white" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/centerPoint_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="중심점"
+                android:visibility="invisible" />
+
+            <!-- 현재 위치 불러오기 -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/moveCurrentLocation_cardView"
+                android:layout_width="67.5dp"
+                android:layout_height="67.5dp"
+                android:layout_above="@+id/joinParty_button"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="30dp"
+                android:backgroundTint="@color/white"
+                android:padding="10dp"
+                app:cardCornerRadius="100dp"
+                app:cardElevation="7.5dp">
+
+                <ImageView
+                    android:layout_width="67.5dp"
+                    android:layout_height="67.5dp"
+                    android:padding="20dp"
+                    android:src="@drawable/current_location" />
+            </androidx.cardview.widget.CardView>
+
+            <Button
+                android:id="@+id/joinParty_button"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/light_gray_border"
+                android:backgroundTint="@color/theme_color"
+                android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                android:outlineProvider="none"
+                android:text="손 들기"
+                android:textColor="@color/white"
+                android:textSize="19sp" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+</RelativeLayout>

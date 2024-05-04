@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".createPost.recruitment.SelectMeetingSpotActivity">
+    tools:context=".createPost.recruitment.SelectedSpotActivity">
 
     <!-- activity (header) RelativeLayout -->
     <RelativeLayout
@@ -58,7 +58,7 @@
         android:layout_below="@+id/activityHeader_relativeLayout"
         android:layout_marginTop="10dp">
 
-        <!-- 현재 위치 불러오기 버튼 -->
+        <!-- 지도 레이아웃 -->
         <RelativeLayout
             android:id="@+id/map_relativeLayout"
             android:layout_width="match_parent"
@@ -110,6 +110,7 @@
                 android:visibility="invisible" />
         </RelativeLayout>
 
+        <!-- 현재 위치 불러오기 -->
         <androidx.cardview.widget.CardView
             android:id="@+id/moveCurrentLocation_cardView"
             android:layout_width="67.5dp"

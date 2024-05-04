@@ -1,0 +1,64 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/selectDistanceBottomSheet_layout"
+    android:layout_width="match_parent"
+    android:layout_height="280dp"
+    android:layout_alignParentBottom="true"
+    android:background="@drawable/bottom_sheet_background"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical"
+    android:padding="20dp"
+    app:behavior_peekHeight="0dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <TextView
+        android:id="@+id/bottomSheetTitle_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="근처 허용 범위를 선택해 주세요."
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/bottomSheetTitle_textView"
+        android:layout_marginTop="22.5dp">
+
+        <Button
+            android:id="@+id/m100_button"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@color/transparent"
+            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+            android:text="100m"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textSize="17.5sp" />
+
+        <Button
+            android:id="@+id/m300_button"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_below="@+id/m100_button"
+            android:background="@color/transparent"
+            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+            android:text="300m"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textSize="17.5sp" />
+
+        <Button
+            android:id="@+id/m500_button"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_below="@+id/m300_button"
+            android:background="@color/transparent"
+            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+            android:text="500m"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textSize="17.5sp" />
+    </RelativeLayout>
+</RelativeLayout>
