@@ -136,6 +136,7 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
         /** 다음 카카오맵 지도를 띄우는 코드 */
         mapView = new MapView(this);
         mapView.setZoomLevel(2, true);
+        mapView.setMapViewEventListener(this);
 
         mapViewContainer = binding.mapRelativeLayout;
         mapViewContainer.addView(mapView);
@@ -143,7 +144,6 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
         binding.markerTagCardView.bringToFront();
 
         /** 현재 나의 위치에 점을 갱신하며 찍어줌 */
-        mapView.setMapViewEventListener(this);
         mapView.setCurrentLocationTrackingMode(net.daum.mf.map.api.MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving);
 
         /** 앱 초기 실행 시 위치 권한 동의 여부에 따라서
@@ -161,7 +161,7 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
             currLatitude = userLocation.getLatitude();
             currLongitude = userLocation.getLongitude();
             System.out.println("////////////현재 내 위치값 : " + currLatitude + "," + currLongitude);
-            currPoint = MapPoint.mapPointWithGeoCoord(36.625646501127875, 127.45427760125744);
+            currPoint = MapPoint.mapPointWithGeoCoord(36.625264039836026, 127.45708706510892);
 
             // 앱 초기 실행 시에만 현재 위치를 지도 중심점으로 위치시킴
             if (selectedLongitude == 0) {
@@ -170,8 +170,8 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
             }
         }
 
-        selectedLatitude = 36.625646501127875;
-        selectedLongitude = 127.45427760125744;
+        selectedLatitude = 36.625264039836026;
+        selectedLongitude = 127.45708706510892;
 
         inputMeetingSpotBottomSheetBehavior = BottomSheetBehavior.from(
                 findViewById(R.id.inputMeetingSpotBottomSheet_layout));

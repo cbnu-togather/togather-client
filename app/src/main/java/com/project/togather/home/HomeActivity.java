@@ -18,14 +18,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.project.togather.MainActivity;
 import com.project.togather.chat.ChatActivity;
 import com.project.togather.community.CommunityActivity;
 import com.project.togather.createPost.community.CreateCommunityPostActivity;
@@ -48,6 +46,7 @@ public class HomeActivity extends AppCompatActivity {
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
 
     private BottomSheetBehavior selectCreatePostTypeBottomSheetBehavior;
+    private BottomSheetBehavior selectDistanceBottomSheetBehavior;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +67,7 @@ public class HomeActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
-                Intent intent = new Intent(HomeActivity.this, HomePostDetailActivity.class);
+                Intent intent = new Intent(HomeActivity.this, RecruitmentPostDetailActivity.class);
                 startActivity(intent);
             }
         });
@@ -76,7 +75,7 @@ public class HomeActivity extends AppCompatActivity {
         adapter.setOnLongItemClickListener(new RecyclerViewAdapter.OnLongItemClickListener() {
             @Override
             public void onLongItemClick(int pos) {
-                Intent intent = new Intent(HomeActivity.this, HomePostDetailActivity.class);
+                Intent intent = new Intent(HomeActivity.this, RecruitmentPostDetailActivity.class);
                 startActivity(intent);
             }
         });
@@ -94,6 +93,59 @@ public class HomeActivity extends AppCompatActivity {
 
         // 초기 데이터 로드
         loadData();
+
+        // 내 근처 거리 설정 bottom sheet layout
+        selectDistanceBottomSheetBehavior = BottomSheetBehavior.from(
+                findViewById(R.id.selectDistanceBottomSheet_layout));
+
+        selectDistanceBottomSheetBehavior.setDraggable(false);
+
+        selectDistanceBottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        binding.backgroundDimmer.setVisibility(View.VISIBLE);
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        binding.backgroundDimmer.setVisibility(View.GONE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                binding.backgroundDimmer.setAlpha(slideOffset);
+                binding.backgroundDimmer.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // 내 근처 거리 설정 레이아웃 클릭 이벤트 설정
+        binding.selectDistanceRelativeLayout.setOnClickListener(view ->
+                selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED));
+
+        // 내 근처 거리 선택 이벤트 설정
+        findViewById(R.id.m100_button).setOnClickListener(view -> {
+            if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                binding.distanceTextView.setText("100m");
+            }
+        });
+
+        findViewById(R.id.m300_button).setOnClickListener(view -> {
+            if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                binding.distanceTextView.setText("300m");
+            }
+        });
+
+        findViewById(R.id.m500_button).setOnClickListener(view -> {
+            if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                binding.distanceTextView.setText("500m");
+            }
+        });
 
         /** "알림" 버튼 클릭 시 */
         binding.notificationImageButton.setOnClickListener(view ->
@@ -215,8 +267,8 @@ public class HomeActivity extends AppCompatActivity {
                 selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
 
-            if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
-                selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
 
