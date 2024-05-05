@@ -26,6 +26,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".createPost.recruitment.SelectedSpotActivity"
+            android:exported="false" />
+        <activity
             android:name=".createPost.recruitment.SelectMeetingSpotActivity"
             android:exported="false" />
         <activity
@@ -57,7 +60,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".home.HomePostDetailActivity"
+            android:name=".home.RecruitmentPostDetailActivity"
             android:exported="false">
             <meta-data
                 android:name="android.app.lib_name"
