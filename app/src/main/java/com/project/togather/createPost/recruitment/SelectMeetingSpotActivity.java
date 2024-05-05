@@ -158,10 +158,10 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
         GetMyLocation getMyLocation = new GetMyLocation(this, this);
         Location userLocation = getMyLocation.getMyLocation();
         if (userLocation != null) {
-            currLatitude = userLocation.getLatitude();
-            currLongitude = userLocation.getLongitude();
+            currLatitude = 36.62565323814696; // 소프트웨어학부 건물 위도, 경도
+            currLongitude = 127.45428323069932;
             System.out.println("////////////현재 내 위치값 : " + currLatitude + "," + currLongitude);
-            currPoint = MapPoint.mapPointWithGeoCoord(36.625264039836026, 127.45708706510892);
+            currPoint = MapPoint.mapPointWithGeoCoord(currLatitude, currLongitude);
 
             // 앱 초기 실행 시에만 현재 위치를 지도 중심점으로 위치시킴
             if (selectedLongitude == 0) {
@@ -169,9 +169,6 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
                 mapView.setMapCenterPoint(currPoint, true);
             }
         }
-
-        selectedLatitude = 36.625264039836026;
-        selectedLongitude = 127.45708706510892;
 
         inputMeetingSpotBottomSheetBehavior = BottomSheetBehavior.from(
                 findViewById(R.id.inputMeetingSpotBottomSheet_layout));
