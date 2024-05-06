@@ -5,6 +5,7 @@
     android:id="@+id/root_relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".home.RecruitmentPostDetailActivity">
 
     <!-- activity (header) RelativeLayout -->
@@ -59,7 +60,8 @@
         <ScrollView
             android:id="@+id/activityBody_srollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:overScrollMode="never">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -91,7 +93,7 @@
                             android:layout_width="57.5dp"
                             android:layout_height="57.5dp"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/user_default_profile"
+                            android:src="@drawable/user_profile_image_temp_image_2"
                             app:riv_oval="true" />
 
                         <RelativeLayout
@@ -112,7 +114,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/otherUsername_textView"
+                                android:id="@+id/address_textView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/username_textView"

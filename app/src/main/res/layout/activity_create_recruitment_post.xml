@@ -160,7 +160,7 @@
                             app:cardElevation="0dp">
 
                             <com.makeramen.roundedimageview.RoundedImageView
-                                android:id="@+id/camera_roundedImageView"
+                                android:id="@+id/deleteImage_roundedImageView"
                                 android:layout_width="20dp"
                                 android:layout_height="20dp"
                                 android:layout_marginStart="0.5dp"
