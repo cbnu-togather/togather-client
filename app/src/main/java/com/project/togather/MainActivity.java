@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            startActivity(new Intent(MainActivity.this, CommunityPostDetailActivity.class));
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
         });
 
         /** 앱 초기 실행 시 위치 권한 동의 여부에 따라서
