@@ -19,6 +19,7 @@
     <color name="invalid_red_color">#d53220</color>
     <color name="recruitment_complete_tag_dark_gray">#4f5159</color>
     <color name="post_clicked_gray_color">#f2f3f6</color>
+    <color name="rounded_gray_border_color">#eaebee</color>
     <color name="post_category_tag_text_color">#50535a</color>
     <color name="gray_text">#9EA1A7</color>
     <color name="hot_post_tag_background_color">#edf7fa</color>
