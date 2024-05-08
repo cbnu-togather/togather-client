@@ -113,9 +113,6 @@ public class ProfileActivity extends AppCompatActivity {
                 selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
 
-            if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
-                selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            }
         });
 
         selectCreatePostTypeBottomSheetBehavior = BottomSheetBehavior.from(
