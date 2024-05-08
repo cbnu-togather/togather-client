@@ -14,8 +14,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.project.togather.community.CommunityActivity;
+import com.project.togather.community.CommunityPostDetailActivity;
 import com.project.togather.createPost.recruitment.CreateRecruitmentPostActivity;
 import com.project.togather.databinding.ActivityMainBinding;
+import com.project.togather.editPost.recruitment.EditRecruitmentPostActivity;
 import com.project.togather.home.HomeActivity;
 import com.project.togather.user.LoginActivity;
 
@@ -42,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            startActivity(new Intent(MainActivity.this, CommunityPostDetailActivity.class));
         });
 
         /** 앱 초기 실행 시 위치 권한 동의 여부에 따라서

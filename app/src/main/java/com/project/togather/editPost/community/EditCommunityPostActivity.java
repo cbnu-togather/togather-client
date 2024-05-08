@@ -1,7 +1,4 @@
-package com.project.togather.createPost.community;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+package com.project.togather.editPost.community;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -18,21 +15,27 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.project.togather.MainActivity;
 import com.project.togather.R;
-import com.project.togather.chat.ChatDetailInfoItem;
 import com.project.togather.community.CommunityPostDetailActivity;
-import com.project.togather.databinding.ActivityCreateCommunityPostBinding;
-import com.project.togather.toast.ToastSuccess;
+import com.project.togather.createPost.community.CreateCommunityPostActivity;
+import com.project.togather.databinding.ActivityCommunityPostDetailBinding;
+import com.project.togather.databinding.ActivityEditCommunityPostBinding;
 import com.project.togather.toast.ToastWarning;
 
 import java.io.InputStream;
 
-public class CreateCommunityPostActivity extends AppCompatActivity {
+public class EditCommunityPostActivity extends AppCompatActivity {
 
-    private ActivityCreateCommunityPostBinding binding;
+    private ActivityEditCommunityPostBinding binding;
 
     private BottomSheetBehavior selectCategoryBottomSheetBehavior;
 
@@ -43,10 +46,8 @@ public class CreateCommunityPostActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityCreateCommunityPostBinding.inflate(getLayoutInflater());
+        binding = ActivityEditCommunityPostBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        selectedImageUri = Uri.parse("");
 
         // X 이미지뷰 클릭 시 현재 액티비티 종료
         binding.closeActivityImageView.setOnClickListener(view -> finish());
@@ -61,15 +62,6 @@ public class CreateCommunityPostActivity extends AppCompatActivity {
                 findViewById(R.id.createCommunityPostSelectCategoryBottomSheet_layout));
 
         selectCategoryBottomSheetBehavior.setDraggable(false);
-
-        binding.rootRelativeLayout.post(new
-
-                                                Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        selectCategoryBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                                                    }
-                                                });
 
         selectCategoryBottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -352,11 +344,11 @@ public class CreateCommunityPostActivity extends AppCompatActivity {
             }
 
             if (binding.contentEditText.getText().toString().length() < 8) {
-                new ToastWarning("본문을 8자 이상 작성해 주세요", CreateCommunityPostActivity.this);
+                new ToastWarning("본문을 8자 이상 작성해 주세요", EditCommunityPostActivity.this);
                 return;
             }
 
-            startActivity(new Intent(CreateCommunityPostActivity.this, CommunityPostDetailActivity.class));
+            startActivity(new Intent(EditCommunityPostActivity.this, CommunityPostDetailActivity.class));
         });
 
         /** (제목) 입력란 텍스트 입력 시 */
@@ -439,6 +431,75 @@ public class CreateCommunityPostActivity extends AppCompatActivity {
             binding.postImageRelativeLayout.setVisibility(View.INVISIBLE);
             selectedImageUri = Uri.parse("");
         });
+
+        // 데이터 하드 코딩
+        String response_selectedCategory = "운동";
+        switch (response_selectedCategory) {
+            case "맛집":
+                findViewById(R.id.famousRestaurantCategory_button).performClick();
+                break;
+            case "병원/약국":
+                findViewById(R.id.hospitalAndPharmacyCategory_button).performClick();
+                break;
+            case "생활/편의":
+                findViewById(R.id.lifeAndConvenienceCategory_button).performClick();
+                break;
+            case "고민/사연":
+                findViewById(R.id.concernAndStoryCategory_button).performClick();
+                break;
+            case "동네친구":
+                findViewById(R.id.neighborhoodCategory_button).performClick();
+                break;
+            case "운동":
+                findViewById(R.id.exerciseCategory_button).performClick();
+                break;
+            case "반려동물":
+                findViewById(R.id.petCategory_button).performClick();
+                break;
+            case "미용":
+                findViewById(R.id.beautyCategory_button).performClick();
+                break;
+            case "이사/시공":
+                findViewById(R.id.movingAndConstructionCategory_button).performClick();
+                break;
+            case "주거/부동산":
+                findViewById(R.id.residentialAndEstateCategory_button).performClick();
+                break;
+            case "교육":
+                findViewById(R.id.educationCategory_button).performClick();
+                break;
+            case "취미":
+                findViewById(R.id.hobbyCategory_button).performClick();
+                break;
+            case "동네사건사고":
+                findViewById(R.id.neighborhoodAccidentCategory_button).performClick();
+                break;
+            case "동네풍경":
+                findViewById(R.id.neighborhoodSceneCategory_button).performClick();
+                break;
+            case "분실/실종":
+                findViewById(R.id.lostAndMissingCategory_button).performClick();
+                break;
+            case "임신/육아":
+                findViewById(R.id.pregnancyAndParentingCategory_button).performClick();
+                break;
+            case "일반":
+                findViewById(R.id.generalCategory_button).performClick();
+                break;
+            default:
+                Log.d("로그 : ", response_selectedCategory + "는 존재하지 않는 카테고리입니다.");
+        }
+
+        String postThumbnailImageUri = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhTU-XV5ayP7d88yRVYZ-Hlbx8ocT3y4btXHRzdgy9SA&s";
+        Glide.with(binding.postThumbnailImageView)
+                .load(postThumbnailImageUri) // 이미지 URL 가져오기
+                .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
+                .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
+                .into(binding.postThumbnailImageView); // ImageView에 이미지 설정
+        binding.postThumbnailImageView.setVisibility(postThumbnailImageUri.equals("") ? View.GONE : View.VISIBLE);
+
+        binding.postTitleEditText.setText("제목이랍니다");
+        binding.contentEditText.setText("이 부분은 내용이랍니다.");
     }
 
     void clearCategoryStyle() {

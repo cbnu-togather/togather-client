@@ -365,6 +365,15 @@ public class EditRecruitmentPostActivity extends AppCompatActivity {
             default:
                 Log.d("로그 : ", response_selectedCategory + "는 존재하지 않는 카테고리입니다.");
         }
+
+        String postThumbnailImageUri = "https://cdn.dominos.co.kr/admin/upload/goods/20200508_780B32i8.jpg";
+        Glide.with(binding.postThumbnailImageView)
+                .load(postThumbnailImageUri) // 이미지 URL 가져오기
+                .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
+                .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
+                .into(binding.postThumbnailImageView); // ImageView에 이미지 설정
+        binding.postThumbnailRelativeLayout.setVisibility(postThumbnailImageUri.equals("") ? View.GONE : View.VISIBLE);
+
         binding.postTitleEditText.setText("도미노 피자 드실분 구해요");
         binding.contentEditText.setText("같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~");
         final int[] recruitmentNum = {2};
@@ -452,20 +461,14 @@ public class EditRecruitmentPostActivity extends AppCompatActivity {
     }
 
     private void updateImage(Uri imageUri) {
-        try (InputStream inputStream = getContentResolver().openInputStream(imageUri)) {
-            bitmap = BitmapFactory.decodeStream(inputStream);
-            Glide.with(binding.postThumbnailImageView)
-                    .load("https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/558/5adebf4c2aa0441be0b9eecf9d7bec7c_res.jpeg") // 이미지 URL 가져오기
-                    .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
-                    .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
-                    .into(binding.postThumbnailImageView); // ImageView에 이미지 설정
-            binding.postThumbnailRelativeLayout.setVisibility(View.VISIBLE);
-        } catch (
-                Exception e) {
-            Toast.makeText(this, "이미지를 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show();
-        }
-
+        Glide.with(this)
+                .load(imageUri)
+                .placeholder(R.drawable.one_person_logo)  // 로딩 중 표시할 이미지
+                .error(R.drawable.one_person_logo)  // 에러 발생 시 표시할 이미지
+                .into(binding.postThumbnailImageView);  // ImageView에 이미지 설정
+        binding.postThumbnailRelativeLayout.setVisibility(View.VISIBLE);
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
