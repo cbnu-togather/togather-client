@@ -111,10 +111,6 @@ public class CommunityActivity extends AppCompatActivity {
             if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
                 selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
-
-            if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
-                selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            }
         });
 
         selectCreatePostTypeBottomSheetBehavior = BottomSheetBehavior.from(
