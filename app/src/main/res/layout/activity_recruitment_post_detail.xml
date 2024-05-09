@@ -2,15 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeActivity">
+    tools:context=".home.RecruitmentPostDetailActivity">
 
     <!-- activity (header) RelativeLayout -->
     <RelativeLayout
         android:id="@+id/activityHeader_relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="7.5dp">
 
         <!-- "뒤로가기" 버튼 -->
         <ImageButton
@@ -20,43 +22,483 @@
             android:layout_marginStart="2.5dp"
             android:layout_marginTop="20dp"
             android:backgroundTint="@color/transparent"
-            android:src="@drawable/arrow_back" />
-    </RelativeLayout>
+            android:src="@drawable/arrow_back_white" />
 
+        <!-- "홈" 버튼 -->
+        <ImageView
+            android:id="@+id/home_imageButton"
+            android:layout_width="42.5dp"
+            android:layout_height="42.5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@+id/back_imageButton"
+            android:backgroundTint="@color/transparent"
+            android:paddingVertical="10dp"
+            android:src="@drawable/home_normal_white" />
+
+        <!-- "더 보기" 버튼 -->
+        <ImageView
+            android:id="@+id/more_imageButton"
+            android:layout_width="42.5dp"
+            android:layout_height="42.5dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="5dp"
+            android:backgroundTint="@color/transparent"
+            android:paddingVertical="10dp"
+            android:src="@drawable/more_white" />
+    </RelativeLayout>
 
     <!-- activity (body) RelativeLayout -->
     <RelativeLayout
         android:id="@+id/activityBody_relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_below="@+id/activityHeader_relativeLayout">
+        android:layout_above="@+id/activityFooter_relativeLayout">
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:layout_marginTop="225dp"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/togather_LottieAnimationView"
-            android:layout_width="125dp"
-            android:layout_height="125dp"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_rawRes="@raw/togather_logo" />
+        <ScrollView
+            android:id="@+id/activityBody_srollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:fontFamily="@font/spoqa_han_sans_neo_medium"
-            android:textSize="25sp"
-            android:layout_marginTop="5dp"
-            android:textColor="#999"
-            android:layout_below="@+id/togather_LottieAnimationView"
-            android:text="개발하는 중이에요"
-            />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/postThumbnail_imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="390dp"
+                    android:layout_alignParentTop="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/home_temp_image_1" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/postThumbnail_imageView"
+                    android:layout_marginHorizontal="17.5dp">
+
+                    <RelativeLayout
+                        android:id="@+id/userInfo_relativeLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/light_gray_border_bottom"
+                        android:paddingVertical="17.5dp">
+
+                        <com.makeramen.roundedimageview.RoundedImageView
+                            android:id="@+id/otherUserProfileImage_roundedImageView"
+                            android:layout_width="57.5dp"
+                            android:layout_height="57.5dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/user_default_profile"
+                            app:riv_oval="true" />
+
+                        <RelativeLayout
+                            android:id="@+id/userDetailInfo_relativeLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:layout_toRightOf="@+id/otherUserProfileImage_roundedImageView"
+                            android:minHeight="50dp">
+
+                            <TextView
+                                android:id="@+id/username_textView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="아몬드"
+                                android:textColor="#4e5257"
+                                android:textSize="17.5sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/otherUsername_textView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/username_textView"
+                                android:layout_marginTop="7.5dp"
+                                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                                android:text="개신동"
+                                android:textColor="#5a5c64"
+                                android:textSize="15sp" />
+                        </RelativeLayout>
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/postTitle_textView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/userInfo_relativeLayout"
+                        android:layout_marginTop="30dp"
+                        android:text="도미노 피자 드실분 구해요"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <RelativeLayout
+                        android:id="@+id/postDetailInfo_relativeLayout"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/postTitle_textView"
+                        android:layout_marginTop="7.5dp">
+
+                        <TextView
+                            android:id="@+id/category_textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                            android:text="피자"
+                            android:textColor="@color/gray_text"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/concatenation_textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="5dp"
+                            android:layout_toRightOf="@+id/category_textView"
+                            android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                            android:text="·"
+                            android:textColor="@color/gray_text"
+                            android:textSize="15sp" />
+
+                        <TextView
+                            android:id="@+id/elapsedTime_textView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@+id/concatenation_textView"
+                            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                            android:text="4분 전"
+                            android:textColor="@color/gray_text"
+                            android:textSize="15sp" />
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/content_textView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/postDetailInfo_relativeLayout"
+                        android:layout_marginTop="15dp"
+                        android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                        android:text="같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~"
+                        android:textSize="17.5sp" />
+
+                    <RelativeLayout
+                        android:id="@+id/spotInfo_relativeLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/content_textView"
+                        android:layout_marginTop="35dp">
+
+                        <RelativeLayout
+                            android:id="@+id/spotInfoHeader_relativeLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <RelativeLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
+                                    android:text="모임 희망 장소"
+                                    android:textSize="17.5sp"
+                                    android:textStyle="bold" />
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentRight="true">
+
+                                    <TextView
+                                        android:id="@+id/spotName_textView"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerVertical="true"
+                                        android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                                        android:text="학연산 출입문 앞"
+                                        android:textSize="17.5sp" />
+
+                                    <ImageView
+                                        android:layout_width="35dp"
+                                        android:layout_height="35dp"
+                                        android:layout_toRightOf="@+id/spotName_textView"
+                                        android:src="@drawable/arrow_right_200_gray" />
+                                </RelativeLayout>
+                            </RelativeLayout>
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/map_cardView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/spotInfoHeader_relativeLayout"
+                            android:layout_marginTop="5dp"
+                            android:background="@drawable/small_map_border">
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="1dp"
+                                app:cardCornerRadius="7.5dp"
+                                app:cardElevation="0dp">
+
+                                <RelativeLayout
+                                    android:id="@+id/map_relativeLayout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="120dp">
+
+                                    <ImageView
+                                        android:id="@+id/centerPoint_imageView"
+                                        android:layout_width="25dp"
+                                        android:layout_height="55dp"
+                                        android:layout_above="@+id/centerPoint_textView"
+                                        android:layout_centerHorizontal="true"
+                                        android:layout_centerVertical="true"
+                                        android:layout_marginBottom="-25dp"
+                                        android:src="@drawable/marker_origin" />
+
+                                    <TextView
+                                        android:id="@+id/centerPoint_textView"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_centerHorizontal="true"
+                                        android:layout_centerVertical="true"
+                                        android:text="중심점"
+                                        android:visibility="invisible" />
+
+                                    <androidx.cardview.widget.CardView
+                                        android:id="@+id/moveCurrentLocation_cardView"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentRight="true"
+                                        android:layout_alignParentBottom="true"
+                                        android:layout_margin="12.5dp"
+                                        android:backgroundTint="@color/white"
+                                        app:cardCornerRadius="5dp"
+                                        app:cardElevation="2.5dp">
+
+                                        <RelativeLayout
+                                            android:layout_width="95dp"
+                                            android:layout_height="wrap_content"
+                                            android:paddingVertical="7.5dp">
+
+                                            <TextView
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginEnd="7.5dp"
+                                                android:layout_toLeftOf="@+id/expandMap_imageView"
+                                                android:text="지도 보기"
+                                                android:textStyle="bold" />
+
+                                            <ImageView
+                                                android:id="@+id/expandMap_imageView"
+                                                android:layout_width="15dp"
+                                                android:layout_height="15dp"
+                                                android:layout_alignParentRight="true"
+                                                android:layout_centerVertical="true"
+                                                android:layout_marginEnd="10dp"
+                                                android:src="@drawable/expand_arrow" />
+                                        </RelativeLayout>
+                                    </androidx.cardview.widget.CardView>
+                                </RelativeLayout>
+                            </androidx.cardview.widget.CardView>
+                        </RelativeLayout>
+
+                        <RelativeLayout
+                            android:id="@+id/views_relativeLayout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/map_cardView"
+                            android:layout_marginVertical="20dp">
+
+                            <TextView
+                                android:id="@+id/views_textView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                                android:text="조회"
+                                android:textColor="@color/gray_text"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:id="@+id/viewNum_textView"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:layout_toRightOf="@+id/views_textView"
+                                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                                android:text="191"
+                                android:textColor="@color/gray_text"
+                                android:textSize="15sp" />
+                        </RelativeLayout>
+                    </RelativeLayout>
+                </RelativeLayout>
+            </RelativeLayout>
+        </ScrollView>
     </RelativeLayout>
+
+    <!-- activity (Footer) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityFooter_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/footer_horizontal_line_border_top">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="17.5dp">
+
+            <ImageView
+                android:id="@+id/like_imageView"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/like_bolder_gray" />
+
+            <ImageView
+                android:id="@+id/verticalLine_imageView"
+                android:layout_width="30dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="12.5dp"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/vertical_line" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12.5dp"
+                android:layout_marginTop="17.5dp"
+                android:layout_toRightOf="@+id/verticalLine_imageView">
+
+                <RelativeLayout
+                    android:id="@+id/currentRecruitmentNum_relativeLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/currentRecruitmentNum_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="모인 인원"
+                        android:textColor="@color/gray_text"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="2.5dp"
+                        android:layout_toRightOf="@+id/currentRecruitmentNum_textView"
+                        android:text="(2/3)"
+                        android:textColor="@color/gray_text"
+                        android:textSize="12sp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/currentPartyMemberNumState_relativeLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/currentRecruitmentNum_relativeLayout"
+                    android:layout_marginTop="2.5dp">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/currentPartyMemberNumFirstState_cardView"
+                        android:layout_width="42.5dp"
+                        android:layout_height="42.5dp"
+                        app:cardCornerRadius="8dp">
+
+                        <ImageView
+                            android:id="@+id/currentPartyMemberNumFirstState_imageView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/one_person_logo_filled" />
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/currentPartyMemberNumSecondState_cardView"
+                        android:layout_width="42.5dp"
+                        android:layout_height="42.5dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_toRightOf="@+id/currentPartyMemberNumFirstState_cardView"
+                        app:cardCornerRadius="8dp">
+
+                        <ImageView
+                            android:id="@+id/currentPartyMemberSecondState_imageView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/one_person_logo_filled" />
+                    </androidx.cardview.widget.CardView>
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/currentPartyMemberNumThirdState_cardView"
+                        android:layout_width="42.5dp"
+                        android:layout_height="42.5dp"
+                        android:layout_marginStart="5dp"
+                        android:layout_toRightOf="@+id/currentPartyMemberNumSecondState_cardView"
+                        app:cardCornerRadius="8dp">
+
+                        <ImageView
+                            android:id="@+id/currentPartyMemberNumThirdState_imageView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/one_person_logo" />
+                    </androidx.cardview.widget.CardView>
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/recruitmentCompleteTag_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/currentRecruitmentNum_relativeLayout"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/recruitment_complete_tag_dark_gray_background"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="4dp"
+                    android:text="모집완료"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/function_button"
+                android:layout_width="wrap_content"
+                android:layout_height="37.5dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@drawable/light_gray_border_rounded_sm"
+                android:backgroundTint="@color/theme_color"
+                android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                android:outlineProvider="none"
+                android:text="손 들기"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/background_dimmer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <!-- bottom sheet 레이아웃 -->
+        <include layout="@layout/bottom_sheet_select_post_mangement" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </RelativeLayout>

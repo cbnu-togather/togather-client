@@ -1,6 +1,7 @@
 package com.project.togather.retrofit;
 
 import com.google.gson.Gson;
+import com.project.togather.BuildConfig;
 import com.project.togather.utils.AuthInterceptor;
 import com.project.togather.utils.TokenManager;
 
@@ -23,7 +24,7 @@ public class RetrofitService {
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("http://10.0.2.2:8080")
+                .baseUrl(BuildConfig.RETROFIT_SERVER_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
                 .build();

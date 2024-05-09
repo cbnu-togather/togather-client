@@ -13,7 +13,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,12 +22,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.project.togather.chat.ChatActivity;
-import com.project.togather.CreatePostActivity;
+import com.project.togather.createPost.community.CreateCommunityPostActivity;
+import com.project.togather.createPost.recruitment.CreateRecruitmentPostActivity;
+import com.project.togather.databinding.ActivityCommunityBinding;
 import com.project.togather.notification.NotificationActivity;
 import com.project.togather.profile.ProfileActivity;
 import com.project.togather.R;
-import com.project.togather.databinding.ActivityCommunityBinding;
 import com.project.togather.home.HomeActivity;
 
 import java.util.ArrayList;
@@ -42,6 +43,8 @@ public class CommunityActivity extends AppCompatActivity {
     ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
 
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
+
+    private BottomSheetBehavior selectCreatePostTypeBottomSheetBehavior;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,9 +106,57 @@ public class CommunityActivity extends AppCompatActivity {
             overridePendingTransition(0, 0);
         });
 
+        // 어두운 배경 클릭 이벤트 설정
+        binding.backgroundDimmer.setOnClickListener(view -> {
+            if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        });
+
+        selectCreatePostTypeBottomSheetBehavior = BottomSheetBehavior.from(
+                findViewById(R.id.selectCreatePostTypeBottomSheet_layout));
+
+        selectCreatePostTypeBottomSheetBehavior.setDraggable(false);
+
+        selectCreatePostTypeBottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        binding.backgroundDimmer.setVisibility(View.VISIBLE);
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        binding.backgroundDimmer.setVisibility(View.GONE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                binding.backgroundDimmer.setAlpha(slideOffset);
+                binding.backgroundDimmer.setVisibility(View.VISIBLE);
+            }
+        });
+
+
         /** "글 쓰기" 레이아웃 클릭 시 */
-        binding.createPostActivityRelativeLayout.setOnClickListener(view ->
-                startActivity(new Intent(CommunityActivity.this, CreatePostActivity.class)));
+        binding.createPostActivityRelativeLayout.setOnClickListener(view -> selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED));
+
+        // 작성할 게시글 유형 선택
+        findViewById(R.id.createRecruitmentPost_button).setOnClickListener(view -> {
+            if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                startActivity(new Intent(CommunityActivity.this, CreateRecruitmentPostActivity.class));
+            }
+        });
+
+        findViewById(R.id.createCommunityPost_button).setOnClickListener(view -> {
+            if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                startActivity(new Intent(CommunityActivity.this, CreateCommunityPostActivity.class));
+            }
+        });
 
         /** "채팅" 레이아웃 클릭 시 */
         binding.chatActivityRelativeLayout.setOnClickListener(view -> {
@@ -153,7 +204,7 @@ public class CommunityActivity extends AppCompatActivity {
 
             if (convertView == null) {
                 LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.community_list_view_item, viewGroup, false);
+                convertView = inflater.inflate(R.layout.list_view_item_community, viewGroup, false);
             } else {
                 View view = new View(context);
                 view = (View) convertView;
@@ -226,7 +277,7 @@ public class CommunityActivity extends AppCompatActivity {
         @NonNull
         @Override
         public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.community_list_view_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view_item_community, parent, false);
             return new RecyclerViewAdapter.ViewHolder(view);
         }
 

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_relativeLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".createPost.recruitment.SelectedSpotActivity">
+
+    <!-- activity (header) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityHeader_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12.5dp">
+
+        <ImageView
+            android:id="@+id/closeActivity_imageView"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="12.5dp"
+            android:layout_marginTop="15dp"
+            android:src="@drawable/close" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/closeActivity_imageView"
+            android:layout_marginTop="2.5dp"
+            android:padding="17.5dp">
+
+            <TextView
+                android:id="@+id/guideMsg1_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="이웃과 만나서 음식을\n나누고 싶은 장소를 선택해 주세요."
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/guideMsg2_textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/guideMsg1_textView"
+                android:layout_marginTop="10dp"
+                android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                android:text="만날 때는 누구나 찾기 쉬운 공공장소가 좋아요."
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <!-- activity (body) RelativeLayout -->
+    <RelativeLayout
+        android:id="@+id/activityBody_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/activityHeader_relativeLayout"
+        android:layout_marginTop="10dp">
+
+        <!-- 지도 레이아웃 -->
+        <RelativeLayout
+            android:id="@+id/map_relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/markerTag_cardView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/centerPoint_imageView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                app:cardElevation="0dp">
+
+                <TextView
+                    android:id="@+id/markerTag_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/light_gray_border"
+                    android:backgroundTint="#212124"
+                    android:fontFamily="@font/spoqa_han_sans_neo_bold"
+                    android:paddingHorizontal="12.5dp"
+                    android:paddingVertical="10dp"
+                    android:text="지도를 움직여서 선택해 보세요."
+                    android:textColor="@color/white" />
+            </androidx.cardview.widget.CardView>
+
+            <ImageView
+                android:id="@+id/centerPoint_imageView"
+                android:layout_width="57.5dp"
+                android:layout_height="57.5dp"
+                android:layout_above="@+id/centerPoint_textView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="-15dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/marker_origin" />
+
+            <TextView
+                android:id="@+id/centerPoint_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="중심점"
+                android:visibility="invisible" />
+        </RelativeLayout>
+
+        <!-- 현재 위치 불러오기 -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/moveCurrentLocation_cardView"
+            android:layout_width="67.5dp"
+            android:layout_height="67.5dp"
+            android:layout_above="@+id/selectDeliverySpot_button"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="30dp"
+            android:backgroundTint="@color/white"
+            android:padding="10dp"
+            app:cardCornerRadius="100dp"
+            app:cardElevation="7.5dp">
+
+            <ImageView
+                android:layout_width="67.5dp"
+                android:layout_height="67.5dp"
+                android:padding="20dp"
+                android:src="@drawable/current_location" />
+        </androidx.cardview.widget.CardView>
+
+        <Button
+            android:id="@+id/selectDeliverySpot_button"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/light_gray_border"
+            android:backgroundTint="@color/theme_color"
+            android:fontFamily="@font/spoqa_han_sans_neo_bold"
+            android:outlineProvider="none"
+            android:text="선택 완료"
+            android:textColor="@color/white"
+            android:textSize="19sp" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/background_dimmer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <!-- bottom sheet 레이아웃 -->
+        <include layout="@layout/bottom_sheet_input_meeting_spot_name" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

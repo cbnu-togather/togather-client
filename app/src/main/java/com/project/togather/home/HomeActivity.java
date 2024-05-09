@@ -23,13 +23,15 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.project.togather.chat.ChatActivity;
 import com.project.togather.community.CommunityActivity;
-import com.project.togather.CreatePostActivity;
+import com.project.togather.createPost.community.CreateCommunityPostActivity;
+import com.project.togather.createPost.recruitment.CreateRecruitmentPostActivity;
+import com.project.togather.databinding.ActivityHomeBinding;
 import com.project.togather.notification.NotificationActivity;
 import com.project.togather.profile.ProfileActivity;
 import com.project.togather.R;
-import com.project.togather.databinding.ActivityHomeBinding;
 
 import java.util.ArrayList;
 
@@ -42,6 +44,9 @@ public class HomeActivity extends AppCompatActivity {
     private ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
 
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
+
+    private BottomSheetBehavior selectCreatePostTypeBottomSheetBehavior;
+    private BottomSheetBehavior selectDistanceBottomSheetBehavior;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +67,7 @@ public class HomeActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
-                Intent intent = new Intent(HomeActivity.this, HomePostDetailActivity.class);
+                Intent intent = new Intent(HomeActivity.this, RecruitmentPostDetailActivity.class);
                 startActivity(intent);
             }
         });
@@ -70,7 +75,7 @@ public class HomeActivity extends AppCompatActivity {
         adapter.setOnLongItemClickListener(new RecyclerViewAdapter.OnLongItemClickListener() {
             @Override
             public void onLongItemClick(int pos) {
-                Intent intent = new Intent(HomeActivity.this, HomePostDetailActivity.class);
+                Intent intent = new Intent(HomeActivity.this, RecruitmentPostDetailActivity.class);
                 startActivity(intent);
             }
         });
@@ -88,6 +93,59 @@ public class HomeActivity extends AppCompatActivity {
 
         // 초기 데이터 로드
         loadData();
+
+        // 내 근처 거리 설정 bottom sheet layout
+        selectDistanceBottomSheetBehavior = BottomSheetBehavior.from(
+                findViewById(R.id.selectDistanceBottomSheet_layout));
+
+        selectDistanceBottomSheetBehavior.setDraggable(false);
+
+        selectDistanceBottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        binding.backgroundDimmer.setVisibility(View.VISIBLE);
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        binding.backgroundDimmer.setVisibility(View.GONE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                binding.backgroundDimmer.setAlpha(slideOffset);
+                binding.backgroundDimmer.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // 내 근처 거리 설정 레이아웃 클릭 이벤트 설정
+        binding.selectDistanceRelativeLayout.setOnClickListener(view ->
+                selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED));
+
+        // 내 근처 거리 선택 이벤트 설정
+        findViewById(R.id.m100_button).setOnClickListener(view -> {
+            if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                binding.distanceTextView.setText("100m");
+            }
+        });
+
+        findViewById(R.id.m300_button).setOnClickListener(view -> {
+            if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                binding.distanceTextView.setText("300m");
+            }
+        });
+
+        findViewById(R.id.m500_button).setOnClickListener(view -> {
+            if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                binding.distanceTextView.setText("500m");
+            }
+        });
 
         /** "알림" 버튼 클릭 시 */
         binding.notificationImageButton.setOnClickListener(view ->
@@ -187,6 +245,15 @@ public class HomeActivity extends AppCompatActivity {
             filterPostsByCategory("cafe_and_dessert");
         });
 
+        /** "일반" 탭 버튼 클릭 시 */
+        binding.generalTabButton.setOnClickListener(view -> {
+            allTabStyleClear();
+            binding.generalTabButton.setTypeface(null, Typeface.BOLD);
+            binding.generalTabButton.setTextColor(getResources().getColor(R.color.text_color));
+            binding.generalTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
+            filterPostsByCategory("general");
+        });
+
         /** "동네생활" 레이아웃 클릭 시 */
         binding.communityActivityRelativeLayout.setOnClickListener(view -> {
             startActivity(new Intent(HomeActivity.this, CommunityActivity.class));
@@ -194,9 +261,60 @@ public class HomeActivity extends AppCompatActivity {
             overridePendingTransition(0, 0);
         });
 
+        // 어두운 배경 클릭 이벤트 설정
+        binding.backgroundDimmer.setOnClickListener(view -> {
+            if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+
+            if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        });
+
+        selectCreatePostTypeBottomSheetBehavior = BottomSheetBehavior.from(
+                findViewById(R.id.selectCreatePostTypeBottomSheet_layout));
+
+        selectCreatePostTypeBottomSheetBehavior.setDraggable(false);
+
+        selectCreatePostTypeBottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        binding.backgroundDimmer.setVisibility(View.VISIBLE);
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        binding.backgroundDimmer.setVisibility(View.GONE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                binding.backgroundDimmer.setAlpha(slideOffset);
+                binding.backgroundDimmer.setVisibility(View.VISIBLE);
+            }
+        });
+
         /** "글 쓰기" 레이아웃 클릭 시 */
-        binding.createPostActivityRelativeLayout.setOnClickListener(view ->
-                startActivity(new Intent(HomeActivity.this, CreatePostActivity.class)));
+        binding.createPostActivityRelativeLayout.setOnClickListener(view -> selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED));
+
+        // 작성할 게시글 유형 선택
+        findViewById(R.id.createRecruitmentPost_button).setOnClickListener(view -> {
+            if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                startActivity(new Intent(HomeActivity.this, CreateRecruitmentPostActivity.class));
+            }
+        });
+
+        findViewById(R.id.createCommunityPost_button).setOnClickListener(view -> {
+            if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                startActivity(new Intent(HomeActivity.this, CreateCommunityPostActivity.class));
+            }
+        });
 
         /** "채팅" 레이아웃 클릭 시 */
         binding.chatActivityRelativeLayout.setOnClickListener(view ->
@@ -245,7 +363,7 @@ public class HomeActivity extends AppCompatActivity {
         @NonNull
         @Override
         public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_list_view_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view_item_home, parent, false);
             return new ViewHolder(view);
         }
 
@@ -396,6 +514,9 @@ public class HomeActivity extends AppCompatActivity {
                     case "cafe_and_dessert":
                         category_textView.setText("카페·디저트");
                         break;
+                    case "general":
+                        category_textView.setText("일반");
+                        break;
                     default:
                         Log.d("로그: ", item.getCategory() + "는 존재하지 않는 카테고리입니다.");
                 }
@@ -432,6 +553,7 @@ public class HomeActivity extends AppCompatActivity {
                 likedCnt_textView.setText("" + item.getLikedCnt());
             }
         }
+
     }
 
     // 음식 카테고리 탭에 설정된 스타일을 제거하는 함수
@@ -475,9 +597,15 @@ public class HomeActivity extends AppCompatActivity {
         binding.cafeAndDessertTabButton.setBackground(null);
         binding.cafeAndDessertTabButton.setTypeface(null, Typeface.NORMAL);
         binding.cafeAndDessertTabButton.setTextColor(getResources().getColor(R.color.not_selected_menu_item_gray_color));
+
+        binding.generalTabButton.setBackground(null);
+        binding.generalTabButton.setTypeface(null, Typeface.NORMAL);
+        binding.generalTabButton.setTextColor(getResources().getColor(R.color.not_selected_menu_item_gray_color));
     }
 
-    /** 음식 카테고리 탭에 맞게 게시글을 필터링하고 UI를 새로고침하는 함수 */
+    /**
+     * 음식 카테고리 탭에 맞게 게시글을 필터링하고 UI를 새로고침하는 함수
+     */
     private void filterPostsByCategory(String category) {
         ArrayList<PostInfoItem> filteredItems = new ArrayList<>();
         if (!category.equals("all")) {

@@ -14,21 +14,28 @@
         android:layout_centerVertical="true"
         android:translationY="-50dp">
 
-        <ImageView
-            android:id="@+id/logo_imageView"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/togather_LottieAnimationView"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
             android:layout_centerHorizontal="true"
-            android:paddingLeft="10dp"
-            android:src="@drawable/logo" />
+            android:layout_marginTop="105dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/togather_logo" />
 
         <TextView
             android:id="@+id/slogan_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/logo_imageView"
+            android:layout_below="@+id/togather_LottieAnimationView"
+            android:layout_marginTop="10dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="-20dp"
             android:fontFamily="@font/spoqa_han_sans_neo_bold"
             android:text="함께해요 우리"
             android:textSize="27.5sp" />

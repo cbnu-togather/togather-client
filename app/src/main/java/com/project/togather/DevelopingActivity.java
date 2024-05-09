@@ -18,11 +18,6 @@ public class DevelopingActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         /** (뒤로가기 화살표 이미지) 버튼 클릭 시 */
-        binding.backImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish(); // 현재 액티비티 종료
-            }
-        });
+        binding.backImageButton.setOnClickListener(view -> finish());
     }
 }

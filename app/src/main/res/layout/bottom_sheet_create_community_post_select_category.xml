@@ -1,0 +1,492 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/createCommunityPostSelectCategoryBottomSheet_layout"
+    android:layout_width="match_parent"
+    android:layout_height="600dp"
+    android:layout_alignParentBottom="true"
+    android:background="@drawable/bottom_sheet_background"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical"
+    android:padding="20dp"
+    app:behavior_peekHeight="0dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <TextView
+        android:id="@+id/bottomSheetTitle_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="게시글의 주제를 선택해 주세요."
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/bottomSheetTitle_textView"
+        android:layout_marginTop="22.5dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/famousRestaurantCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/famousRestaurantCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="맛집"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/famousRestaurantCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/hospitalAndPharmacyCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/famousRestaurantCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/hospitalAndPharmacyCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="병원/약국"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/hospitalAndPharmacyCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lifeAndConvenienceCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/hospitalAndPharmacyCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/lifeAndConvenienceCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="생활/편의"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/lifeAndConvenienceCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/concernAndStoryCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/lifeAndConvenienceCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/concernAndStoryCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="고민/사연"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/concernAndStoryCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/neighborhoodCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/concernAndStoryCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/neighborhoodCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="동네친구"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/neighborhoodCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/exerciseCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/neighborhoodCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/exerciseCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="운동"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/exerciseCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/petCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/exerciseCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/petCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="반려동물"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/petCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/beautyCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/petCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/beautyCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="미용"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/beautyCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/movingAndConstructionCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/beautyCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/movingAndConstructionCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="이사/시공"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/movingAndConstructionCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/residentialAndEstateCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/movingAndConstructionCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/residentialAndEstateCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="주거/부동산"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/residentialAndEstateCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/educationCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/residentialAndEstateCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/educationCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="교육"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/educationCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/hobbyCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/educationCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/hobbyCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="취미"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/hobbyCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/neighborhoodAccidentCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/hobbyCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/neighborhoodAccidentCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="동네사건사고"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/neighborhoodAccidentCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/neighborhoodSceneCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/neighborhoodAccidentCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/neighborhoodSceneCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="동네풍경"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/neighborhoodSceneCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/lostAndMissingCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/neighborhoodSceneCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/lostAndMissingCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="분실/실종"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/lostAndMissingCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/pregnancyAndParentingCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/lostAndMissingCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/pregnancyAndParentingCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="임신/육아"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/pregnancyAndParentingCategorycheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/generalCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/pregnancyAndParentingCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/generalCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="일반"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/generalCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

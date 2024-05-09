@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityLikedPostListBinding;
-import com.project.togather.home.HomePostDetailActivity;
+import com.project.togather.home.RecruitmentPostDetailActivity;
 
 import java.util.ArrayList;
 
@@ -44,14 +44,14 @@ public class LikedPostListActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
-                startActivity(new Intent(LikedPostListActivity.this, HomePostDetailActivity.class));
+                startActivity(new Intent(LikedPostListActivity.this, RecruitmentPostDetailActivity.class));
             }
         });
 
         adapter.setOnLongItemClickListener(new RecyclerViewAdapter.OnLongItemClickListener() {
             @Override
             public void onLongItemClick(int pos) {
-                startActivity(new Intent(LikedPostListActivity.this, HomePostDetailActivity.class));
+                startActivity(new Intent(LikedPostListActivity.this, RecruitmentPostDetailActivity.class));
             }
         });
 
@@ -96,7 +96,7 @@ public class LikedPostListActivity extends AppCompatActivity {
         @NonNull
         @Override
         public RecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_list_view_item, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_view_item_home, parent, false);
             return new ViewHolder(view);
         }
 

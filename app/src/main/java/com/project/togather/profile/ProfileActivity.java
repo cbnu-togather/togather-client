@@ -2,6 +2,7 @@ package com.project.togather.profile;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
@@ -13,10 +14,12 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 
-import com.project.togather.CreatePostActivity;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.R;
 import com.project.togather.chat.ChatActivity;
 import com.project.togather.community.CommunityActivity;
+import com.project.togather.createPost.recruitment.CreateRecruitmentPostActivity;
 import com.project.togather.databinding.ActivityProfileBinding;
 import com.project.togather.home.HomeActivity;
 import com.project.togather.toast.ToastSuccess;
@@ -34,6 +37,8 @@ public class ProfileActivity extends AppCompatActivity {
             askUnsubscribe_dialog;
 
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
+
+    private BottomSheetBehavior selectCreatePostTypeBottomSheetBehavior;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,10 +107,57 @@ public class ProfileActivity extends AppCompatActivity {
             overridePendingTransition(0, 0);
         });
 
-        /** (글 쓰기) 레이아웃 클릭 시 */
-        binding.createPostActivityRelativeLayout.setOnClickListener(view -> {
-            Intent intent = new Intent(ProfileActivity.this, CreatePostActivity.class);
-            startActivity(intent);
+        // 어두운 배경 클릭 이벤트 설정
+        binding.backgroundDimmer.setOnClickListener(view -> {
+            if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+
+        });
+
+        selectCreatePostTypeBottomSheetBehavior = BottomSheetBehavior.from(
+                findViewById(R.id.selectCreatePostTypeBottomSheet_layout));
+
+        selectCreatePostTypeBottomSheetBehavior.setDraggable(false);
+
+        selectCreatePostTypeBottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        binding.backgroundDimmer.setVisibility(View.VISIBLE);
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        binding.backgroundDimmer.setVisibility(View.GONE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                binding.backgroundDimmer.setAlpha(slideOffset);
+                binding.backgroundDimmer.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+        /** "글 쓰기" 레이아웃 클릭 시 */
+        binding.createPostActivityRelativeLayout.setOnClickListener(view -> selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED));
+
+        // 작성할 게시글 유형 선택
+        findViewById(R.id.createRecruitmentPost_button).setOnClickListener(view -> {
+            if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                startActivity(new Intent(ProfileActivity.this, CreateRecruitmentPostActivity.class));
+            }
+        });
+
+        findViewById(R.id.createCommunityPost_button).setOnClickListener(view -> {
+            if (selectCreatePostTypeBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectCreatePostTypeBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                startActivity(new Intent(ProfileActivity.this, CreateCommunityPostActivity.class));
+            }
         });
 
         /** (채팅) 레이아웃 클릭 시 */

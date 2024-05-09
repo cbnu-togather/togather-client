@@ -19,14 +19,14 @@
             android:layout_height="wrap_content">
 
             <RelativeLayout
-                android:id="@+id/selectedPosition_relativeLayout"
+                android:id="@+id/selectDistance_relativeLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="20dp"
                 android:layout_marginTop="30dp">
 
                 <TextView
-                    android:id="@+id/selectedPosition_textView"
+                    android:id="@+id/selectDistance_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
@@ -35,12 +35,12 @@
                     android:textSize="20sp" />
 
                 <TextView
-                    android:id="@+id/radius_textView"
+                    android:id="@+id/distance_textView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBottom="@+id/selectedPosition_textView"
+                    android:layout_alignBottom="@+id/selectDistance_textView"
                     android:layout_marginStart="7.5dp"
-                    android:layout_toRightOf="@+id/selectedPosition_textView"
+                    android:layout_toRightOf="@+id/selectDistance_textView"
                     android:fontFamily="@font/spoqa_han_sans_neo_bold"
                     android:text="100m"
                     android:textColor="@color/gray"
@@ -48,12 +48,12 @@
 
                 <!-- "위치 설정" 버튼 -->
                 <ImageView
-                    android:id="@+id/selectPosition_imageButton"
+                    android:id="@+id/selectDistance_imageButton"
                     android:layout_width="30dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="2.5dp"
                     android:layout_marginTop="5dp"
-                    android:layout_toRightOf="@+id/radius_textView"
+                    android:layout_toRightOf="@+id/distance_textView"
                     android:src="@drawable/arrow_down" />
             </RelativeLayout>
 
@@ -62,7 +62,7 @@
                 android:id="@+id/notification_imageButton"
                 android:layout_width="42.5dp"
                 android:layout_height="42.5dp"
-                android:layout_alignBottom="@+id/selectedPosition_relativeLayout"
+                android:layout_alignBottom="@+id/selectDistance_relativeLayout"
                 android:layout_alignParentRight="true"
                 android:layout_marginEnd="25dp"
                 android:backgroundTint="@color/transparent"
@@ -75,7 +75,7 @@
                 android:id="@+id/notificationNew_imageButton"
                 android:layout_width="47.5dp"
                 android:layout_height="47.5dp"
-                android:layout_alignBottom="@+id/selectedPosition_relativeLayout"
+                android:layout_alignBottom="@+id/selectDistance_relativeLayout"
                 android:layout_alignParentRight="true"
                 android:layout_marginEnd="19.5dp"
                 android:backgroundTint="@color/transparent"
@@ -204,10 +204,21 @@
                     android:id="@+id/cafeAndDessertTab_button"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="30dp"
+                    android:layout_marginEnd="32.5dp"
                     android:background="@color/transparent"
                     android:minWidth="80dp"
                     android:text="카페·디저트"
+                    android:textColor="@color/not_selected_menu_item_gray_color"
+                    android:textSize="17.5sp" />
+
+                <Button
+                    android:id="@+id/generalTab_button"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="30dp"
+                    android:background="@color/transparent"
+                    android:minWidth="80dp"
+                    android:text="일반"
                     android:textColor="@color/not_selected_menu_item_gray_color"
                     android:textSize="17.5sp" />
             </LinearLayout>
@@ -376,4 +387,21 @@
                 android:textSize="12.5sp" />
         </RelativeLayout>
     </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/background_dimmer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone" />
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <!-- bottom sheet 레이아웃 -->
+        <include layout="@layout/bottom_sheet_select_create_post_type" />
+        <include layout="@layout/bottom_sheet_select_distance" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </RelativeLayout>

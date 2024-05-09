@@ -24,7 +24,6 @@
             android:src="@drawable/arrow_back" />
     </RelativeLayout>
 
-
     <!-- activity (body) RelativeLayout -->
     <RelativeLayout
         android:id="@+id/activityBody_relativeLayout"
@@ -158,7 +157,7 @@
                         android:layout_toRightOf="@+id/agreeOurPolicies_textView"
                         android:backgroundTint="@color/transparent"
                         android:foregroundTint="@color/white"
-                        android:src="@drawable/arrow_right_gray" />
+                        android:src="@drawable/arrow_right_300" />
                 </RelativeLayout>
             </RelativeLayout>
 

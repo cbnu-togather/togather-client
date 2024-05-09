@@ -45,6 +45,7 @@ public class EditMyProfile extends AppCompatActivity {
     }
 
     private void setupListeners() {
+        // X 이미지뷰 클릭 시 현재 액티비티 종료
         binding.closeActivityImageView.setOnClickListener(view -> finish());
 
         binding.editMyProfileCompleteButton.setOnClickListener(view -> {

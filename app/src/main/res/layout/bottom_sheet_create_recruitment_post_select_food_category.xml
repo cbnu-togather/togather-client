@@ -1,0 +1,303 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/createRecruitmentPostSelectFoodCategoryBottomSheet_layout"
+    android:layout_width="match_parent"
+    android:layout_height="600dp"
+    android:layout_alignParentBottom="true"
+    android:background="@drawable/bottom_sheet_background"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical"
+    android:padding="20dp"
+    app:behavior_peekHeight="0dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <TextView
+        android:id="@+id/bottomSheetTitle_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="음식의 종류를 선택해 주세요."
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/bottomSheetTitle_textView"
+        android:layout_marginTop="22.5dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/chickenCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/chickenCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="치킨"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/chickenCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/pizzaCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/chickenCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/pizzaCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="피자"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/pizzaCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/hamburgerCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/pizzaCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/hamburgerCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="햄버거"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/hamburgerCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/koreanFoodCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/hamburgerCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/koreanFoodCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="한식"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/koreanFoodCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/japaneseFoodCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/koreanFoodCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/japaneseFoodCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="일식"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/japaneseFoodCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/chineseFoodCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/japaneseFoodCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/chineseFoodCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="중식"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/chineseFoodCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/westernFoodCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/chineseFoodCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/westernFoodCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="양식"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/westernFoodCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/snackCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/westernFoodCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/snackCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="간식"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/snackCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/cafeAndDessertCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/snackCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/cafeAndDessertCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="카페·디저트"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/cafeAndDessertCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/generalCategory_relativeLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/cafeAndDessertCategory_relativeLayout">
+
+                <Button
+                    android:id="@+id/generalCategory_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:background="@color/transparent"
+                    android:fontFamily="@font/spoqa_han_sans_neo_regular"
+                    android:text="일반"
+                    android:textAlignment="textStart"
+                    android:textSize="17.5sp" />
+
+                <ImageView
+                    android:id="@+id/generalCategoryCheck_imageView"
+                    android:layout_width="27.5dp"
+                    android:layout_height="27.5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="15dp"
+                    android:src="@drawable/check"
+                    android:visibility="invisible" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>
