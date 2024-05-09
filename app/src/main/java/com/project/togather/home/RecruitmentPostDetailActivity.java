@@ -20,10 +20,12 @@ import android.widget.Button;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.project.togather.GetMyLocation;
+import com.project.togather.MainActivity;
 import com.project.togather.R;
-import com.project.togather.createPost.recruitment.SelectedSpotActivity;
 import com.project.togather.databinding.ActivityRecruitmentPostDetailBinding;
+import com.project.togather.editPost.recruitment.EditRecruitmentPostActivity;
 import com.project.togather.toast.ToastSuccess;
+import com.project.togather.user.LoginActivity;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -153,6 +155,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                 {
                     if (selectPostManagementBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
                         selectPostManagementBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                        startActivity(new Intent(RecruitmentPostDetailActivity.this, EditRecruitmentPostActivity.class));
                     }
                 });
 

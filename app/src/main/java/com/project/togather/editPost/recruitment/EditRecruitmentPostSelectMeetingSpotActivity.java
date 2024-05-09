@@ -1,4 +1,4 @@
-package com.project.togather.createPost.recruitment;
+package com.project.togather.editPost.recruitment;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.location.Location;
@@ -20,7 +19,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -41,17 +39,15 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.project.togather.GetMyLocation;
 import com.project.togather.R;
-import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.databinding.ActivitySelectMeetingSpotBinding;
-import com.project.togather.home.HomeActivity;
 import com.project.togather.model.CoordinateToAddress;
 import com.project.togather.retrofit.RetrofitServiceForKakao;
 import com.project.togather.retrofit.interfaceAPI.KakaoAPI;
 import com.project.togather.toast.ToastWarning;
 
-import net.daum.mf.map.api.MapView;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
+import net.daum.mf.map.api.MapView;
 
 import java.util.List;
 
@@ -59,7 +55,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SelectMeetingSpotActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, net.daum.mf.map.api.MapView.MapViewEventListener, net.daum.mf.map.api.MapView.POIItemEventListener {
+public class EditRecruitmentPostSelectMeetingSpotActivity extends AppCompatActivity implements MapView.CurrentLocationEventListener, MapView.MapViewEventListener, MapView.POIItemEventListener {
 
     private ActivitySelectMeetingSpotBinding binding;
 
@@ -144,7 +140,7 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
         binding.markerTagCardView.bringToFront();
 
         /** 현재 나의 위치에 점을 갱신하며 찍어줌 */
-        mapView.setCurrentLocationTrackingMode(net.daum.mf.map.api.MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving);
+        mapView.setCurrentLocationTrackingMode(MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving);
 
         /** 앱 초기 실행 시 위치 권한 동의 여부에 따라서
          * (권한 획득 요청) 및 (현재 위치 표시)를 수행 */
@@ -158,10 +154,10 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
         GetMyLocation getMyLocation = new GetMyLocation(this, this);
         Location userLocation = getMyLocation.getMyLocation();
         if (userLocation != null) {
-            currLatitude = 36.62565323814696; // 소프트웨어학부 건물 위도, 경도
-            currLongitude = 127.45428323069932;
+            currLatitude = userLocation.getLatitude();
+            currLongitude = userLocation.getLongitude();
             System.out.println("////////////현재 내 위치값 : " + currLatitude + "," + currLongitude);
-            currPoint = MapPoint.mapPointWithGeoCoord(currLatitude, currLongitude);
+            currPoint = MapPoint.mapPointWithGeoCoord(36.625264039836026, 127.45708706510892);
 
             // 앱 초기 실행 시에만 현재 위치를 지도 중심점으로 위치시킴
             if (selectedLongitude == 0) {
@@ -169,6 +165,9 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
                 mapView.setMapCenterPoint(currPoint, true);
             }
         }
+
+        selectedLatitude = 36.625264039836026;
+        selectedLongitude = 127.45708706510892;
 
         inputMeetingSpotBottomSheetBehavior = BottomSheetBehavior.from(
                 findViewById(R.id.inputMeetingSpotBottomSheet_layout));
@@ -272,17 +271,17 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
                             editor.apply();
                             finish();
                         } else {
-                            new ToastWarning("서비스 불가 지역이에요", SelectMeetingSpotActivity.this);
+                            new ToastWarning("서비스 불가 지역이에요", EditRecruitmentPostSelectMeetingSpotActivity.this);
                         }
                     } else {
-                        new ToastWarning("잘못된 요청이에요", SelectMeetingSpotActivity.this);
+                        new ToastWarning("잘못된 요청이에요", EditRecruitmentPostSelectMeetingSpotActivity.this);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<CoordinateToAddress> call, Throwable t) {
                     // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
-                    new ToastWarning(getResources().getString(R.string.toast_server_error), SelectMeetingSpotActivity.this);
+                    new ToastWarning(getResources().getString(R.string.toast_server_error), EditRecruitmentPostSelectMeetingSpotActivity.this);
                 }
             });
         });
@@ -304,7 +303,7 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // Permission denied.
                 for (String permission : permissions) {
                     if ("android.permission.ACCESS_FINE_LOCATION".equals(permission)) {

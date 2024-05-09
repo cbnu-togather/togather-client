@@ -1,39 +1,24 @@
-package com.project.togather.createPost.recruitment;
+package com.project.togather.home;
 
-import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.location.LocationManager;
-import android.location.LocationRequest;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.SettingsClient;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.project.togather.GetMyLocation;
 import com.project.togather.R;
-import com.project.togather.databinding.ActivitySelectMeetingSpotBinding;
 import com.project.togather.databinding.ActivitySelectedSpotBinding;
-import com.project.togather.home.RecruitmentPostDetailActivity;
-import com.project.togather.retrofit.interfaceAPI.KakaoAPI;
 import com.project.togather.toast.ToastSuccess;
 
 import net.daum.mf.map.api.MapPOIItem;
