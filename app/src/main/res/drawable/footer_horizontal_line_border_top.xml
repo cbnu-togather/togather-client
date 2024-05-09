@@ -1,9 +1,8 @@
-<!-- button_background_with_bottom_border.xml -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Button background -->
     <item android:id="@android:id/background">
         <shape android:shape="rectangle">
-            <solid android:color="@android:color/transparent" />
+            <solid android:color="@color/white" /> <!-- 변경된 부분 -->
         </shape>
     </item>
     <!-- Bottom border -->
@@ -11,7 +10,7 @@
         <shape android:shape="rectangle">
             <solid android:color="@android:color/transparent" />
             <stroke
-                android:width="0.75dp"
+                android:width="0.5dp"
                 android:color="@color/tab_top_horizontal_line_gray_color" />
         </shape>
     </item>

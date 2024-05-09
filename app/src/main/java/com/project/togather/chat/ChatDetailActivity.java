@@ -1,7 +1,5 @@
 package com.project.togather.chat;
 
-import static com.google.android.material.internal.ViewUtils.hideKeyboard;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -39,7 +37,6 @@ import android.Manifest;
 
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityChatDetailBinding;
-import com.project.togather.home.HomeActivity;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.cardview.widget.CardView;
@@ -99,7 +96,7 @@ public class ChatDetailActivity extends AppCompatActivity {
 
         adapter = new RecyclerViewAdapter();
 
-        adapter.setOnItemClickListener(new HomeActivity.RecyclerViewAdapter.OnItemClickListener() {
+        adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
                 hideKeyboard();
@@ -107,7 +104,7 @@ public class ChatDetailActivity extends AppCompatActivity {
             }
         });
 
-        adapter.setOnLongItemClickListener(new HomeActivity.RecyclerViewAdapter.OnLongItemClickListener() {
+        adapter.setOnLongItemClickListener(new RecyclerViewAdapter.OnLongItemClickListener() {
             @Override
             public void onLongItemClick(int pos) {
             }
@@ -137,6 +134,7 @@ public class ChatDetailActivity extends AppCompatActivity {
 
         adapter.setChatDetailInfoItem(chatDetailInfoItems);
 
+        /** (채팅 입력란) 내용 입력 이벤트 설정 */
         binding.messageEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -312,9 +310,9 @@ public class ChatDetailActivity extends AppCompatActivity {
             void onItemClick(int pos);
         }
 
-        private HomeActivity.RecyclerViewAdapter.OnItemClickListener onItemClickListener = null;
+        private OnItemClickListener onItemClickListener = null;
 
-        public void setOnItemClickListener(HomeActivity.RecyclerViewAdapter.OnItemClickListener listener) {
+        public void setOnItemClickListener(OnItemClickListener listener) {
             this.onItemClickListener = listener;
         }
 
@@ -323,9 +321,9 @@ public class ChatDetailActivity extends AppCompatActivity {
             void onLongItemClick(int pos);
         }
 
-        private HomeActivity.RecyclerViewAdapter.OnLongItemClickListener onLongItemClickListener = null;
+        private OnLongItemClickListener onLongItemClickListener = null;
 
-        public void setOnLongItemClickListener(HomeActivity.RecyclerViewAdapter.OnLongItemClickListener listener) {
+        public void setOnLongItemClickListener(OnLongItemClickListener listener) {
             this.onLongItemClickListener = listener;
         }
 
@@ -518,7 +516,7 @@ public class ChatDetailActivity extends AppCompatActivity {
 
             adapter.getChatDetailInfoItems().add(newItem);  // Add new message item to the list
             adapter.notifyDataSetChanged();  // Notify adapter to refresh view
-            binding.chatRoomRecyclerView.scrollToPosition(adapter.getItemCount() - 1);  // Scroll to the new message
+            binding.chatRoomRecyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);  // Scroll to the new message
             binding.messageEditText.setText("");  // Clear the input field
         }
     }
@@ -553,16 +551,15 @@ public class ChatDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void updateProfileImage(Uri imageUri) {
+    private void updateImage(Uri imageUri) {
         try (InputStream inputStream = getContentResolver().openInputStream(imageUri)) {
-            bitmap = BitmapFactory.decodeStream(inputStream);
             addMenuBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             long timestamp = System.currentTimeMillis();  // Get current timestamp
             ChatDetailInfoItem newItem = new ChatDetailInfoItem(
                     "",  // userProfileImageUrl, assuming no image for simplicity
                     "You",  // username
                     "",  // message
-                    "https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/558/5adebf4c2aa0441be0b9eecf9d7bec7c_res.jpeg",  // ImageUrl, assuming no image for simplicity
+                    imageUri.toString(),  // ImageUrl, assuming no image for simplicity
                     timestamp,  // current timestamp
                     true,  // isMyMessage
                     true  // isContinuousMessage, assuming new message is not part of a continuous block
@@ -611,7 +608,7 @@ public class ChatDetailActivity extends AppCompatActivity {
                 case REQUEST_GALLERY:
                     // 갤러리에서 이미지를 선택했을 때의 처리
                     Uri selectedImageUri = data.getData();
-                    updateProfileImage(selectedImageUri);
+                    updateImage(selectedImageUri);
                     break;
             }
         }

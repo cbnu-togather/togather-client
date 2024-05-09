@@ -14,8 +14,11 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.project.togather.community.CommunityActivity;
+import com.project.togather.community.CommunityPostDetailActivity;
 import com.project.togather.createPost.recruitment.CreateRecruitmentPostActivity;
 import com.project.togather.databinding.ActivityMainBinding;
+import com.project.togather.editPost.recruitment.EditRecruitmentPostActivity;
 import com.project.togather.home.HomeActivity;
 import com.project.togather.user.LoginActivity;
 

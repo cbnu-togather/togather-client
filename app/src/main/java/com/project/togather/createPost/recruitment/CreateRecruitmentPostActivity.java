@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -38,19 +36,21 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
 
     private BottomSheetBehavior selectFoodCategoryBottomSheetBehavior;
 
-    private Bitmap bitmap;
-
     private static final int REQUEST_GALLERY = 2;
 
     String sp_extractedDong, sp_selectedAddress, sp_addSpotName;
 
     float sp_selectedLatitude, sp_selectedLongitude;
 
+    Uri selectedImageUri;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityCreateRecruitmentPostBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        selectedImageUri = Uri.parse("");
 
         // 전역 데이터 초기화
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);
@@ -262,6 +262,7 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
             // 이미지 초기화
             binding.postThumbnailImageView.setImageResource(0);
             binding.postThumbnailRelativeLayout.setVisibility(View.INVISIBLE);
+            selectedImageUri = Uri.parse("");
         });
 
         String recruitmentNumStr = binding.recruitmentNumTextView.getText().toString().replaceAll("[^0-9]", "");
@@ -416,9 +417,8 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
 
     private void updateImage(Uri imageUri) {
         try (InputStream inputStream = getContentResolver().openInputStream(imageUri)) {
-            bitmap = BitmapFactory.decodeStream(inputStream);
             Glide.with(binding.postThumbnailImageView)
-                    .load("https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/558/5adebf4c2aa0441be0b9eecf9d7bec7c_res.jpeg") // 이미지 URL 가져오기
+                    .load(imageUri) // 이미지 URL 가져오기
                     .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
                     .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
                     .into(binding.postThumbnailImageView); // ImageView에 이미지 설정

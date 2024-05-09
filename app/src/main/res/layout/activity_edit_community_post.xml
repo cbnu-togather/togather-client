@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".createPost.community.CreateCommunityPostActivity">
+    tools:context=".editPost.community.EditCommunityPostActivity">
 
     <!-- activity (header) RelativeLayout -->
     <RelativeLayout
@@ -79,7 +79,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                        android:text="게시글의 주제를 선택해 주세요"
+                        android:text="맛집"
                         android:textSize="18dp" />
 
                     <ImageView
@@ -100,6 +100,7 @@
                     android:background="@color/transparent"
                     android:hint="제목을 입력하세요"
                     android:singleLine="true"
+                    android:text="제목제목"
                     android:textColorHint="@color/hint_color"
                     android:textSize="22sp"
                     android:textStyle="bold" />
@@ -113,6 +114,7 @@
                     android:background="@color/transparent"
                     android:fontFamily="@font/spoqa_han_sans_neo_regular"
                     android:gravity="start"
+                    android:text="내용내용123"
                     android:hint="개신동 이웃과 이야기를 나눠보세요."
                     android:minHeight="210dp"
                     android:paddingEnd="20dp"
@@ -125,7 +127,7 @@
                     android:layout_height="90dp"
                     android:layout_below="@+id/content_editText"
                     android:layout_marginTop="17.5dp"
-                    android:visibility="invisible">
+                    android:visibility="visible">
 
                     <androidx.cardview.widget.CardView
                         android:id="@+id/postImage_cardView"
@@ -176,8 +178,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/tap_top_horizontal_line_border_top"
-        android:paddingVertical="8dp"
-        android:paddingHorizontal="15dp">
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="8dp">
 
         <ImageView
             android:id="@+id/gallery_imageView"

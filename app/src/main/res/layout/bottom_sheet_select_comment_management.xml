@@ -1,0 +1,51 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/selectCommentManagementBottomSheet_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:background="@drawable/bottom_sheet_background_rectangle"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical"
+    app:behavior_peekHeight="0dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/editComment_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+            android:padding="20dp"
+            android:text="수정"
+            android:textAlignment="center"
+            android:textSize="17.5sp" />
+
+        <!-- 가로 구분선 #1 -->
+        <RelativeLayout
+            android:id="@+id/dividingLine1_relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/editComment_button"
+            android:background="@color/list_item_bottom_line_gray_color" />
+
+        <Button
+            android:id="@+id/deleteComment_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dividingLine1_relativeLayout"
+            android:background="@color/transparent"
+            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+            android:padding="20dp"
+            android:text="삭제"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="@color/red"
+            android:textSize="17.5sp" />
+    </RelativeLayout>
+
+</RelativeLayout>

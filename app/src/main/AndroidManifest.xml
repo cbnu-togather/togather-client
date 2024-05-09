@@ -26,6 +26,12 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".editPost.community.EditCommunityPostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".editPost.community.EditCommunityPostCommentActivity"
+            android:exported="false" />
+        <activity
             android:name=".editPost.recruitment.EditRecruitmentPostActivity"
             android:exported="false" />
         <activity
@@ -150,7 +156,7 @@
         <activity android:name=".profile.EditMyProfile" />
         <activity android:name=".chat.ChatDetailActivity" />
         <activity android:name=".createPost.recruitment.CreateRecruitmentPostActivity" />
-        <activity android:name="com.project.togather.editPost.recruitment.EditRecruitmentPostSelectMeetingSpotActivity" />
+        <activity android:name=".editPost.recruitment.EditRecruitmentPostSelectMeetingSpotActivity" />
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"

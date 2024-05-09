@@ -23,6 +23,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityEditMyProfileBinding;
 import com.project.togather.toast.ToastSuccess;
@@ -85,20 +86,19 @@ public class EditMyProfile extends AppCompatActivity {
             result -> {
                 if (result.getResultCode() == RESULT_OK && result.getData() != null) {
                     Uri selectedImageUri = result.getData().getData();
-                    updateProfileImage(selectedImageUri);
+                    updateImage(selectedImageUri);
                     // 이미지 변경 후 사용자 이름 유효성을 다시 확인
                     validateUsername(binding.usernameEditText.getText().toString());
                 }
             }
     );
 
-    private void updateProfileImage(Uri imageUri) {
-        try (InputStream inputStream = getContentResolver().openInputStream(imageUri)) {
-            bitmap = BitmapFactory.decodeStream(inputStream);
-            binding.userProfileImageRoundedImageView.setImageBitmap(bitmap);
-        } catch (Exception e) {
-            Toast.makeText(this, "이미지를 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show();
-        }
+    private void updateImage(Uri imageUri) {
+        Glide.with(this)
+                .load(imageUri)
+                .placeholder(R.drawable.one_person_logo)  // 로딩 중 표시할 이미지
+                .error(R.drawable.one_person_logo)  // 에러 발생 시 표시할 이미지
+                .into(binding.userProfileImageRoundedImageView);  // ImageView에 이미지 설정
     }
 
     private void validateUsername(String input) {

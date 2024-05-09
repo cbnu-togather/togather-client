@@ -31,10 +31,10 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="27.5dp"
+            android:fontFamily="@font/spoqa_han_sans_neo_bold"
             android:letterSpacing="-0.01"
             android:text="나의 파티원 모집글"
             android:textColor="@color/text_color"
-            android:fontFamily="@font/spoqa_han_sans_neo_bold"
             android:textSize="20sp" />
     </RelativeLayout>
 
@@ -51,6 +51,7 @@
             android:layout_height="match_parent"
             android:divider="#FFFFFF"
             android:dividerHeight="0px"
+            android:overScrollMode="never"
             android:scrollbars="none" />
     </RelativeLayout>
 </RelativeLayout>
