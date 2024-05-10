@@ -369,6 +369,7 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
             }
 
             startActivity(new Intent(CreateRecruitmentPostActivity.this, RecruitmentPostDetailActivity.class));
+            finish();
         });
     }
 

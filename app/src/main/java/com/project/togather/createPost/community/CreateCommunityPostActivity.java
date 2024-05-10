@@ -357,6 +357,7 @@ public class CreateCommunityPostActivity extends AppCompatActivity {
             }
 
             startActivity(new Intent(CreateCommunityPostActivity.this, CommunityPostDetailActivity.class));
+            finish();
         });
 
         /** (제목) 입력란 텍스트 입력 시 */
