@@ -15,4 +15,6 @@ public interface UserAPI {
             @Query("phone") String phone,
             @Query("name") String name
     );
+    @POST("/login")
+    Call<ResponseBody> login(@Query("phone") String phone);
 }

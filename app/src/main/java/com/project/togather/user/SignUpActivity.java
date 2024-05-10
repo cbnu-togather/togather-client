@@ -19,6 +19,11 @@ import com.project.togather.toast.ToastSuccess;
 import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -135,6 +140,49 @@ public class SignUpActivity extends AppCompatActivity {
         binding.signUpButton.setOnClickListener(view -> performSignUp());
     }
 
+    // 로그인 메서드
+    private void login(String phoneNumber) {
+        Call<ResponseBody> call = userAPI.login(phoneNumber);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    // 로그인 성공 시
+                    ResponseBody responseBody = response.body();
+                    if (responseBody != null) {
+                        // API 요청으로 받은 데이터가 null이 아닌 경우
+                        try {
+                            String json = responseBody.string();
+                            JSONObject jsonObject = new JSONObject(json);
+
+                            String token = jsonObject.getString("token");
+                            tokenManager.saveToken(token);
+
+                            Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
+                            startActivity(intent);
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else {
+                        // API 요청으로 받은 데이터가 null인 경우
+
+                        return ;
+                    }
+                }
+                else {
+                    // 요청이 실패한 경우
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
+                new ToastWarning(getResources().getString(R.string.toast_server_error), SignUpActivity.this);
+            }
+        });
+    }
+
     private void performSignUp() {
         String username = binding.usernameEditText.getText().toString().trim();
         String phoneNumber = binding.phoneNumberEditText.getText().toString().replaceAll("\\s", "");
@@ -149,8 +197,9 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
+                    login(phoneNumber);
                     new ToastSuccess("회원가입 완료", SignUpActivity.this);
-                    startActivity(new Intent(SignUpActivity.this, HomeActivity.class));
+
                 }
             }
 
