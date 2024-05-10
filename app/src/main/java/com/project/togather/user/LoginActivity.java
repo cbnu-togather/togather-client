@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // 로그인 메서드
-    private void login(String phoneNumber) {
+    private void performLogin(String phoneNumber) {
         Call<ResponseBody> call = userAPI.login(phoneNumber);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -146,7 +146,7 @@ public class LoginActivity extends AppCompatActivity {
                                     return;
                                 }
                                 // 중복된 전화번호 정보가 있는 경우(이미 가입된 전화번호의 경우)
-                                login(finalPhoneNumber);
+                                performLogin(finalPhoneNumber);
                                 return;
                             }
                         } catch (IOException e) {

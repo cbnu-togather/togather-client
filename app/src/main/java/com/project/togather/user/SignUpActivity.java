@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.content.res.ColorStateList;
 
@@ -118,9 +119,13 @@ public class SignUpActivity extends AppCompatActivity {
 
         binding.usernameEditText.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
             @Override
             public void afterTextChanged(Editable s) {
                 validateUsername(s.toString());
@@ -141,7 +146,7 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     // 로그인 메서드
-    private void login(String phoneNumber) {
+    private void performLogin(String phoneNumber) {
         Call<ResponseBody> call = userAPI.login(phoneNumber);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -163,14 +168,12 @@ public class SignUpActivity extends AppCompatActivity {
                         } catch (IOException | JSONException e) {
                             e.printStackTrace();
                         }
-                    }
-                    else {
+                    } else {
                         // API 요청으로 받은 데이터가 null인 경우
 
-                        return ;
+                        return;
                     }
-                }
-                else {
+                } else {
                     // 요청이 실패한 경우
                 }
             }
@@ -183,32 +186,54 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
+
     private void performSignUp() {
         String username = binding.usernameEditText.getText().toString().trim();
         String phoneNumber = binding.phoneNumberEditText.getText().toString().replaceAll("\\s", "");
 
-        if (username.equals("exist")) {
-            new ToastWarning("이미 존재하는 유저 이름입니다.", this);
-            return;
-        }
-
-        Call<ResponseBody> call = userAPI.signUp(phoneNumber, username);
-        call.enqueue(new Callback<ResponseBody>() {
+        // 닉네임 중복 확인
+        Call<Boolean> doubleCheckCall = userAPI.doubleCheckUserName(username);
+        doubleCheckCall.enqueue(new Callback<Boolean>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
                 if (response.isSuccessful()) {
-                    login(phoneNumber);
-                    new ToastSuccess("회원가입 완료", SignUpActivity.this);
+                    Boolean isUserNameAvailable = response.body();
+                    // 중복된 유저 이름으로 가입 시도시
+                    if (isUserNameAvailable != null && isUserNameAvailable) {
+                        new ToastWarning("이미 존재하는 유저 이름입니다.", SignUpActivity.this);
+                        return;
+                    }
 
+                    // 중복되지 않은 경우 회원 가입
+                    Call<ResponseBody> signUpCall = userAPI.signUp(phoneNumber, username);
+                    signUpCall.enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            if (response.isSuccessful()) {
+                                // 회원가입 성공 후 로그인 시도
+                                new ToastSuccess("회원가입 완료", SignUpActivity.this);
+                                performLogin(phoneNumber);
+                                return ;
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                            // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
+                            new ToastWarning(getResources().getString(R.string.toast_server_error), SignUpActivity.this);
+                        }
+                    });
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+            public void onFailure(Call<Boolean> call, Throwable throwable) {
+                // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
                 new ToastWarning(getResources().getString(R.string.toast_server_error), SignUpActivity.this);
             }
         });
     }
+
 
     private void openPolicyActivity(View view) {
         startActivity(new Intent(this, HandleAndStoreUserInformationPoliciesActivity.class));
