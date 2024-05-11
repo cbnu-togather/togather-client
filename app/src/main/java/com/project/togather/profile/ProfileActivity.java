@@ -15,6 +15,7 @@ import android.view.Window;
 import android.widget.Button;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.project.togather.MainActivity;
 import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.R;
 import com.project.togather.chat.ChatActivity;
@@ -22,12 +23,21 @@ import com.project.togather.community.CommunityActivity;
 import com.project.togather.createPost.recruitment.CreateRecruitmentPostActivity;
 import com.project.togather.databinding.ActivityProfileBinding;
 import com.project.togather.home.HomeActivity;
+import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastSuccess;
+import com.project.togather.toast.ToastWarning;
 import com.project.togather.user.HandleAndStoreUserInformationPoliciesActivity;
 import com.project.togather.user.LoginActivity;
 import com.project.togather.profile.likedPost.LikedPostListActivity;
 import com.project.togather.profile.myCommunityPost.MyCommunityPostListActivity;
 import com.project.togather.profile.myRecruitmentPartyPost.MyRecruitmentPartyPostListActivity;
+import com.project.togather.user.SignUpActivity;
+import com.project.togather.utils.TokenManager;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -39,12 +49,19 @@ public class ProfileActivity extends AppCompatActivity {
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
 
     private BottomSheetBehavior selectCreatePostTypeBottomSheetBehavior;
+    private UserAPI userAPI;
+    private TokenManager tokenManager;
+    private RetrofitService retrofitService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+        retrofitService = new RetrofitService(tokenManager);
+        userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
         onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -182,8 +199,10 @@ public class ProfileActivity extends AppCompatActivity {
         // (확인) 버튼
         askLogout_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
             askLogout_dialog.dismiss(); // 다이얼로그 닫기
+            tokenManager.logout();
             new ToastSuccess("로그아웃 되었어요", ProfileActivity.this);
-            startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
+            startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+            finish();
         });
     }
 
@@ -202,8 +221,28 @@ public class ProfileActivity extends AppCompatActivity {
         // (확인) 버튼
         askUnsubscribe_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
             askUnsubscribe_dialog.dismiss(); // 다이얼로그 닫기
-            new ToastSuccess("회원탈퇴를 완료했어요", ProfileActivity.this);
-            startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
+            performUnsubscribe();
+        });
+    }
+
+    // 회원 탈퇴 메서드
+    public void performUnsubscribe() {
+        Call<Void> call = userAPI.deleteUser();
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    new ToastSuccess("회원탈퇴를 완료했어요", ProfileActivity.this);
+                    tokenManager.logout();
+                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), ProfileActivity.this);
+            }
         });
     }
 }
