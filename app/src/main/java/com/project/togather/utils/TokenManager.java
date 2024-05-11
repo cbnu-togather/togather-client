@@ -51,11 +51,11 @@ public class TokenManager {
         // 토큰 제거
         editor.remove("JWT_TOKEN");
         // 사용자 정보 제거
-        editor.remove("userId");
-        editor.remove("email");
-        editor.remove("username");
-        editor.remove("role");
-        editor.remove("point");
+//        editor.remove("userId");
+//        editor.remove("email");
+//        editor.remove("username");
+//        editor.remove("role");
+//        editor.remove("point");
         editor.apply();
     }
 

@@ -21,6 +21,9 @@ import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -71,11 +74,55 @@ public class LoginActivity extends AppCompatActivity {
         }.start();
     }
 
+    // 로그인 메서드
+    private void performLogin(String phoneNumber) {
+        Call<ResponseBody> call = userAPI.login(phoneNumber);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    // 로그인 성공 시
+                    ResponseBody responseBody = response.body();
+                    if (responseBody != null) {
+                        // API 요청으로 받은 데이터가 null이 아닌 경우
+                        try {
+                            String json = responseBody.string();
+                            JSONObject jsonObject = new JSONObject(json);
+
+                            String token = jsonObject.getString("token");
+                            tokenManager.saveToken(token);
+
+                            Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                            startActivity(intent);
+                        } catch (IOException | JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else {
+                        // API 요청으로 받은 데이터가 null인 경우
+
+                        return ;
+                    }
+                }
+                else {
+                    // 요청이 실패한 경우
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
+                new ToastWarning(getResources().getString(R.string.toast_server_error), LoginActivity.this);
+            }
+        });
+    }
+
     // 전화번호 중복 확인 메서드
     private void checkPhoneNumber(String phoneNumber) {
         // 전화번호 문자열 내 공백을 제거
-        phoneNumber = phoneNumber.replaceAll("\\s", "");
-        Call<ResponseBody> call = userAPI.checkPhoneNumber(phoneNumber);
+        String finalPhoneNumber = phoneNumber.replaceAll("\\s", "");
+        Call<ResponseBody> call = userAPI.checkPhoneNumber(finalPhoneNumber);
+
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -98,10 +145,8 @@ public class LoginActivity extends AppCompatActivity {
                                     startActivity(intent);
                                     return;
                                 }
-
                                 // 중복된 전화번호 정보가 있는 경우(이미 가입된 전화번호의 경우)
-                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                                startActivity(intent);
+                                performLogin(finalPhoneNumber);
                                 return;
                             }
                         } catch (IOException e) {
