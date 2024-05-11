@@ -228,7 +228,7 @@ public class SignUpActivity extends AppCompatActivity {
                     Boolean isUserNameAvailable = response.body();
                     // 중복된 유저 이름으로 가입 시도시
                     if (isUserNameAvailable != null && isUserNameAvailable) {
-                        new ToastWarning("이미 존재하는 유저 이름입니다.", SignUpActivity.this);
+                        new ToastWarning("이미 사용 중인 이름이에요", SignUpActivity.this);
                         return;
                     }
 
@@ -239,7 +239,7 @@ public class SignUpActivity extends AppCompatActivity {
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             if (response.isSuccessful()) {
                                 // 회원가입 성공 후 로그인 시도
-                                new ToastSuccess("회원가입 완료", SignUpActivity.this);
+                                new ToastSuccess("가입이 완료되었어요", SignUpActivity.this);
                                 performLogin(phoneNumber);
                                 return ;
                             }
