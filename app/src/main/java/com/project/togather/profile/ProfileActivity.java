@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.project.togather.MainActivity;
 import com.project.togather.createPost.community.CreateCommunityPostActivity;
@@ -68,6 +69,21 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(new Intent(ProfileActivity.this, MainActivity.class));
             finish();
         }
+
+        // 액티비티 생성 시 내 유저 이름을 표시
+        if (tokenManager.getUsername() != null) {
+            binding.userNameTextView.setText(tokenManager.getUsername());
+        }
+
+        // 액티비티 생성 시 내 프로필 사진을 표시
+        if (tokenManager.getPhoto() != null) {
+            Glide.with(this)
+                    .load(tokenManager.getPhoto())
+                    .placeholder(R.drawable.one_person_logo)
+                    .error(R.drawable.one_person_logo)
+                    .into(binding.userProfileImageRoundedImageView);
+        }
+
         onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
