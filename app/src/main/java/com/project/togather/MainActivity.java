@@ -21,10 +21,12 @@ import com.project.togather.databinding.ActivityMainBinding;
 import com.project.togather.editPost.recruitment.EditRecruitmentPostActivity;
 import com.project.togather.home.HomeActivity;
 import com.project.togather.user.LoginActivity;
+import com.project.togather.utils.TokenManager;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private TokenManager tokenManager;
 
     /**
      * 위치 권한 요청 코드의 상숫값
@@ -38,13 +40,20 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        tokenManager = TokenManager.getInstance(this);
+
         /** (시작하기) 버튼 클릭 시 */
         binding.startButton.setOnClickListener(view -> {
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions();
                 return;
             }
-
+            // 현재 유효한 토큰 값이 존재할 경우 시작하기 버튼 클릭 시 홈 액티비티로 이동
+            if (tokenManager.getToken() != null) {
+                startActivity(new Intent(MainActivity.this, HomeActivity.class));
+                finish();
+                return ;
+            }
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         });
 
