@@ -2,6 +2,7 @@ package com.project.togather.home;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
@@ -17,9 +18,11 @@ import androidx.activity.OnBackPressedDispatcher;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.project.togather.GetMyLocation;
+import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivitySelectedSpotBinding;
 import com.project.togather.toast.ToastSuccess;
+import com.project.togather.utils.TokenManager;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -28,6 +31,7 @@ import net.daum.mf.map.api.MapView;
 public class SelectedSpotActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, net.daum.mf.map.api.MapView.MapViewEventListener, net.daum.mf.map.api.MapView.POIItemEventListener {
 
     private ActivitySelectedSpotBinding binding;
+    private TokenManager tokenManager;
 
     private Dialog askJoinParty_dialog;
 
@@ -49,6 +53,14 @@ public class SelectedSpotActivity extends AppCompatActivity implements net.daum.
         super.onCreate(savedInstanceState);
         binding = ActivitySelectedSpotBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(SelectedSpotActivity.this, MainActivity.class));
+            finish();
+        }
 
         /** (손 들기 확인) 다이얼로그 변수 초기화 및 설정 */
         askJoinParty_dialog = new Dialog(SelectedSpotActivity.this);  // Dialog 초기화

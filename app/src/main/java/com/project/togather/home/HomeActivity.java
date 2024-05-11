@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.project.togather.MainActivity;
 import com.project.togather.chat.ChatActivity;
 import com.project.togather.community.CommunityActivity;
 import com.project.togather.createPost.community.CreateCommunityPostActivity;
@@ -32,6 +33,7 @@ import com.project.togather.databinding.ActivityHomeBinding;
 import com.project.togather.notification.NotificationActivity;
 import com.project.togather.profile.ProfileActivity;
 import com.project.togather.R;
+import com.project.togather.utils.TokenManager;
 
 import java.util.ArrayList;
 
@@ -40,6 +42,7 @@ public class HomeActivity extends AppCompatActivity {
     private ActivityHomeBinding binding;
 
     private RecyclerViewAdapter adapter;
+    private TokenManager tokenManager;
 
     private ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
 
@@ -53,6 +56,14 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(HomeActivity.this, MainActivity.class));
+            finish();
+        }
 
         // Add callback listener
         onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {

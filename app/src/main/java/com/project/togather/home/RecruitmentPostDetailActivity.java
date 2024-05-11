@@ -26,6 +26,7 @@ import com.project.togather.databinding.ActivityRecruitmentPostDetailBinding;
 import com.project.togather.editPost.recruitment.EditRecruitmentPostActivity;
 import com.project.togather.toast.ToastSuccess;
 import com.project.togather.user.LoginActivity;
+import com.project.togather.utils.TokenManager;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
@@ -36,7 +37,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
     private ActivityRecruitmentPostDetailBinding binding;
 
     private BottomSheetBehavior selectPostManagementBottomSheetBehavior;
-
+    private TokenManager tokenManager;
     private Dialog askDeletePost_dialog, askJoinParty_dialog, askStopRecruitment_dialog;
 
     private boolean isWriter, isLiked, isRecruitmentComplete;
@@ -57,6 +58,14 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityRecruitmentPostDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(RecruitmentPostDetailActivity.this, MainActivity.class));
+            finish();
+        }
 
         binding.activityHeaderRelativeLayout.bringToFront();
 

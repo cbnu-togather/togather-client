@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.project.togather.MainActivity;
 import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.R;
 import com.project.togather.createPost.recruitment.CreateRecruitmentPostActivity;
@@ -35,13 +36,14 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.project.togather.databinding.ActivityChatBinding;
+import com.project.togather.utils.TokenManager;
 
 public class ChatActivity extends AppCompatActivity {
 
     private ActivityChatBinding binding;
 
     private RecyclerViewAdapter adapter;
-
+    private TokenManager tokenManager;
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
 
     private BottomSheetBehavior selectCreatePostTypeBottomSheetBehavior;
@@ -51,6 +53,14 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityChatBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(ChatActivity.this, MainActivity.class));
+            finish();
+        }
 
         onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {
             @Override

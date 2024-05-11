@@ -24,9 +24,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityEditMyProfileBinding;
 import com.project.togather.toast.ToastSuccess;
+import com.project.togather.utils.TokenManager;
 
 import java.io.InputStream;
 
@@ -35,6 +37,9 @@ public class EditMyProfile extends AppCompatActivity {
     private ActivityEditMyProfileBinding binding;
 
     private Bitmap bitmap;
+    private UserAPI userAPI;
+    private TokenManager tokenManager;
+    private RetrofitService retrofitService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,15 @@ public class EditMyProfile extends AppCompatActivity {
         binding = ActivityEditMyProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        tokenManager = TokenManager.getInstance(this);
+        retrofitService = new RetrofitService(tokenManager);
+        userAPI = retrofitService.getRetrofit().create(UserAPI.class);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(EditMyProfile.this, MainActivity.class));
+            finish();
+        }
         setupListeners();
     }
 

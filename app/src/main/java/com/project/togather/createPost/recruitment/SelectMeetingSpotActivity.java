@@ -40,6 +40,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.project.togather.GetMyLocation;
+import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.databinding.ActivitySelectMeetingSpotBinding;
@@ -48,6 +49,7 @@ import com.project.togather.model.CoordinateToAddress;
 import com.project.togather.retrofit.RetrofitServiceForKakao;
 import com.project.togather.retrofit.interfaceAPI.KakaoAPI;
 import com.project.togather.toast.ToastWarning;
+import com.project.togather.utils.TokenManager;
 
 import net.daum.mf.map.api.MapView;
 import net.daum.mf.map.api.MapPOIItem;
@@ -62,6 +64,7 @@ import retrofit2.Response;
 public class SelectMeetingSpotActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, net.daum.mf.map.api.MapView.MapViewEventListener, net.daum.mf.map.api.MapView.POIItemEventListener {
 
     private ActivitySelectMeetingSpotBinding binding;
+    private TokenManager tokenManager;
 
     /**
      * 위치 권한 요청 코드의 상숫값
@@ -117,6 +120,14 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
         super.onCreate(savedInstanceState);
         binding = ActivitySelectMeetingSpotBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(SelectMeetingSpotActivity.this, MainActivity.class));
+            finish();
+        }
 
         // 전역 데이터 로드
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);

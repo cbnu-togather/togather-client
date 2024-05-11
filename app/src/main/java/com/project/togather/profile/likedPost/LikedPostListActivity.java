@@ -19,15 +19,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityLikedPostListBinding;
 import com.project.togather.home.RecruitmentPostDetailActivity;
+import com.project.togather.utils.TokenManager;
 
 import java.util.ArrayList;
 
 public class LikedPostListActivity extends AppCompatActivity {
 
     private ActivityLikedPostListBinding binding;
+    private TokenManager tokenManager;
 
     private RecyclerViewAdapter adapter;
 
@@ -36,6 +39,14 @@ public class LikedPostListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityLikedPostListBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(LikedPostListActivity.this, MainActivity.class));
+            finish();
+        }
 
         adapter = new RecyclerViewAdapter();
 
