@@ -24,5 +24,8 @@ public interface UserAPI {
     @DELETE("/user")
     @Headers("accept: application/json")
     Call<Void> deleteUser();
+    @GET("/user")
+    @Headers("accept: application/json")
+    Call<ResponseBody> getUserInfo();
 
 }

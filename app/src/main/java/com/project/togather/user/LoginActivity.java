@@ -74,6 +74,31 @@ public class LoginActivity extends AppCompatActivity {
         }.start();
     }
 
+
+    private void getUserInfo() {
+        Call<ResponseBody> call = userAPI.getUserInfo();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseBodyString = response.body().string();
+                        JSONObject jsonObject = new JSONObject(responseBodyString);
+
+                        tokenManager.saveUserInfo(jsonObject);
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+            }
+        });
+    }
+
     // 로그인 메서드
     private void performLogin(String phoneNumber) {
         Call<ResponseBody> call = userAPI.login(phoneNumber);
@@ -91,6 +116,11 @@ public class LoginActivity extends AppCompatActivity {
 
                             String token = jsonObject.getString("token");
                             tokenManager.saveToken(token);
+
+                            if (tokenManager.getToken() != null) {
+                                getUserInfo();
+                            }
+
 
                             Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                             startActivity(intent);

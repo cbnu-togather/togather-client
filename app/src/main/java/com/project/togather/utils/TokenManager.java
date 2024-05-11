@@ -31,18 +31,16 @@ public class TokenManager {
     }
 
     public void saveUserInfo(JSONObject jsonObject) {
-        String userId = jsonObject.optString("_id");
-        String email = jsonObject.optString("email");
-        String username = jsonObject.optString("username");
-        String role = jsonObject.optString("role");
-        int point = jsonObject.optInt("point");
+        String userId = jsonObject.optString("id");
+        String phone = jsonObject.optString("phone");
+        String username = jsonObject.optString("name");
+        String photo = jsonObject.optString("photo");
 
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("userId`", userId);
-        editor.putString("email", email);
-        editor.putString("username", username);
-        editor.putString("role", role);
-        editor.putInt("point", point);
+        editor.putString("id", userId);
+        editor.putString("phone", phone);
+        editor.putString("name", username);
+        editor.putString("photo", photo);
         editor.apply();
     }
 
@@ -51,29 +49,27 @@ public class TokenManager {
         // 토큰 제거
         editor.remove("JWT_TOKEN");
         // 사용자 정보 제거
-//        editor.remove("userId");
-//        editor.remove("email");
-//        editor.remove("username");
-//        editor.remove("role");
-//        editor.remove("point");
+        editor.remove("id");
+        editor.remove("phone");
+        editor.remove("name");
+        editor.remove("photo");
         editor.apply();
     }
 
     public String getUserId() {
-        return prefs.getString("userId", null);
+        return prefs.getString("id", null);
     }
 
-    public String getEmail() {
-        return prefs.getString("email", null);
+    public String getPhone() {
+        return prefs.getString("phone", null);
     }
 
     public String getUsername() {
-        return prefs.getString("username", null);
+        return prefs.getString("name", null);
     }
 
-    public String getRole() {
-        return prefs.getString("role", null);
+    public String getPhoto() {
+        return prefs.getString("photo", null);
     }
 
-    public int getPoint() { return prefs.getInt("point", 0); }
 }
