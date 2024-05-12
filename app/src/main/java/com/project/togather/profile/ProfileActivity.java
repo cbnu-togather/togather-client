@@ -64,26 +64,6 @@ public class ProfileActivity extends AppCompatActivity {
         retrofitService = new RetrofitService(tokenManager);
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
-        // 토큰 값이 없다면 메인 액티비티로 이동
-        if (tokenManager.getToken() == null) {
-            startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-            finish();
-        }
-
-        // 액티비티 생성 시 내 유저 이름을 표시
-        if (tokenManager.getUsername() != null) {
-            binding.userNameTextView.setText(tokenManager.getUsername());
-        }
-
-        // 액티비티 생성 시 내 프로필 사진을 표시
-        if (tokenManager.getPhoto() != null) {
-            Glide.with(this)
-                    .load(tokenManager.getPhoto())
-                    .placeholder(R.drawable.one_person_logo)
-                    .error(R.drawable.one_person_logo)
-                    .into(binding.userProfileImageRoundedImageView);
-        }
-
         onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -265,5 +245,26 @@ public class ProfileActivity extends AppCompatActivity {
                 new ToastWarning(getResources().getString(R.string.toast_server_error), ProfileActivity.this);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+            finish();
+        }
+
+        // 내 유저 이름을 표시
+        binding.userNameTextView.setText(tokenManager.getUsername());
+
+        // 내 프로필 사진을 표시
+        Glide.with(this)
+                .load(tokenManager.getPhoto())
+                .placeholder(R.drawable.one_person_logo)
+                .error(R.drawable.one_person_logo)
+                .into(binding.userProfileImageRoundedImageView);
     }
 }
