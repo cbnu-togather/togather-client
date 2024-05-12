@@ -38,5 +38,7 @@ public interface UserAPI {
             @Query("name") String name,
             @Part @Nullable MultipartBody.Part img
             );
+    @POST("/user/update")
+    Call<ResponseBody> updateUserProfileWithoutImg(@Query("name") String name);
 
 }

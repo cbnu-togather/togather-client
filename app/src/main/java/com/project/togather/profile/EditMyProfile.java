@@ -175,7 +175,7 @@ public class EditMyProfile extends AppCompatActivity {
 
             } else {
                 // 유저 이름만 변경하는 경우
-                Call<ResponseBody> call = userAPI.updateUserProfile(userName, null);
+                Call<ResponseBody> call = userAPI.updateUserProfileWithoutImg(userName);
                 call.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
