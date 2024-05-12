@@ -163,7 +163,7 @@ public class EditMyProfile extends AppCompatActivity {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.isSuccessful()) {
-                            new ToastSuccess("회원정보 수정 완료", EditMyProfile.this);
+                            new ToastSuccess("정보가 수정되었어요", EditMyProfile.this);
                             if (tokenManager.getToken() != null) {
                                 getUserInfo();
                             }
