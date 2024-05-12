@@ -81,22 +81,8 @@ public class EditMyProfile extends AppCompatActivity {
         retrofitService = new RetrofitService(tokenManager);
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
-        // 토큰 값이 없다면 메인 액티비티로 이동
-        if (tokenManager.getToken() == null) {
-            startActivity(new Intent(EditMyProfile.this, MainActivity.class));
-            finish();
-        }
+        getUserInfo();
 
-        if (tokenManager.getUsername() != null) {
-            binding.usernameEditText.setText(tokenManager.getUsername());
-        }
-        if (tokenManager.getPhoto() != null) {
-            Glide.with(this)
-                    .load(tokenManager.getPhoto())
-                    .placeholder(R.drawable.one_person_logo)  // 로딩 중 표시할 이미지
-                    .error(R.drawable.one_person_logo)  // 에러 발생 시 표시할 이미지
-                    .into(binding.userProfileImageRoundedImageView);  // ImageView에 이미지 설정
-        }
         setupListeners();
     }
 
@@ -111,7 +97,19 @@ public class EditMyProfile extends AppCompatActivity {
                         String responseBodyString = response.body().string();
                         JSONObject jsonObject = new JSONObject(responseBodyString);
 
-                        tokenManager.saveUserInfo(jsonObject);
+                        String userName = jsonObject.getString("name");
+                        String photo = jsonObject.getString("photo");
+
+                        // 내 유저 이름을 표시
+                        binding.usernameEditText.setText(userName);
+
+                        // 내 프로필 사진을 표시
+                        Glide.with(EditMyProfile.this)
+                                .load(photo)
+                                .placeholder(R.drawable.one_person_logo)
+                                .error(R.drawable.one_person_logo)
+                                .into(binding.userProfileImageRoundedImageView);
+
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
@@ -120,7 +118,7 @@ public class EditMyProfile extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-
+                new ToastWarning(getResources().getString(R.string.toast_server_error), EditMyProfile.this);
             }
         });
     }
@@ -164,9 +162,6 @@ public class EditMyProfile extends AppCompatActivity {
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.isSuccessful()) {
                             new ToastSuccess("정보가 수정되었어요", EditMyProfile.this);
-                            if (tokenManager.getToken() != null) {
-                                getUserInfo();
-                            }
                             finish();
                         }
                     }
@@ -262,5 +257,16 @@ public class EditMyProfile extends AppCompatActivity {
         binding.editMyProfileCompleteButton.setTextColor(ContextCompat.getColor(this, isValid ? R.color.text_color : R.color.gray_text));
         binding.usernameEditTextHelperTextView.setVisibility(isValid ? View.GONE : View.VISIBLE);
         binding.usernameEditTextHelperTextView.setText(!isValid && input.length() < 2 ? "닉네임은 2자 이상 입력해 주세요." : "닉네임은 띄어쓰기 없이 한글, 영문, 숫자만 가능해요.");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(EditMyProfile.this, MainActivity.class));
+            finish();
+        }
     }
 }

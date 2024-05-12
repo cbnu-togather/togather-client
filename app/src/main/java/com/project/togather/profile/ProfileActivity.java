@@ -36,6 +36,12 @@ import com.project.togather.profile.myRecruitmentPartyPost.MyRecruitmentPartyPos
 import com.project.togather.user.SignUpActivity;
 import com.project.togather.utils.TokenManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -247,6 +253,43 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    // 유저 정보 조회 메서드
+    private void getUserInfo() {
+        Call<ResponseBody> call = userAPI.getUserInfo();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseBodyString = response.body().string();
+                        JSONObject jsonObject = new JSONObject(responseBodyString);
+
+                        String userName = jsonObject.getString("name");
+                        String photo = jsonObject.getString("photo");
+
+                        // 내 유저 이름을 표시
+                        binding.userNameTextView.setText(userName);
+
+                        // 내 프로필 사진을 표시
+                        Glide.with(ProfileActivity.this)
+                                .load(photo)
+                                .placeholder(R.drawable.one_person_logo)
+                                .error(R.drawable.one_person_logo)
+                                .into(binding.userProfileImageRoundedImageView);
+
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), ProfileActivity.this);
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -256,15 +299,7 @@ public class ProfileActivity extends AppCompatActivity {
             startActivity(new Intent(ProfileActivity.this, MainActivity.class));
             finish();
         }
+        getUserInfo();
 
-        // 내 유저 이름을 표시
-        binding.userNameTextView.setText(tokenManager.getUsername());
-
-        // 내 프로필 사진을 표시
-        Glide.with(this)
-                .load(tokenManager.getPhoto())
-                .placeholder(R.drawable.one_person_logo)
-                .error(R.drawable.one_person_logo)
-                .into(binding.userProfileImageRoundedImageView);
     }
 }
