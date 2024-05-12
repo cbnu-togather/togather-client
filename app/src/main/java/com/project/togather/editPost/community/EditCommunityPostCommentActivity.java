@@ -20,15 +20,18 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityEditCommunityPostCommentBinding;
 import com.project.togather.toast.ToastSuccess;
+import com.project.togather.utils.TokenManager;
 
 import java.io.InputStream;
 
 public class EditCommunityPostCommentActivity extends AppCompatActivity {
 
     private ActivityEditCommunityPostCommentBinding binding;
+    private TokenManager tokenManager;
 
     private static Dialog askCancelWriteComment_dialog;
 
@@ -41,6 +44,14 @@ public class EditCommunityPostCommentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityEditCommunityPostCommentBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(EditCommunityPostCommentActivity.this, MainActivity.class));
+            finish();
+        }
 
         selectedImageUri = Uri.parse("");
 

@@ -27,12 +27,14 @@ import com.project.togather.community.CommunityPostDetailActivity;
 import com.project.togather.databinding.ActivityCreateCommunityPostBinding;
 import com.project.togather.toast.ToastSuccess;
 import com.project.togather.toast.ToastWarning;
+import com.project.togather.utils.TokenManager;
 
 import java.io.InputStream;
 
 public class CreateCommunityPostActivity extends AppCompatActivity {
 
     private ActivityCreateCommunityPostBinding binding;
+    private TokenManager tokenManager;
 
     private BottomSheetBehavior selectCategoryBottomSheetBehavior;
 
@@ -45,6 +47,14 @@ public class CreateCommunityPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityCreateCommunityPostBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(CreateCommunityPostActivity.this, MainActivity.class));
+            finish();
+        }
 
         selectedImageUri = Uri.parse("");
 

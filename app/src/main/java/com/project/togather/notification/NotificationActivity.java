@@ -29,16 +29,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.chat.ChatDetailActivity;
 import com.project.togather.databinding.ActivityNotificationBinding;
 import com.project.togather.toast.ToastSuccess;
+import com.project.togather.utils.TokenManager;
 
 import java.util.ArrayList;
 
 public class NotificationActivity extends AppCompatActivity {
 
     private ActivityNotificationBinding binding;
+    private TokenManager tokenManager;
 
     private RecyclerViewAdapter adapter;
 
@@ -49,6 +52,14 @@ public class NotificationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityNotificationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(NotificationActivity.this, MainActivity.class));
+            finish();
+        }
 
         // 알림 권한 요청
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

@@ -78,16 +78,17 @@
                             android:layout_marginEnd="0dp"
                             android:layout_marginBottom="0dp"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/user_profile_image_temp_image_1"
+                            android:src="@drawable/one_person_logo"
                             app:riv_oval="true" />
 
                         <TextView
+                            android:id="@+id/userName_textView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:layout_marginLeft="12.5dp"
                             android:layout_toRightOf="@+id/userProfileImage_roundedImageView"
-                            android:text="김감자"
+                            android:text=""
                             android:textSize="20sp" />
                     </RelativeLayout>
 

@@ -23,16 +23,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityEditRecruitmentPostBinding;
 import com.project.togather.home.RecruitmentPostDetailActivity;
 import com.project.togather.toast.ToastWarning;
+import com.project.togather.utils.TokenManager;
 
 import java.io.InputStream;
 
 public class EditRecruitmentPostActivity extends AppCompatActivity {
 
     private ActivityEditRecruitmentPostBinding binding;
+    private TokenManager tokenManager;
 
     private BottomSheetBehavior selectFoodCategoryBottomSheetBehavior;
 
@@ -49,6 +52,14 @@ public class EditRecruitmentPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityEditRecruitmentPostBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(EditRecruitmentPostActivity.this, MainActivity.class));
+            finish();
+        }
 
         // 전역 데이터 초기화
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);

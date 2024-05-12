@@ -24,19 +24,21 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.community.CommunityPostDetailActivity;
 import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.databinding.ActivityCommunityPostDetailBinding;
 import com.project.togather.databinding.ActivityEditCommunityPostBinding;
 import com.project.togather.toast.ToastWarning;
+import com.project.togather.utils.TokenManager;
 
 import java.io.InputStream;
 
 public class EditCommunityPostActivity extends AppCompatActivity {
 
     private ActivityEditCommunityPostBinding binding;
-
+    private TokenManager tokenManager;
     private BottomSheetBehavior selectCategoryBottomSheetBehavior;
 
     private static final int REQUEST_GALLERY = 2;
@@ -48,6 +50,14 @@ public class EditCommunityPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityEditCommunityPostBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(EditCommunityPostActivity.this, MainActivity.class));
+            finish();
+        }
 
         // X 이미지뷰 클릭 시 현재 액티비티 종료
         binding.closeActivityImageView.setOnClickListener(view -> finish());

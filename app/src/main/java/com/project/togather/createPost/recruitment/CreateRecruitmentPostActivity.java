@@ -21,18 +21,21 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.community.CommunityPostDetailActivity;
 import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.databinding.ActivityCreateRecruitmentPostBinding;
 import com.project.togather.home.RecruitmentPostDetailActivity;
 import com.project.togather.toast.ToastWarning;
+import com.project.togather.utils.TokenManager;
 
 import java.io.InputStream;
 
 public class CreateRecruitmentPostActivity extends AppCompatActivity {
 
     private ActivityCreateRecruitmentPostBinding binding;
+    private TokenManager tokenManager;
 
     private BottomSheetBehavior selectFoodCategoryBottomSheetBehavior;
 
@@ -49,6 +52,14 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityCreateRecruitmentPostBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(CreateRecruitmentPostActivity.this, MainActivity.class));
+            finish();
+        }
 
         selectedImageUri = Uri.parse("");
 

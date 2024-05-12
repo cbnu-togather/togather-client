@@ -31,11 +31,13 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityCommunityPostDetailBinding;
 import com.project.togather.editPost.community.EditCommunityPostActivity;
 import com.project.togather.editPost.community.EditCommunityPostCommentActivity;
 import com.project.togather.editPost.recruitment.EditRecruitmentPostActivity;
+import com.project.togather.utils.TokenManager;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -45,6 +47,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
     private static ActivityCommunityPostDetailBinding binding;
 
     private static RecyclerViewAdapter adapter;
+    private TokenManager tokenManager;
 
     private BottomSheetBehavior selectPostManagementBottomSheetBehavior;
     private static BottomSheetBehavior selectCommentManagementBottomSheetBehavior;
@@ -63,6 +66,14 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityCommunityPostDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(CommunityPostDetailActivity.this, MainActivity.class));
+            finish();
+        }
 
         selectedImageUri = Uri.parse("");
 

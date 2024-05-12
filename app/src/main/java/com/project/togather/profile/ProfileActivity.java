@@ -14,7 +14,9 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.project.togather.MainActivity;
 import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.R;
 import com.project.togather.chat.ChatActivity;
@@ -22,12 +24,27 @@ import com.project.togather.community.CommunityActivity;
 import com.project.togather.createPost.recruitment.CreateRecruitmentPostActivity;
 import com.project.togather.databinding.ActivityProfileBinding;
 import com.project.togather.home.HomeActivity;
+import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastSuccess;
+import com.project.togather.toast.ToastWarning;
 import com.project.togather.user.HandleAndStoreUserInformationPoliciesActivity;
 import com.project.togather.user.LoginActivity;
 import com.project.togather.profile.likedPost.LikedPostListActivity;
 import com.project.togather.profile.myCommunityPost.MyCommunityPostListActivity;
 import com.project.togather.profile.myRecruitmentPartyPost.MyRecruitmentPartyPostListActivity;
+import com.project.togather.user.SignUpActivity;
+import com.project.togather.utils.TokenManager;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -39,12 +56,19 @@ public class ProfileActivity extends AppCompatActivity {
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
 
     private BottomSheetBehavior selectCreatePostTypeBottomSheetBehavior;
+    private UserAPI userAPI;
+    private TokenManager tokenManager;
+    private RetrofitService retrofitService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityProfileBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+        retrofitService = new RetrofitService(tokenManager);
+        userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
         onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -182,8 +206,10 @@ public class ProfileActivity extends AppCompatActivity {
         // (확인) 버튼
         askLogout_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
             askLogout_dialog.dismiss(); // 다이얼로그 닫기
+            tokenManager.logout();
             new ToastSuccess("로그아웃 되었어요", ProfileActivity.this);
-            startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
+            startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+            finish();
         });
     }
 
@@ -202,8 +228,78 @@ public class ProfileActivity extends AppCompatActivity {
         // (확인) 버튼
         askUnsubscribe_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
             askUnsubscribe_dialog.dismiss(); // 다이얼로그 닫기
-            new ToastSuccess("회원탈퇴를 완료했어요", ProfileActivity.this);
-            startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
+            performUnsubscribe();
         });
+    }
+
+    // 회원 탈퇴 메서드
+    public void performUnsubscribe() {
+        Call<Void> call = userAPI.deleteUser();
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    new ToastSuccess("회원탈퇴를 완료했어요", ProfileActivity.this);
+                    tokenManager.logout();
+                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), ProfileActivity.this);
+            }
+        });
+    }
+
+    // 유저 정보 조회 메서드
+    private void getUserInfo() {
+        Call<ResponseBody> call = userAPI.getUserInfo();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseBodyString = response.body().string();
+                        JSONObject jsonObject = new JSONObject(responseBodyString);
+
+                        String userName = jsonObject.getString("name");
+                        String photo = jsonObject.getString("photo");
+
+                        // 내 유저 이름을 표시
+                        binding.userNameTextView.setText(userName);
+
+                        // 내 프로필 사진을 표시
+                        Glide.with(ProfileActivity.this)
+                                .load(photo)
+                                .placeholder(R.drawable.one_person_logo)
+                                .error(R.drawable.one_person_logo)
+                                .into(binding.userProfileImageRoundedImageView);
+
+                    } catch (IOException | JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), ProfileActivity.this);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+            finish();
+        }
+        getUserInfo();
+
     }
 }

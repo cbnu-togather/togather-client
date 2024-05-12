@@ -35,8 +35,10 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 
 import android.Manifest;
 
+import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityChatDetailBinding;
+import com.project.togather.utils.TokenManager;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.cardview.widget.CardView;
@@ -58,6 +60,7 @@ public class ChatDetailActivity extends AppCompatActivity {
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
 
     private RecyclerViewAdapter adapter;
+    private TokenManager tokenManager;
 
     private BottomSheetBehavior moreMenuBottomSheetBehavior;
     private BottomSheetBehavior addMenuBottomSheetBehavior;
@@ -74,6 +77,14 @@ public class ChatDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityChatDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        tokenManager = TokenManager.getInstance(this);
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(ChatDetailActivity.this, MainActivity.class));
+            finish();
+        }
 
         /** (로그아웃 확인) 다이얼로그 변수 초기화 및 설정 */
         askLeaveChatRoom_dialog = new Dialog(ChatDetailActivity.this);  // Dialog 초기화
