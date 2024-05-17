@@ -22,12 +22,26 @@ public interface RecruitmentAPI {
     @Multipart
     @POST("/groupbuy")
     Call<ResponseBody> createRecruitmentPost(
-            @Query("groupBuyInfo") String groupBuyInfo,
+            @Query("title") String title,
+            @Query("content") String content,
+            @Query("latitude") float latitude,
+            @Query("longitude") float longitude,
+            @Query("headCount") int headCount,
+            @Query("address") String address,
+            @Query("spotName") String spotName,
+            @Query("category") String category,
             @Part @Nullable MultipartBody.Part img
     );
     @POST("/groupbuy")
     Call<ResponseBody> createRecruitmentPostWithoutImg(
-            @Query("groupBuyInfo") String groupBuyInfoJson
+            @Query("title") String title,
+            @Query("content") String content,
+            @Query("latitude") float latitude,
+            @Query("longitude") float longitude,
+            @Query("headCount") int headCount,
+            @Query("address") String address,
+            @Query("spotName") String spotName,
+            @Query("category") String category
     );
 
 }
