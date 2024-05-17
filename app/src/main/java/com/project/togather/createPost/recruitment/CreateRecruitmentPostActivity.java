@@ -507,8 +507,6 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
         String spotName = sp_addSpotName;
         String category = binding.postCategoryTextView.getText().toString();
 
-        Log.d("test", "lati: " + latitude + ", long: " + longitude + ", " + address + ", " +spotName + " dong : " + sp_extractedDong + "uri : " + selectedImageUri);
-
         if (!selectedImageUri.toString().isEmpty()) {
             File file = uriToFile(selectedImageUri, CreateRecruitmentPostActivity.this);
 
@@ -528,12 +526,6 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable throwable) {
                     // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
-                    // 요청한 URL 가져오기
-                    String requestedUrl = call.request().url().toString();
-
-                    // 로그를 사용하여 URL 출력
-                    Log.e("Retrofit Error", "Requested URL: " + requestedUrl);
-
                     new ToastWarning(getResources().getString(R.string.toast_server_error), CreateRecruitmentPostActivity.this);
                 }
             });
@@ -552,9 +544,6 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable throwable) {
                     // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
-
-                    // 오류 원인 출력
-                    Log.e("Retrofit Error", "Error Message: " + throwable.getMessage());
                     new ToastWarning(getResources().getString(R.string.toast_server_error), CreateRecruitmentPostActivity.this);
                 }
             });
