@@ -21,22 +21,43 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.gson.Gson;
 import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.community.CommunityPostDetailActivity;
 import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.databinding.ActivityCreateRecruitmentPostBinding;
 import com.project.togather.home.RecruitmentPostDetailActivity;
+import com.project.togather.profile.EditMyProfile;
+import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.RecruitmentAPI;
+import com.project.togather.toast.ToastSuccess;
 import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.UUID;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CreateRecruitmentPostActivity extends AppCompatActivity {
 
     private ActivityCreateRecruitmentPostBinding binding;
     private TokenManager tokenManager;
-
+    private RecruitmentAPI recruitmentAPI;
+    private RetrofitService retrofitService;
     private BottomSheetBehavior selectFoodCategoryBottomSheetBehavior;
 
     private static final int REQUEST_GALLERY = 2;
@@ -54,12 +75,8 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         tokenManager = TokenManager.getInstance(this);
-
-        // 토큰 값이 없다면 메인 액티비티로 이동
-        if (tokenManager.getToken() == null) {
-            startActivity(new Intent(CreateRecruitmentPostActivity.this, MainActivity.class));
-            finish();
-        }
+        retrofitService = new RetrofitService(tokenManager);
+        recruitmentAPI = retrofitService.getRetrofit().create(RecruitmentAPI.class);
 
         selectedImageUri = Uri.parse("");
 
@@ -379,10 +396,15 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
                 return;
             }
 
+            // API 요청 부분
+            performPost(recruitmentNum[0]);
+
             startActivity(new Intent(CreateRecruitmentPostActivity.this, RecruitmentPostDetailActivity.class));
             finish();
         });
     }
+
+
 
     void clearCategoryStyle() {
         ((Button) findViewById(R.id.chickenCategory_button)).setTextColor(getResources().getColor(R.color.text_color));
@@ -428,6 +450,7 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
     }
 
     private void updateImage(Uri imageUri) {
+        selectedImageUri = imageUri;
         try (InputStream inputStream = getContentResolver().openInputStream(imageUri)) {
             Glide.with(binding.postThumbnailImageView)
                     .load(imageUri) // 이미지 URL 가져오기
@@ -450,17 +473,94 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
             switch (requestCode) {
                 case REQUEST_GALLERY:
                     // 갤러리에서 이미지를 선택했을 때의 처리
-                    Uri selectedImageUri = data.getData();
-                    updateImage(selectedImageUri);
+                    Uri newSelectedImageUri = data.getData();
+                    updateImage(newSelectedImageUri);
                     break;
             }
         }
+    }
+
+    // Uri를 실제 파일로 변환하는 메서드
+    private File uriToFile(Uri uri, Context context) {
+        String uniqueFileName = "upload_" + UUID.randomUUID().toString() + ".jpg";
+        File file = new File(context.getCacheDir(), uniqueFileName);
+        try (InputStream inputStream = context.getContentResolver().openInputStream(uri);
+             OutputStream outputStream = new FileOutputStream(file)) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, len);
+            }
+        } catch (Exception e) {
+            Log.e("File Conversion", "Error converting Uri to File", e);
+        }
+        return file;
+    }
+
+    private void performPost(int recruitmentNum) {
+        String title = binding.postTitleEditText.getText().toString();
+        String content = binding.contentEditText.getText().toString();
+        float latitude = sp_selectedLatitude;
+        float longitude = sp_selectedLongitude;
+        int headCount = recruitmentNum;
+        String address = (sp_extractedDong.isEmpty() ? sp_selectedAddress : sp_extractedDong);
+        String spotName = sp_addSpotName;
+        String category = binding.postCategoryTextView.getText().toString();
+
+        if (!selectedImageUri.toString().isEmpty()) {
+            File file = uriToFile(selectedImageUri, CreateRecruitmentPostActivity.this);
+
+            RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+            MultipartBody.Part body =  MultipartBody.Part.createFormData("img", file.getName(), requestFile);
+
+            Call<ResponseBody> call = recruitmentAPI.createRecruitmentPost(title, content, latitude,
+                    longitude, headCount, address, spotName, category, body);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        new ToastSuccess("작성이 완료되었어요", CreateRecruitmentPostActivity.this);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
+                    new ToastWarning(getResources().getString(R.string.toast_server_error), CreateRecruitmentPostActivity.this);
+                }
+            });
+
+        } else {
+            Call<ResponseBody> call = recruitmentAPI.createRecruitmentPostWithoutImg(title, content, latitude,
+                    longitude, headCount, address, spotName, category);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        new ToastSuccess("작성이 완료되었어요", CreateRecruitmentPostActivity.this);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
+                    new ToastWarning(getResources().getString(R.string.toast_server_error), CreateRecruitmentPostActivity.this);
+                }
+            });
+        }
+
     }
 
     // 이 액티비티로 다시 돌아왔을 때 실행되는 메소드
     @Override
     public void onResume() {
         super.onResume();
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(CreateRecruitmentPostActivity.this, MainActivity.class));
+            finish();
+        }
 
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);
         sp_extractedDong = sharedPreferences.getString("extractedDong", "");
