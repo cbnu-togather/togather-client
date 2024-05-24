@@ -3,15 +3,26 @@ package com.project.togather.home;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.location.Location;
+import android.location.LocationManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -24,6 +35,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.project.togather.GetMyLocation;
 import com.project.togather.MainActivity;
 import com.project.togather.chat.ChatActivity;
 import com.project.togather.community.CommunityActivity;
@@ -33,18 +47,46 @@ import com.project.togather.databinding.ActivityHomeBinding;
 import com.project.togather.notification.NotificationActivity;
 import com.project.togather.profile.ProfileActivity;
 import com.project.togather.R;
+import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.RecruitmentAPI;
+import com.project.togather.toast.ToastWarning;
+import com.project.togather.user.LoginActivity;
 import com.project.togather.utils.TokenManager;
 
+import net.daum.mf.map.api.MapPoint;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity {
 
     private ActivityHomeBinding binding;
-
+    private LocationManager locationManager;
     private RecyclerViewAdapter adapter;
     private TokenManager tokenManager;
+    private RecruitmentAPI recruitmentAPI;
+    private RetrofitService retrofitService;
+
+    /**
+     * 위치 권한 요청 코드의 상숫값
+     */
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1981;
+    private static final int REQUEST_CODE_LOCATION_SETTINGS = 2981;
+    private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+
 
     private ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
+
+    private static double currLatitude, currLongitude;
 
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
 
@@ -58,12 +100,26 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         tokenManager = TokenManager.getInstance(this);
+        retrofitService = new RetrofitService(tokenManager);
+        recruitmentAPI = retrofitService.getRetrofit().create(RecruitmentAPI.class);
 
-        // 토큰 값이 없다면 메인 액티비티로 이동
-        if (tokenManager.getToken() == null) {
-            startActivity(new Intent(HomeActivity.this, MainActivity.class));
-            finish();
+        /** 앱 초기 실행 시 위치 권한 동의 여부에 따라서
+         * (권한 획득 요청) 및 (현재 위치 표시)를 수행 */
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions();
+            return;
         }
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        /** 사용자의 현재 위치 */
+        GetMyLocation getMyLocation = new GetMyLocation(this, this);
+        Location userLocation = getMyLocation.getMyLocation();
+        if (userLocation != null) {
+            currLatitude = userLocation.getLatitude(); // 소프트웨어학부 건물 위도, 경도
+            currLongitude = userLocation.getLongitude();
+            System.out.println("////////////현재 내 위치값 : " + currLatitude + "," + currLongitude);
+        }
+        Log.d("위치", "lat: " + currLatitude + " lon : " + currLongitude);
 
         // Add callback listener
         onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {
@@ -640,9 +696,9 @@ public class HomeActivity extends AppCompatActivity {
         postInfoItems.clear();
 
         // 새 데이터 추가 (하드 코딩) : 새로고침 했더니 게시글이 두 개만 남았다는 가정
-        postInfoItems.add(new PostInfoItem("https://cdn.mkhealth.co.kr/news/photo/202306/64253_68458_1153.png", "개신동 교촌치킨 파티 구함", "chicken", 320, 3, 2, false, 1));
-        postInfoItems.add(new PostInfoItem("https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 160, 3, 3, false, 0));
-
+//        postInfoItems.add(new PostInfoItem("https://cdn.mkhealth.co.kr/news/photo/202306/64253_68458_1153.png", "개신동 교촌치킨 파티 구함", "chicken", 320, 3, 2, false, 1));
+//        postInfoItems.add(new PostInfoItem("https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 160, 3, 3, false, 0));
+        loadData();
         // 어댑터에 변경된 데이터 리스트를 설정
         adapter.setPostInfoList(postInfoItems);
 
@@ -657,18 +713,126 @@ public class HomeActivity extends AppCompatActivity {
     // 초기 데이터 로딩 함수
     private void loadData() {
         // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-        postInfoItems.add(new PostInfoItem("https://cdn.mkhealth.co.kr/news/photo/202306/64253_68458_1153.png", "개신동 교촌치킨 파티 구함", "chicken", 320, 3, 2, false, 1));
-        postInfoItems.add(new PostInfoItem("https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 160, 3, 3, false, 0));
-        postInfoItems.add(new PostInfoItem("https://mblogthumb-phinf.pstatic.net/MjAyMjA3MjhfMTY5/MDAxNjU4OTkyODg0NTA3.z8WzaZAOKBvo4JkSm9lTMOTiNsKEUNHZJYRB-DPZCdEg.0WdqohiJPsSM5pXWYl-HvTE3JUVlUPe7LT-U6wvjUQwg.JPEG.duwlsrjdwb/KakaoTalk_20220728_151114228_10.jpg?type=w800", "사창동 우리집 닭강정 파티!!", "chicken", 500, 1, 0, false, 0));
-        postInfoItems.add(new PostInfoItem("https://image.kmib.co.kr/online_image/2024/0131/2024013114261427977_1706678775_0019120339.jpg", "맘스터치 배달 파티 999~~", "hamburger", 600, 3, 3, true, 2));
-        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6LTXILpqDk2KY425YAGSIAdF84ogxh-OFRz2P51EPvA&s", "행컵 그룹 구해용", "korean_food", 550, 2, 1, false, 0));
-        postInfoItems.add(new PostInfoItem("", "짚신 스시 & 롤 배달 구해요", "japanese_food", 555, 1, 0, true, 1));
-        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRj0BYs-iE7kn3fmdg0eVBxtqO89kwVRBFe_3Y8uZrgMA&s", "대장집 파티 구", "chinese_food", 560, 2, 1, false, 0));
-        postInfoItems.add(new PostInfoItem("https://d12zq4w4guyljn.cloudfront.net/750_750_20201122041810_photo1_5831aaf849cf.jpg", "파브리카 배달 구해용", "western_food", 700, 2, 2, false, 1));
-        postInfoItems.add(new PostInfoItem("https://media-cdn.tripadvisor.com/media/photo-s/12/31/92/d9/1519804025288-largejpg.jpg", "신전 떡볶이 구해유", "snack", 900, 3, 2, false, 2));
-        postInfoItems.add(new PostInfoItem("https://d12zq4w4guyljn.cloudfront.net/750_750_20230517093845_photo1_edd2f5913a1b.jpg", "메가커피 999", "cafe_and_dessert", 1000, 1, 0, false, 2));
-        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-1FF9Hpe-_ERtrBHcUDeeckMOeOzm6IWylD_mJJlJEQ&s", "컴포즈 배달 구해요!!!", "cafe_and_dessert", 1500, 1, 1, false, 1));
 
-        adapter.setPostInfoList(postInfoItems);
+        Call<ResponseBody> call = recruitmentAPI.getRecruitmentPostList(33, 35);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String responseBody = response.body().string();
+                        Log.d("responseBody", "onResponse: " + responseBody);
+                        Type listType = new TypeToken<ArrayList<PostInfoResponse>>(){}.getType();
+                        ArrayList<PostInfoResponse> postList = new Gson().fromJson(responseBody, listType);
+
+                        Log.d("postlist", "onResponse: " + postList);
+
+                        LocalDateTime now = LocalDateTime.now();
+
+                        for (PostInfoResponse post : postList) {
+                            LocalDateTime createdAt = LocalDateTime.parse(post.getCreatedAt(), DateTimeFormatter.ISO_DATE_TIME);
+                            long elapsedTime = Duration.between(now, createdAt).getSeconds();
+
+                            PostInfoItem item = new PostInfoItem(
+                                    post.getImg(),
+                                    post.getTitle(),
+                                    post.getCategory(),
+                                    elapsedTime,
+                                    post.getHeadCount(),
+                                    post.getCurrentCount(),
+                                    post.isLiked(),
+                                    post.getLikes()
+                            );
+
+                            postInfoItems.add(item);
+
+                        }
+                        adapter.setPostInfoList(postInfoItems);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), HomeActivity.this);
+            }
+        });
+
+//        postInfoItems.add(new PostInfoItem("https://cdn.mkhealth.co.kr/news/photo/202306/64253_68458_1153.png", "개신동 교촌치킨 파티 구함", "chicken", 320, 3, 2, false, 1));
+//        postInfoItems.add(new PostInfoItem("https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 160, 3, 3, false, 0));
+//        postInfoItems.add(new PostInfoItem("https://mblogthumb-phinf.pstatic.net/MjAyMjA3MjhfMTY5/MDAxNjU4OTkyODg0NTA3.z8WzaZAOKBvo4JkSm9lTMOTiNsKEUNHZJYRB-DPZCdEg.0WdqohiJPsSM5pXWYl-HvTE3JUVlUPe7LT-U6wvjUQwg.JPEG.duwlsrjdwb/KakaoTalk_20220728_151114228_10.jpg?type=w800", "사창동 우리집 닭강정 파티!!", "chicken", 500, 1, 0, false, 0));
+//        postInfoItems.add(new PostInfoItem("https://image.kmib.co.kr/online_image/2024/0131/2024013114261427977_1706678775_0019120339.jpg", "맘스터치 배달 파티 999~~", "hamburger", 600, 3, 3, true, 2));
+//        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6LTXILpqDk2KY425YAGSIAdF84ogxh-OFRz2P51EPvA&s", "행컵 그룹 구해용", "korean_food", 550, 2, 1, false, 0));
+//        postInfoItems.add(new PostInfoItem("", "짚신 스시 & 롤 배달 구해요", "japanese_food", 555, 1, 0, true, 1));
+//        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRj0BYs-iE7kn3fmdg0eVBxtqO89kwVRBFe_3Y8uZrgMA&s", "대장집 파티 구", "chinese_food", 560, 2, 1, false, 0));
+//        postInfoItems.add(new PostInfoItem("https://d12zq4w4guyljn.cloudfront.net/750_750_20201122041810_photo1_5831aaf849cf.jpg", "파브리카 배달 구해용", "western_food", 700, 2, 2, false, 1));
+//        postInfoItems.add(new PostInfoItem("https://media-cdn.tripadvisor.com/media/photo-s/12/31/92/d9/1519804025288-largejpg.jpg", "신전 떡볶이 구해유", "snack", 900, 3, 2, false, 2));
+//        postInfoItems.add(new PostInfoItem("https://d12zq4w4guyljn.cloudfront.net/750_750_20230517093845_photo1_edd2f5913a1b.jpg", "메가커피 999", "cafe_and_dessert", 1000, 1, 0, false, 2));
+//        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-1FF9Hpe-_ERtrBHcUDeeckMOeOzm6IWylD_mJJlJEQ&s", "컴포즈 배달 구해요!!!", "cafe_and_dessert", 1500, 1, 1, false, 1));
+//
+//        adapter.setPostInfoList(postInfoItems);
+    }
+
+    private void requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            requestPermissions(PERMISSIONS, REQUEST_PERMISSIONS_REQUEST_CODE);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // Permission denied.
+                for (String permission : permissions) {
+                    if ("android.permission.ACCESS_FINE_LOCATION".equals(permission)) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setMessage("지도 사용을 위해 위치 권한을 허용해 주세요.\n(필수권한)");
+                        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                /** 위치 정보 설정창에서 '설정으로 이동' 클릭 시 */
+                                Intent intent = new Intent();
+                                intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                intent.setData(Uri.fromParts("package", getPackageName(), null));
+                                startActivity(intent);
+                            }
+                        });
+                        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                /** 위치 정보 설정창에서 '취소' 클릭 시 */
+//                                Toast.makeText(MainActivity.this, "Cancel Click", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                            @Override
+                            public void onShow(DialogInterface arg0) {
+                                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.rgb(0, 133, 254));
+                                alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.rgb(123, 123, 123));
+                            }
+                        });
+                        alertDialog.show();
+                    }
+                }
+            }
+        }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // 토큰 값이 없다면 메인 액티비티로 이동
+        if (tokenManager.getToken() == null) {
+            startActivity(new Intent(HomeActivity.this, MainActivity.class));
+            finish();
+        }
+
+
+
+
     }
 }

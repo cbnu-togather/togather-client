@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -34,6 +35,12 @@ public interface RecruitmentAPI {
             @Query("address") String address,
             @Query("spotName") String spotName,
             @Query("category") String category
+    );
+
+    @GET("groupbuy/list")
+    Call<ResponseBody> getRecruitmentPostList(
+            @Query("Latitude") double latitude,
+            @Query("Longitude") double longitude
     );
 
 }
