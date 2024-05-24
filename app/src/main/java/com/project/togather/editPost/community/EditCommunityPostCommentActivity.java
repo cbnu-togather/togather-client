@@ -23,15 +23,25 @@ import com.bumptech.glide.Glide;
 import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityEditCommunityPostCommentBinding;
+import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastSuccess;
+import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
 
 import java.io.InputStream;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class EditCommunityPostCommentActivity extends AppCompatActivity {
 
     private ActivityEditCommunityPostCommentBinding binding;
     private TokenManager tokenManager;
+    private UserAPI userAPI;
+    private RetrofitService retrofitService;
 
     private static Dialog askCancelWriteComment_dialog;
 
@@ -46,12 +56,8 @@ public class EditCommunityPostCommentActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         tokenManager = TokenManager.getInstance(this);
-
-        // 토큰 값이 없다면 메인 액티비티로 이동
-        if (tokenManager.getToken() == null) {
-            startActivity(new Intent(EditCommunityPostCommentActivity.this, MainActivity.class));
-            finish();
-        }
+        retrofitService = new RetrofitService(tokenManager);
+        userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
         selectedImageUri = Uri.parse("");
 
@@ -186,5 +192,29 @@ public class EditCommunityPostCommentActivity extends AppCompatActivity {
             askCancelWriteComment_dialog.dismiss(); // 다이얼로그 닫기
             finish();
         });
+    }
+    // 유저 정보 조회 메서드
+    private void getUserInfo() {
+        Call<ResponseBody> call = userAPI.getUserInfo();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 403) {
+                    startActivity(new Intent(EditCommunityPostCommentActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), EditCommunityPostCommentActivity.this);
+            }
+        });
+    }
+    // 이 액티비티로 다시 돌아왔을 때 실행되는 메소드
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getUserInfo();
     }
 }

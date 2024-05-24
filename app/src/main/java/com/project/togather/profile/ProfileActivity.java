@@ -280,6 +280,9 @@ public class ProfileActivity extends AppCompatActivity {
                     } catch (IOException | JSONException e) {
                         e.printStackTrace();
                     }
+                } else if (response.code() == 403) {
+                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                    finish();
                 }
             }
 
@@ -294,11 +297,6 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // 토큰 값이 없다면 메인 액티비티로 이동
-        if (tokenManager.getToken() == null) {
-            startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-            finish();
-        }
         getUserInfo();
 
     }
