@@ -46,7 +46,7 @@ public class GetMyLocation {
                             1000);
                 }
             }
-//            getMyLocation(); //이건 써도되고 안써도 되지만, 전 권한 승인하면 즉시 위치값 받아오려고 썼습니다!
+            getMyLocation(); //이건 써도되고 안써도 되지만, 전 권한 승인하면 즉시 위치값 받아오려고 썼습니다!
         } else {
             System.out.println("//////////// 권한 요청 안해도 됨");
 

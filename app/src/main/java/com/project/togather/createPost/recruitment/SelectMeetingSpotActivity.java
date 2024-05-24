@@ -169,8 +169,8 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
         GetMyLocation getMyLocation = new GetMyLocation(this, this);
         Location userLocation = getMyLocation.getMyLocation();
         if (userLocation != null) {
-            currLatitude = 36.62565323814696; // 소프트웨어학부 건물 위도, 경도
-            currLongitude = 127.45428323069932;
+            currLatitude = userLocation.getLatitude(); // 소프트웨어학부 건물 위도, 경도
+            currLongitude = userLocation.getLongitude();
             System.out.println("////////////현재 내 위치값 : " + currLatitude + "," + currLongitude);
             currPoint = MapPoint.mapPointWithGeoCoord(currLatitude, currLongitude);
 
