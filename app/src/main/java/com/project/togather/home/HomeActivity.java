@@ -13,6 +13,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
+import android.location.LocationRequest;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,6 +36,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -48,19 +53,30 @@ import com.project.togather.notification.NotificationActivity;
 import com.project.togather.profile.ProfileActivity;
 import com.project.togather.R;
 import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.KakaoAPI;
 import com.project.togather.retrofit.interfaceAPI.RecruitmentAPI;
 import com.project.togather.toast.ToastWarning;
 import com.project.togather.user.LoginActivity;
 import com.project.togather.utils.TokenManager;
 
+import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
+import net.daum.mf.map.api.MapView;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -81,12 +97,50 @@ public class HomeActivity extends AppCompatActivity {
      */
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1981;
     private static final int REQUEST_CODE_LOCATION_SETTINGS = 2981;
+
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
+    /**
+     * Provides access to the Fused Location Provider API.
+     */
+    private FusedLocationProviderClient mFusedLocationClient;
+    /**
+     * Provides access to the Location Settings API.
+     */
+    private SettingsClient mSettingsClient;
+    /**
+     * Stores parameters for requests to the FusedLocationProviderApi.
+     */
+    private LocationRequest mLocationRequest;
+    /**
+     * Callback for Location events.
+     */
+
+    private LocationSettingsRequest mLocationSettingsRequest;
+
+    private static MapView mapView;
+    private static ViewGroup mapViewContainer;
+    private MapPoint currPoint, selectedPoint;
+    private MapPOIItem marker;
+
+    /**
+     * 위치 설정에 대한 객체 변수
+     */
+    private static final int REQUEST_CODE_LOCATION = 2;
+    private static double currLatitude, currLongitude;
+
+    private Context context = this;
+    private Activity activity = this;
+
+    private KakaoAPI kakaoInterface;
+
+
+    String sp_extractedDong, sp_selectedAddress, sp_addSpotName;
+
+    float sp_selectedLatitude, sp_selectedLongitude;
 
     private ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
 
-    private static double currLatitude, currLongitude;
 
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
 
@@ -695,9 +749,6 @@ public class HomeActivity extends AppCompatActivity {
         // 기존 데이터를 비우는 로직 추가
         postInfoItems.clear();
 
-        // 새 데이터 추가 (하드 코딩) : 새로고침 했더니 게시글이 두 개만 남았다는 가정
-//        postInfoItems.add(new PostInfoItem("https://cdn.mkhealth.co.kr/news/photo/202306/64253_68458_1153.png", "개신동 교촌치킨 파티 구함", "chicken", 320, 3, 2, false, 1));
-//        postInfoItems.add(new PostInfoItem("https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 160, 3, 3, false, 0));
         loadData();
         // 어댑터에 변경된 데이터 리스트를 설정
         adapter.setPostInfoList(postInfoItems);
@@ -710,10 +761,8 @@ public class HomeActivity extends AppCompatActivity {
         binding.swipeRefreshLayout.setRefreshing(false);
     }
 
-    // 초기 데이터 로딩 함수
+    // 데이터 로딩 함수
     private void loadData() {
-        // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-
         Call<ResponseBody> call = recruitmentAPI.getRecruitmentPostList(33, 35);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -722,34 +771,43 @@ public class HomeActivity extends AppCompatActivity {
                     try {
                         String responseBody = response.body().string();
                         Log.d("responseBody", "onResponse: " + responseBody);
-                        Type listType = new TypeToken<ArrayList<PostInfoResponse>>(){}.getType();
+                        Type listType = new TypeToken<ArrayList<PostInfoResponse>>() {}.getType();
                         ArrayList<PostInfoResponse> postList = new Gson().fromJson(responseBody, listType);
 
-                        Log.d("postlist", "onResponse: " + postList);
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
+                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
-                        LocalDateTime now = LocalDateTime.now();
+                        // 현재 시간 UTC로 생성
+                        Date now = new Date();
 
                         for (PostInfoResponse post : postList) {
-                            LocalDateTime createdAt = LocalDateTime.parse(post.getCreatedAt(), DateTimeFormatter.ISO_DATE_TIME);
-                            long elapsedTime = Duration.between(now, createdAt).getSeconds();
+                            try {
+                                String createdAtString = post.getCreatedAt().split("\\.")[0];
+                                Date createdAt = sdf.parse(createdAtString);
+                                long elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
 
-                            PostInfoItem item = new PostInfoItem(
-                                    post.getImg(),
-                                    post.getTitle(),
-                                    post.getCategory(),
-                                    elapsedTime,
-                                    post.getHeadCount(),
-                                    post.getCurrentCount(),
-                                    post.isLiked(),
-                                    post.getLikes()
-                            );
-
-                            postInfoItems.add(item);
-
+                                PostInfoItem item = new PostInfoItem(
+                                        post.getImg(),
+                                        post.getTitle(),
+                                        post.getCategory(),
+                                        elapsedTime,
+                                        post.getHeadCount(),
+                                        post.getCurrentCount(),
+                                        post.isLiked(),
+                                        post.getLikes()
+                                );
+                                Log.d("elapsedTime", "onResponse: " + elapsedTime);
+                                postInfoItems.add(item);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                                Log.e("ParseException", "Date parsing error for post: " + post.getCreatedAt(), e);
+                            }
                         }
+
                         adapter.setPostInfoList(postInfoItems);
                     } catch (IOException e) {
                         e.printStackTrace();
+                        Log.e("Exception", "Error processing response", e);
                     }
                 }
             }
@@ -759,20 +817,6 @@ public class HomeActivity extends AppCompatActivity {
                 new ToastWarning(getResources().getString(R.string.toast_server_error), HomeActivity.this);
             }
         });
-
-//        postInfoItems.add(new PostInfoItem("https://cdn.mkhealth.co.kr/news/photo/202306/64253_68458_1153.png", "개신동 교촌치킨 파티 구함", "chicken", 320, 3, 2, false, 1));
-//        postInfoItems.add(new PostInfoItem("https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 160, 3, 3, false, 0));
-//        postInfoItems.add(new PostInfoItem("https://mblogthumb-phinf.pstatic.net/MjAyMjA3MjhfMTY5/MDAxNjU4OTkyODg0NTA3.z8WzaZAOKBvo4JkSm9lTMOTiNsKEUNHZJYRB-DPZCdEg.0WdqohiJPsSM5pXWYl-HvTE3JUVlUPe7LT-U6wvjUQwg.JPEG.duwlsrjdwb/KakaoTalk_20220728_151114228_10.jpg?type=w800", "사창동 우리집 닭강정 파티!!", "chicken", 500, 1, 0, false, 0));
-//        postInfoItems.add(new PostInfoItem("https://image.kmib.co.kr/online_image/2024/0131/2024013114261427977_1706678775_0019120339.jpg", "맘스터치 배달 파티 999~~", "hamburger", 600, 3, 3, true, 2));
-//        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6LTXILpqDk2KY425YAGSIAdF84ogxh-OFRz2P51EPvA&s", "행컵 그룹 구해용", "korean_food", 550, 2, 1, false, 0));
-//        postInfoItems.add(new PostInfoItem("", "짚신 스시 & 롤 배달 구해요", "japanese_food", 555, 1, 0, true, 1));
-//        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRj0BYs-iE7kn3fmdg0eVBxtqO89kwVRBFe_3Y8uZrgMA&s", "대장집 파티 구", "chinese_food", 560, 2, 1, false, 0));
-//        postInfoItems.add(new PostInfoItem("https://d12zq4w4guyljn.cloudfront.net/750_750_20201122041810_photo1_5831aaf849cf.jpg", "파브리카 배달 구해용", "western_food", 700, 2, 2, false, 1));
-//        postInfoItems.add(new PostInfoItem("https://media-cdn.tripadvisor.com/media/photo-s/12/31/92/d9/1519804025288-largejpg.jpg", "신전 떡볶이 구해유", "snack", 900, 3, 2, false, 2));
-//        postInfoItems.add(new PostInfoItem("https://d12zq4w4guyljn.cloudfront.net/750_750_20230517093845_photo1_edd2f5913a1b.jpg", "메가커피 999", "cafe_and_dessert", 1000, 1, 0, false, 2));
-//        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-1FF9Hpe-_ERtrBHcUDeeckMOeOzm6IWylD_mJJlJEQ&s", "컴포즈 배달 구해요!!!", "cafe_and_dessert", 1500, 1, 1, false, 1));
-//
-//        adapter.setPostInfoList(postInfoItems);
     }
 
     private void requestPermissions() {
