@@ -205,12 +205,15 @@ public class HomeActivity extends AppCompatActivity {
         binding.postsRecyclerView.setAdapter(adapter);
         binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
+
+
         binding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refreshData(); // 데이터 새로고침 메소드 호출
             }
         });
+
 
         // 초기 데이터 로드
         loadData();
@@ -742,6 +745,7 @@ public class HomeActivity extends AppCompatActivity {
         adapter.setPostInfoList(filteredItems); // 필터링된 리스트를 리사이클러 뷰에 설정
         binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         binding.postsRecyclerView.setAdapter(adapter); // 어댑터를 다시 설정하여 갱신
+
     }
 
     // 데이터 새로고침 함수
@@ -763,7 +767,7 @@ public class HomeActivity extends AppCompatActivity {
 
     // 데이터 로딩 함수
     private void loadData() {
-        Call<ResponseBody> call = recruitmentAPI.getRecruitmentPostList(33, 35);
+        Call<ResponseBody> call = recruitmentAPI.getRecruitmentPostList(currLatitude, currLongitude);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -797,7 +801,8 @@ public class HomeActivity extends AppCompatActivity {
                                         post.getLikes()
                                 );
                                 Log.d("elapsedTime", "onResponse: " + elapsedTime);
-                                postInfoItems.add(item);
+                                postInfoItems.add(0, item);
+
                             } catch (ParseException e) {
                                 e.printStackTrace();
                                 Log.e("ParseException", "Date parsing error for post: " + post.getCreatedAt(), e);
@@ -817,6 +822,7 @@ public class HomeActivity extends AppCompatActivity {
                 new ToastWarning(getResources().getString(R.string.toast_server_error), HomeActivity.this);
             }
         });
+
     }
 
     private void requestPermissions() {
@@ -868,15 +874,5 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        // 토큰 값이 없다면 메인 액티비티로 이동
-        if (tokenManager.getToken() == null) {
-            startActivity(new Intent(HomeActivity.this, MainActivity.class));
-            finish();
-        }
-
-
-
-
     }
 }
