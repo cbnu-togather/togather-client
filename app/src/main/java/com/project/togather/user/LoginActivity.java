@@ -45,8 +45,10 @@ public class LoginActivity extends AppCompatActivity {
 
     // Retrofit 객체
     private UserAPI userAPI;
+    private UserAPI userAPIWithoutToken;
     private TokenManager tokenManager;
     private RetrofitService retrofitService;
+    private RetrofitService retrofitServiceWithoutToken;
 
     // 타이머 시작 메서드
     private void startTimer() {
@@ -101,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // 로그인 메서드
     private void performLogin(String phoneNumber) {
-        Call<ResponseBody> call = userAPI.login(phoneNumber);
+        Call<ResponseBody> call = userAPI.login("no-auth", phoneNumber);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -136,6 +138,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else {
                     // 요청이 실패한 경우
+                    System.out.println("로그인 실패");
                 }
             }
 
@@ -143,19 +146,23 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Call<ResponseBody> call, Throwable throwable) {
                 // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
                 new ToastWarning(getResources().getString(R.string.toast_server_error), LoginActivity.this);
+                System.out.println("로그인 실패");
             }
         });
     }
 
     // 전화번호 중복 확인 메서드
     private void checkPhoneNumber(String phoneNumber) {
+        System.out.println(tokenManager.getToken());
         // 전화번호 문자열 내 공백을 제거
         String finalPhoneNumber = phoneNumber.replaceAll("\\s", "");
-        Call<ResponseBody> call = userAPI.checkPhoneNumber(finalPhoneNumber);
+        Call<ResponseBody> call = userAPI.checkPhoneNumber("no-auth", finalPhoneNumber);
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                System.out.println("시작"+response.code());
+                System.out.println("오류 " + response.body());
                 if (response.isSuccessful()) {
                     // API 요청이 성공한 경우
                     ResponseBody responseBody = response.body();
@@ -184,9 +191,15 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     } else {
                         // API 요청으로 받은 데이터가 null인 경우
+                        System.out.println("중복확인 실패2");
                     }
                 } else {
                     // 요청이 실패한 경우
+                    try {
+                        System.out.println("중복확인 실패1: " + response.code() + ", " + response.errorBody().string());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -194,6 +207,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onFailure(Call<ResponseBody> call, Throwable throwable) {
                 // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
                 new ToastWarning(getResources().getString(R.string.toast_server_error), LoginActivity.this);
+                System.out.println("중복확인 서버 실패");
             }
         });
     }
@@ -206,7 +220,11 @@ public class LoginActivity extends AppCompatActivity {
 
         tokenManager = TokenManager.getInstance(this);
         retrofitService = new RetrofitService(tokenManager);
+        retrofitServiceWithoutToken = new RetrofitService(null);
+
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
+        userAPIWithoutToken = retrofitServiceWithoutToken.getRetrofit().create(UserAPI.class);
+
 
         /** (뒤로가기 화살표 이미지) 버튼 클릭 시 */
         binding.backImageButton.setOnClickListener(view -> finish());
