@@ -74,6 +74,9 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         retrofitService = new RetrofitService(tokenManager);
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
+        Intent intent = getIntent();
+        String postId = intent.getStringExtra("post_id");
+
         binding.activityHeaderRelativeLayout.bringToFront();
 
         /** (게시글 삭제 확인) 다이얼로그 변수 초기화 및 설정 */

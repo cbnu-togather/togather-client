@@ -40,7 +40,8 @@ public interface RecruitmentAPI {
     @GET("groupbuy/list")
     Call<ResponseBody> getRecruitmentPostList(
             @Query("Latitude") double latitude,
-            @Query("Longitude") double longitude
+            @Query("Longitude") double longitude,
+            @Query("distance") int distance
     );
 
 }
