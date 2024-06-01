@@ -81,6 +81,8 @@ public class EditMyProfile extends AppCompatActivity {
         retrofitService = new RetrofitService(tokenManager);
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
+        getUserInfo();
+
         setupListeners();
     }
 
@@ -258,15 +260,5 @@ public class EditMyProfile extends AppCompatActivity {
         binding.editMyProfileCompleteButton.setTextColor(ContextCompat.getColor(this, isValid ? R.color.text_color : R.color.gray_text));
         binding.usernameEditTextHelperTextView.setVisibility(isValid ? View.GONE : View.VISIBLE);
         binding.usernameEditTextHelperTextView.setText(!isValid && input.length() < 2 ? "닉네임은 2자 이상 입력해 주세요." : "닉네임은 띄어쓰기 없이 한글, 영문, 숫자만 가능해요.");
-    }
-
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // 유저 정보 조회 후 토큰 값의 유효성 따라 다르게 작동
-        getUserInfo();
     }
 }
