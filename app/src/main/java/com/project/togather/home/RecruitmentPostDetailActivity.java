@@ -94,7 +94,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         postId = intent.getIntExtra("post_id", 0);
 
-        getRecruitmentPostDetail(postId);
+
 
         binding.activityHeaderRelativeLayout.bringToFront();
 
@@ -208,6 +208,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                         Intent intentEdit = new Intent(RecruitmentPostDetailActivity.this, EditRecruitmentPostActivity.class);
                         intentEdit.putExtra("post_id", postId);
                         startActivity(intentEdit);
+                        finish();
                     }
                 });
 
@@ -444,29 +445,29 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
 
         getUserInfo();
 
+        getRecruitmentPostDetail(postId);
 
+        if (mapView == null) {
+            /** 다음 카카오맵 지도를 띄우는 코드 */
+            mapView = new MapView(this);
+            mapView.setZoomLevel(2, true);
 
-        /** 다음 카카오맵 지도를 띄우는 코드 */
-        mapView = new MapView(this);
-        mapView.setZoomLevel(2, true);
+            mapViewContainer = binding.mapRelativeLayout;
+            mapViewContainer.addView(mapView);
+            binding.centerPointImageView.bringToFront();
 
-        mapViewContainer = binding.mapRelativeLayout;
-        mapViewContainer.addView(mapView);
-        binding.centerPointImageView.bringToFront();
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            /** 사용자의 현재 위치 */
+            GetMyLocation getMyLocation = new GetMyLocation(this, this);
+            Location userLocation = getMyLocation.getMyLocation();
+            if (userLocation != null) {
+                currLatitude = userLocation.getLatitude();
+                currLongitude = userLocation.getLongitude();
+                selectedPoint = MapPoint.mapPointWithGeoCoord(currLatitude, currLongitude);
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        /** 사용자의 현재 위치 */
-        GetMyLocation getMyLocation = new GetMyLocation(this, this);
-        Location userLocation = getMyLocation.getMyLocation();
-        if (userLocation != null) {
-            currLatitude = userLocation.getLatitude();
-            currLongitude = userLocation.getLongitude();
-            selectedPoint = MapPoint.mapPointWithGeoCoord(currLatitude, currLongitude);
-
-            /** 중심점 변경 */
-            mapView.setMapCenterPoint(selectedPoint, true);
+                /** 중심점 변경 */
+                mapView.setMapCenterPoint(selectedPoint, true);
+            }
         }
-
-
     }
 }
