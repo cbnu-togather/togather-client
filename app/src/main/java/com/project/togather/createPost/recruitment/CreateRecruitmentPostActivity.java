@@ -405,7 +405,7 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
             // API 요청 부분
             performPost(recruitmentNum[0]);
 
-            startActivity(new Intent(CreateRecruitmentPostActivity.this, RecruitmentPostDetailActivity.class));
+            startActivity(new Intent(CreateRecruitmentPostActivity.this, HomeActivity.class));
             finish();
         });
     }

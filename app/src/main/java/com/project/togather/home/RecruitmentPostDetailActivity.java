@@ -77,7 +77,8 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
      * 위치 설정에 대한 객체 변수
      */
     private LocationManager locationManager;
-    private static double selectedLatitude, selectedLongitude;
+    private static double currLatitude, currLongitude;
+    private static int postId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -424,9 +425,9 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         GetMyLocation getMyLocation = new GetMyLocation(this, this);
         Location userLocation = getMyLocation.getMyLocation();
         if (userLocation != null) {
-            selectedLatitude = 36.625264039836026;
-            selectedLongitude = 127.45708706510892;
-            selectedPoint = MapPoint.mapPointWithGeoCoord(selectedLatitude, selectedLongitude);
+            currLatitude = userLocation.getLatitude();
+            currLongitude = userLocation.getLongitude();
+            selectedPoint = MapPoint.mapPointWithGeoCoord(currLatitude, currLongitude);
 
             /** 중심점 변경 */
             mapView.setMapCenterPoint(selectedPoint, true);
