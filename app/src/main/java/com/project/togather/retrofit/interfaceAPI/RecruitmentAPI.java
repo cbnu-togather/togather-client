@@ -48,4 +48,6 @@ public interface RecruitmentAPI {
     @GET("groupbuy/{groupBuyId}")
     Call<ResponseBody> getRecruitmentPostDetail(@Path("groupBuyId") int postId);
 
+    @POST("groupbuy/like")
+    Call<ResponseBody> setRecruitmentPostLike(@Query("groupBuyId") int postId);
 }

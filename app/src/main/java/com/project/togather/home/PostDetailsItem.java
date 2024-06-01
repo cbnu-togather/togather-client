@@ -22,6 +22,7 @@ public class PostDetailsItem {
     private double longitude;
     private int view;
     private int likes;
+    private boolean liked;
     private boolean writer;
     private String category;
 }
