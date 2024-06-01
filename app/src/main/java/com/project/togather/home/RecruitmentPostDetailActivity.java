@@ -13,12 +13,15 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.gson.Gson;
 import com.project.togather.GetMyLocation;
 import com.project.togather.MainActivity;
 import com.project.togather.R;
@@ -26,6 +29,7 @@ import com.project.togather.databinding.ActivityRecruitmentPostDetailBinding;
 import com.project.togather.editPost.recruitment.EditRecruitmentPostActivity;
 import com.project.togather.editPost.recruitment.EditRecruitmentPostSelectMeetingSpotActivity;
 import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.RecruitmentAPI;
 import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastSuccess;
 import com.project.togather.toast.ToastWarning;
@@ -35,6 +39,15 @@ import com.project.togather.utils.TokenManager;
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
+
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -48,6 +61,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
     private BottomSheetBehavior selectPostManagementBottomSheetBehavior;
     private TokenManager tokenManager;
     private UserAPI userAPI;
+    private RecruitmentAPI recruitmentAPI;
     private RetrofitService retrofitService;
     private Dialog askDeletePost_dialog, askJoinParty_dialog, askStopRecruitment_dialog;
 
@@ -57,6 +71,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
     private static ViewGroup mapViewContainer;
     private MapPoint selectedPoint;
     private MapPOIItem marker;
+    private PostDetailsItem postDetailsItem;
 
     /**
      * 위치 설정에 대한 객체 변수
@@ -73,9 +88,10 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         tokenManager = TokenManager.getInstance(this);
         retrofitService = new RetrofitService(tokenManager);
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
+        recruitmentAPI = retrofitService.getRetrofit().create(RecruitmentAPI.class);
 
         Intent intent = getIntent();
-        String postId = intent.getStringExtra("post_id");
+        postId = intent.getIntExtra("post_id", 0);
 
         binding.activityHeaderRelativeLayout.bringToFront();
 
@@ -109,7 +125,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         /** (더 보기) 클릭 시 */
         binding.moreImageButton.setOnClickListener(view -> selectPostManagementBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED));
 
-        binding.moreImageButton.setVisibility(isWriter ? View.VISIBLE : View.GONE);
+
 
         // 스크롤 뷰에 리스너 추가
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -201,7 +217,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
             showDialog_askStopRecruitment_dialog();
         });
 
-        binding.functionButton.setText(isWriter ? "마감하기" : "손 들기");
+
 
         // 모임 희망 장소 레이아웃 클릭 이벤트 설정
         binding.spotInfoRelativeLayout.setOnClickListener(view -> {
@@ -295,11 +311,105 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         });
     }
 
+    private void getRecruitmentPostDetail(int postId) {
+        Call<ResponseBody> call = recruitmentAPI.getRecruitmentPostDetail(postId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String jsonString = response.body().string();
+                        Gson gson = new Gson();
+                        postDetailsItem = gson.fromJson(jsonString, PostDetailsItem.class);
+                        isWriter = postDetailsItem.isWriter();
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
+                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+
+                        Date now = new Date();
+                        try {
+                            String createdAtString = postDetailsItem.getCreatedAt().split("\\.")[0];
+                            Date createdAt = sdf.parse(createdAtString);
+                            long elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
+                            String elapsedTime_str;
+                            if (elapsedTime < 60) {
+                                elapsedTime_str = elapsedTime + "초 전";
+                            } else if (elapsedTime < 3600) {
+                                elapsedTime_str = elapsedTime / 60 + "분 전";
+                            } else if (elapsedTime < 86400) {
+                                elapsedTime_str = elapsedTime / 3600 + "시간 전";
+                            } else if (elapsedTime < 86400 * 365) {
+                                elapsedTime_str = elapsedTime / 86400 + "일 전";
+                            } else {
+                                elapsedTime_str = elapsedTime / 86400 * 365 + "일 전";
+                            }
+                            binding.elapsedTimeTextView.setText(elapsedTime_str);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        // 유저 프로필 사진 set
+                        if (postDetailsItem.getWriterImg() != null && postDetailsItem.getWriterImg().equals("")) {
+                            binding.otherUserProfileImageRoundedImageView.setImageResource(R.drawable.post_thumbnail_background_logo);
+                        } else {
+                            Glide.with(RecruitmentPostDetailActivity.this)
+                                    .load(postDetailsItem.getWriterImg()) // 이미지 URL 가져오기
+                                    .placeholder(R.drawable.post_thumbnail_background_logo) // 로딩 중에 표시할 이미지
+                                    .error(R.drawable.post_thumbnail_background_logo) // 에러 발생 시 표시할 이미지
+                                    .into(binding.otherUserProfileImageRoundedImageView); // ImageView에 이미지 설정
+                        }
+                        if (postDetailsItem.getImg() != null && postDetailsItem.getImg().equals("")) {
+                            binding.otherUserProfileImageRoundedImageView.setImageResource(R.drawable.post_thumbnail_background_logo);
+                        } else {
+                            Glide.with(RecruitmentPostDetailActivity.this)
+                                    .load(postDetailsItem.getImg()) // 이미지 URL 가져오기
+                                    .placeholder(R.drawable.post_thumbnail_background_logo) // 로딩 중에 표시할 이미지
+                                    .error(R.drawable.post_thumbnail_background_logo) // 에러 발생 시 표시할 이미지
+                                    .into(binding.postThumbnailImageView); // ImageView에 이미지 설정
+                        }
+
+
+
+                        binding.usernameTextView.setText(postDetailsItem.getWriterName());
+                        binding.addressTextView.setText(postDetailsItem.getAddress());
+                        binding.postTitleTextView.setText(postDetailsItem.getTitle());
+                        binding.categoryTextView.setText(postDetailsItem.getCategory());
+                        binding.contentTextView.setText(postDetailsItem.getContent());
+                        binding.spotNameTextView.setText(postDetailsItem.getSpotName());
+                        binding.viewNumTextView.setText(String.valueOf(postDetailsItem.getView()));
+
+                        binding.currentRecruitmentHeadCountTextView.setText("(" + postDetailsItem.getCurrentCount() + "/" + postDetailsItem.getHeadCount() + ")");
+                        binding.currentPartyMemberNumFirstStateCardView.setVisibility(postDetailsItem.getHeadCount() >= 1 ? View.VISIBLE : View.INVISIBLE);
+                        binding.currentPartyMemberNumFirstStateImageView.setImageResource(postDetailsItem.getCurrentCount() >= 1 ? R.drawable.one_person_logo_filled : R.drawable.one_person_logo);
+
+                        binding.currentPartyMemberNumSecondStateCardView.setVisibility(postDetailsItem.getHeadCount() >= 2 ? View.VISIBLE : View.INVISIBLE);
+                        binding.currentPartyMemberSecondStateImageView.setImageResource(postDetailsItem.getCurrentCount() >= 2 ? R.drawable.one_person_logo_filled : R.drawable.one_person_logo);
+
+                        binding.currentPartyMemberNumThirdStateCardView.setVisibility(postDetailsItem.getHeadCount() >= 3 ? View.VISIBLE : View.INVISIBLE);
+                        binding.currentPartyMemberNumThirdStateImageView.setImageResource(postDetailsItem.getCurrentCount() >= 3 ? R.drawable.one_person_logo_filled : R.drawable.one_person_logo);
+
+                        binding.functionButton.setText(isWriter ? "마감하기" : "손 들기");
+                        binding.moreImageButton.setVisibility(isWriter ? View.VISIBLE : View.GONE);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), RecruitmentPostDetailActivity.this);
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
 
         getUserInfo();
+
+        getRecruitmentPostDetail(postId);
 
         /** 다음 카카오맵 지도를 띄우는 코드 */
         mapView = new MapView(this);
