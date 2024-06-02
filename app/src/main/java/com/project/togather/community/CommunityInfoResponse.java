@@ -7,13 +7,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class PostInfoItem {
+public class CommunityInfoResponse {
     private int id;
-    private String postThumbnailImageUrl;
-    private String tag;
     private String title;
+    private String img;
+    private String category;
+    private String createdAt;
+    private String address;
     private String content;
-    private String district;
-    private long elapsedTime;
-    private int likedCnt;
+    private int likes;
+
 }
