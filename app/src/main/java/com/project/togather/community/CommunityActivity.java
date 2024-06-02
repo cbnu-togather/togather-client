@@ -3,14 +3,26 @@ package com.project.togather.community;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationRequest;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -22,7 +34,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.project.togather.GetMyLocation;
 import com.project.togather.MainActivity;
 import com.project.togather.chat.ChatActivity;
 import com.project.togather.createPost.community.CreateCommunityPostActivity;
@@ -33,11 +51,24 @@ import com.project.togather.profile.ProfileActivity;
 import com.project.togather.R;
 import com.project.togather.home.HomeActivity;
 import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.CommunityAPI;
+import com.project.togather.retrofit.interfaceAPI.KakaoAPI;
 import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
 
+import net.daum.mf.map.api.MapPOIItem;
+import net.daum.mf.map.api.MapPoint;
+import net.daum.mf.map.api.MapView;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -51,9 +82,56 @@ public class CommunityActivity extends AppCompatActivity {
     private RecyclerViewAdapter adapter;
     private TokenManager tokenManager;
     private UserAPI userAPI;
+    private CommunityAPI communityAPI;
     private RetrofitService retrofitService;
+    private LocationManager locationManager;
 
     ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
+
+    /**
+     * 위치 권한 요청 코드의 상숫값
+     */
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1981;
+    private static final int REQUEST_CODE_LOCATION_SETTINGS = 2981;
+
+    private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+
+    /**
+     * Provides access to the Fused Location Provider API.
+     */
+    private FusedLocationProviderClient mFusedLocationClient;
+    /**
+     * Provides access to the Location Settings API.
+     */
+    private SettingsClient mSettingsClient;
+    /**
+     * Stores parameters for requests to the FusedLocationProviderApi.
+     */
+    private LocationRequest mLocationRequest;
+    /**
+     * Callback for Location events.
+     */
+
+    private LocationSettingsRequest mLocationSettingsRequest;
+
+    private static MapView mapView;
+    private static ViewGroup mapViewContainer;
+    private MapPoint currPoint, selectedPoint;
+    private MapPOIItem marker;
+
+    /**
+     * 위치 설정에 대한 객체 변수
+     */
+    private static final int REQUEST_CODE_LOCATION = 2;
+    private static double currLatitude, currLongitude;
+
+    String sp_extractedDong, sp_selectedAddress;
+
+
+    private Context context = this;
+    private Activity activity = this;
+
+    private KakaoAPI kakaoInterface;
 
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
 
@@ -68,6 +146,24 @@ public class CommunityActivity extends AppCompatActivity {
         tokenManager = TokenManager.getInstance(this);
         retrofitService = new RetrofitService(tokenManager);
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
+        communityAPI = retrofitService.getRetrofit().create(CommunityAPI.class);
+
+        /** 앱 초기 실행 시 위치 권한 동의 여부에 따라서
+         * (권한 획득 요청) 및 (현재 위치 표시)를 수행 */
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions();
+            return;
+        }
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        /** 사용자의 현재 위치 */
+        GetMyLocation getMyLocation = new GetMyLocation(this, this);
+        Location userLocation = getMyLocation.getMyLocation();
+        if (userLocation != null) {
+            currLatitude = userLocation.getLatitude(); // 소프트웨어학부 건물 위도, 경도
+            currLongitude = userLocation.getLongitude();
+            System.out.println("////////////현재 내 위치값 : " + currLatitude + "," + currLongitude);
+        }
 
         onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -393,7 +489,7 @@ public class CommunityActivity extends AppCompatActivity {
             }
 
             void onBind(PostInfoItem item) {
-                if (item.getPostThumbnailImageUrl().equals("")) {
+                if (item.getPostThumbnailImageUrl() != null && item.getPostThumbnailImageUrl().equals("")) {
                     post_imageView.setVisibility(View.GONE);
                     postTitle_textView.setMaxWidth(1000);
                 } else {
@@ -411,15 +507,15 @@ public class CommunityActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams layoutParams = root_relativeLayout.getLayoutParams();
                 if (postTitle.length() >= 28)
                     postTitle = postTitle.substring(0, 28) + "...";
-                else if (!item.getPostThumbnailImageUrl().equals("") && postTitle.length() >= 19)
+                else if (item.getPostThumbnailImageUrl() != null && !item.getPostThumbnailImageUrl().equals("") && postTitle.length() >= 19)
                     postTitle = postTitle.substring(0, 19) + "...";
 
                 postTitle_textView.setText(postTitle);
 
                 String postContent = item.getContent();
-                if (item.getPostThumbnailImageUrl().equals("") && postContent.length() >= 29)
+                if (item.getPostThumbnailImageUrl() != null && item.getPostThumbnailImageUrl().equals("") && postContent.length() >= 29)
                     postContent = postContent.substring(0, 29) + "...";
-                else if(!item.getPostThumbnailImageUrl().equals("") && postContent.length() >= 24)
+                else if(item.getPostThumbnailImageUrl() != null && !item.getPostThumbnailImageUrl().equals("") && postContent.length() >= 24)
                     postContent = postContent.substring(0, 24) + "...";
                 postContent_textView.setText(postContent);
 
@@ -450,9 +546,7 @@ public class CommunityActivity extends AppCompatActivity {
         // 기존 데이터를 비우는 로직 추가
         postInfoItems.clear();
 
-        // 새 데이터 추가 (하드 코딩) : 새로고침 했더니 게시글이 두 개만 남았다는 가정
-        postInfoItems.add(new PostInfoItem("https://gd.image-gmkt.com/%EC%BD%94%EC%B9%98-%EC%BD%94%EC%B9%98-%EB%B8%8C%EB%9D%BC%EC%9A%B4-%EA%B0%80%EC%A3%BD-%EB%82%A8%EB%85%80-%ED%95%99%EC%83%9D-%EC%A7%81%EC%9E%A5%EC%9D%B8-%EB%B0%B1%ED%8C%A9-%EC%B1%85%EA%B0%80%EB%B0%A9-%EC%A4%91%EA%B3%A0-%EB%AA%85%ED%92%88-%EA%B0%80%EB%B0%A9-%EC%9D%80%ED%94%BC%EC%95%84%EB%85%B8/li/600/574/2388574600.g_350-w-et-pj_g.jpg", "나눔", "가방 나눔해요~~", "새거입니다.", "개신동", 320, 1));
-        postInfoItems.add(new PostInfoItem("https://mblogthumb-phinf.pstatic.net/MjAyMjA2MDhfMjMy/MDAxNjU0NjgwMDEyNzQ2.jkfgtrFgZlbkEzgAXCmgEK7lzIcgJOwiMwNfjm9dfUog.weSpjt3puKOlolJv8fZUuNys5s7Vh9RAuJkX2Ikoe0cg.JPEG.dpfls111103/20220602%EF%BC%BF144812.jpg?type=w800", "고민/사연", "실외기 비둘기가 나뭇가지를..ㅠ", "실외기에 비둘기가 나뭇가지를..어제보니 실외기 위에 나뭇가지가 수북히 쌓여있더라구요...\n집은2층 입니다 실외기 커버 씌여놓은 상태구요..ㅠ\n혹시 경험 있으신 분이나 방법 아시는 분..\n조언 좀 부탁드릴게요ㅠ", "사창동", 320, 6));
+        loadData();
 
         // 어댑터에 변경된 데이터 리스트를 설정
         adapter.setPostInfoList(postInfoItems);
@@ -467,20 +561,105 @@ public class CommunityActivity extends AppCompatActivity {
 
     // 초기 데이터 로딩 함수
     private void loadData() {
-        // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-        postInfoItems.add(new PostInfoItem("https://gd.image-gmkt.com/%EC%BD%94%EC%B9%98-%EC%BD%94%EC%B9%98-%EB%B8%8C%EB%9D%BC%EC%9A%B4-%EA%B0%80%EC%A3%BD-%EB%82%A8%EB%85%80-%ED%95%99%EC%83%9D-%EC%A7%81%EC%9E%A5%EC%9D%B8-%EB%B0%B1%ED%8C%A9-%EC%B1%85%EA%B0%80%EB%B0%A9-%EC%A4%91%EA%B3%A0-%EB%AA%85%ED%92%88-%EA%B0%80%EB%B0%A9-%EC%9D%80%ED%94%BC%EC%95%84%EB%85%B8/li/600/574/2388574600.g_350-w-et-pj_g.jpg", "나눔", "가방 나눔해요~~", "새거입니다.", "개신동", 320, 1));
-        postInfoItems.add(new PostInfoItem("https://mblogthumb-phinf.pstatic.net/MjAyMjA2MDhfMjMy/MDAxNjU0NjgwMDEyNzQ2.jkfgtrFgZlbkEzgAXCmgEK7lzIcgJOwiMwNfjm9dfUog.weSpjt3puKOlolJv8fZUuNys5s7Vh9RAuJkX2Ikoe0cg.JPEG.dpfls111103/20220602%EF%BC%BF144812.jpg?type=w800", "고민/사연", "실외기 비둘기가 나뭇가지를..ㅠ", "실외기에 비둘기가 나뭇가지를..어제보니 실외기 위에 나뭇가지가 수북히 쌓여있더라구요...\n집은2층 입니다 실외기 커버 씌여놓은 상태구요..ㅠ\n혹시 경험 있으신 분이나 방법 아시는 분..\n조언 좀 부탁드릴게요ㅠ", "사창동", 320, 6));
-        postInfoItems.add(new PostInfoItem("", "맛집", "청주에 파스타 샐러드 / 샌드위치 맛집 있을까요?", "많은 추천 부탁드려요 ㅎㅎ", "율량동", 320, 2));
-        postInfoItems.add(new PostInfoItem("", "이사/시공", "폐목재", "리모델링하면서 나온 다루끼 폐목재들을 어떻게 버려야 할까요..?", "개신동", 320, 0));
-        postInfoItems.add(new PostInfoItem("", "부동산/주거", "전세계약 어떻게 하셨나요", "전세로 계약 시 계약서는 1대1로 쓰시나요?\n혹시 계약서만 부동산에서 작성할 수 있는 건가요?", "개신동", 320, 1));
-        postInfoItems.add(new PostInfoItem("", "모임", "보드게임 모임사람 구합니다", "보드게임 모임 사람 모집합니다! 모임은 보통 주말에 충대 보드카페나 게임들고 일반카페도 가끔 갑니당☺️☺️ 게임 아는 거 없어도 가능해요! 루미큐브 할리갈리만 해 분신 분 가능! 티츄 좋아하거나 전략 게임 좋아하시는 분! 다양한 게임 배우고 싶으신 분! 환영합니다! 와서 같이 놀아요! 신천지 여미새 남미새 사절😒", "개신동", 320, 2));
-        postInfoItems.add(new PostInfoItem("https://i.balaan.io/images/87/879c94/879c94f2397057afb0b9f72673c33ab1dc599ff66b09049433eab961a198f357.jpg", "분실/실종", "카드 케이스를 잃어버렸어요ㅠㅠ", "하복대에서 분실했습니다..\n보신 분 있으면 연락 주세요 사례 해 드릴게요...ㅠㅠ", "개신동", 320, 0));
-        postInfoItems.add(new PostInfoItem("", "운동", "강서동 헬스장 회원권 양도합니다 싸게 해드릴께요 ㅠ", "연락 주세용~", "개신동", 320, 1));
-        postInfoItems.add(new PostInfoItem("", "생활/편의", "가경동이나 근처에 믿을만한 차량 정비소 있을까요?", "예전에는 집 뒤에 있는 카센터에 가서 믿고 맡기는 편이었습니다. 사장님이 친절하시고 기술료도 적정선에서 받으셔서 부담은 없었어요. 그런데 그 사장님이 바뀐 뒤로 불친절하고 그래서 다른 곳을 찾고 있는데, 마땅한 곳이 없습니다.\n\n봉명동 공임나라랑 가경동 블루핸즈는 정말 괜찮은 편이긴 하지만 봉명동은 거리가 조금 멀고 블루핸즈는 무조건 모비스 정품 수리라 비싸다는 단점이 있더라고요.\n\n공임나라랑 비교해서 조금 비싸더라도 그냥 믿고 맡겼을 때 작업 완성도가 좋은 정비소를 찾고 있습니다.\n혹시 정비를 받으시고 좋았던 곳이 있을까요? 추천 부탁드립니다..!", "개신동", 320, 2));
-        postInfoItems.add(new PostInfoItem("", "풍경", "청주에서 모래사장 있는 놀이터 아시면 알려주시면 감사하겠습니다 ㅠㅠ", "콘텐츠 잠깐 찍을려고 하는데 요즘에 공원에 모래가 있는 곳이 안 보이네요 ㅠㅠ", "개신동", 320, 0));
+        Call<ResponseBody> call = communityAPI.getCommunityPostList(currLatitude, currLongitude);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        postInfoItems.clear();
+                        String responseBody = response.body().string();
+                        Type listType = new TypeToken<ArrayList<CommunityInfoResponse>>() {}.getType();
+                        ArrayList<CommunityInfoResponse> postList = new Gson().fromJson(responseBody, listType);
 
-        adapter.setPostInfoList(postInfoItems);
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
+                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+
+                        // 현재 시간 UTC로 생성
+                        Date now = new Date();
+                        for (CommunityInfoResponse post : postList) {
+                            try {
+                                String createdAtString = post.getCreatedAt();
+                                Date createdAt = sdf.parse(createdAtString);
+                                long elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
+                                PostInfoItem item = new PostInfoItem(
+                                        post.getId(),
+                                        post.getImg(),
+                                        post.getCategory(),
+                                        post.getTitle(),
+                                        post.getContent(),
+                                        post.getAddress(),
+                                        elapsedTime,
+                                        post.getLikes()
+                                );
+                                postInfoItems.add(0, item);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        adapter.setPostInfoList(postInfoItems);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), CommunityActivity.this);
+            }
+        });
+
+
     }
+
+    private void requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            requestPermissions(PERMISSIONS, REQUEST_PERMISSIONS_REQUEST_CODE);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // Permission denied.
+                for (String permission : permissions) {
+                    if ("android.permission.ACCESS_FINE_LOCATION".equals(permission)) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setMessage("지도 사용을 위해 위치 권한을 허용해 주세요.\n(필수권한)");
+                        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                /** 위치 정보 설정창에서 '설정으로 이동' 클릭 시 */
+                                Intent intent = new Intent();
+                                intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                intent.setData(Uri.fromParts("package", getPackageName(), null));
+                                startActivity(intent);
+                            }
+                        });
+                        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                /** 위치 정보 설정창에서 '취소' 클릭 시 */
+//                                Toast.makeText(MainActivity.this, "Cancel Click", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                            @Override
+                            public void onShow(DialogInterface arg0) {
+                                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.rgb(0, 133, 254));
+                                alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.rgb(123, 123, 123));
+                            }
+                        });
+                        alertDialog.show();
+                    }
+                }
+            }
+        }
+    }
+
     // 유저 정보 조회 메서드
     private void getUserInfo() {
         Call<ResponseBody> call = userAPI.getUserInfo();
@@ -504,5 +683,6 @@ public class CommunityActivity extends AppCompatActivity {
         super.onResume();
 
         getUserInfo();
+        loadData();
     }
 }
