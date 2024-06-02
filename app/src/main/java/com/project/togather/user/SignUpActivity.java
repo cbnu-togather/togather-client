@@ -171,7 +171,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     // 로그인 메서드
     private void performLogin(String phoneNumber) {
-        Call<ResponseBody> call = userAPI.login(phoneNumber);
+        Call<ResponseBody> call = userAPI.login("no-auth", phoneNumber);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -220,7 +220,7 @@ public class SignUpActivity extends AppCompatActivity {
         String phoneNumber = binding.phoneNumberEditText.getText().toString().replaceAll("\\s", "");
 
         // 닉네임 중복 확인
-        Call<Boolean> doubleCheckCall = userAPI.doubleCheckUserName(username);
+        Call<Boolean> doubleCheckCall = userAPI.doubleCheckUserName("no-auth", username);
         doubleCheckCall.enqueue(new Callback<Boolean>() {
             @Override
             public void onResponse(Call<Boolean> call, Response<Boolean> response) {
@@ -233,7 +233,7 @@ public class SignUpActivity extends AppCompatActivity {
                     }
 
                     // 중복되지 않은 경우 회원 가입
-                    Call<ResponseBody> signUpCall = userAPI.signUp(phoneNumber, username);
+                    Call<ResponseBody> signUpCall = userAPI.signUp("no-auth", phoneNumber, username);
                     signUpCall.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

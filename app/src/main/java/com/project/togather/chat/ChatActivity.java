@@ -24,6 +24,7 @@ import com.project.togather.MainActivity;
 import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.R;
 import com.project.togather.createPost.recruitment.CreateRecruitmentPostActivity;
+import com.project.togather.createPost.recruitment.SelectMeetingSpotActivity;
 import com.project.togather.notification.NotificationActivity;
 import com.project.togather.profile.ProfileActivity;
 import com.project.togather.community.CommunityActivity;
@@ -36,14 +37,24 @@ import java.util.Date;
 import java.util.Locale;
 
 import com.project.togather.databinding.ActivityChatBinding;
+import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.UserAPI;
+import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ChatActivity extends AppCompatActivity {
 
     private ActivityChatBinding binding;
 
     private RecyclerViewAdapter adapter;
+    private UserAPI userAPI;
     private TokenManager tokenManager;
+    private RetrofitService retrofitService;
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
 
     private BottomSheetBehavior selectCreatePostTypeBottomSheetBehavior;
@@ -55,6 +66,8 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         tokenManager = TokenManager.getInstance(this);
+        retrofitService = new RetrofitService(tokenManager);
+        userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
         // 토큰 값이 없다면 메인 액티비티로 이동
         if (tokenManager.getToken() == null) {
@@ -428,5 +441,29 @@ public class ChatActivity extends AppCompatActivity {
                 return isSameDay(cal1, cal2);
             }
         }
+    }
+    // 유저 정보 조회 메서드
+    private void getUserInfo() {
+        Call<ResponseBody> call = userAPI.getUserInfo();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 403) {
+                    startActivity(new Intent(ChatActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), ChatActivity.this);
+            }
+        });
+    }
+    // 이 액티비티로 다시 돌아왔을 때 실행되는 메소드
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getUserInfo();
     }
 }

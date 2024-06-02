@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class PostInfoItem {
+    private int id;
     private String postThumbnailImageUrl;
     private String title;
     private String category;

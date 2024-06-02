@@ -3,15 +3,28 @@ package com.project.togather.home;
 import androidx.activity.OnBackPressedCallback;
 import androidx.activity.OnBackPressedDispatcher;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationRequest;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -23,7 +36,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.project.togather.GetMyLocation;
 import com.project.togather.MainActivity;
 import com.project.togather.chat.ChatActivity;
 import com.project.togather.community.CommunityActivity;
@@ -33,18 +52,99 @@ import com.project.togather.databinding.ActivityHomeBinding;
 import com.project.togather.notification.NotificationActivity;
 import com.project.togather.profile.ProfileActivity;
 import com.project.togather.R;
+import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.KakaoAPI;
+import com.project.togather.retrofit.interfaceAPI.RecruitmentAPI;
+import com.project.togather.retrofit.interfaceAPI.UserAPI;
+import com.project.togather.toast.ToastWarning;
+import com.project.togather.user.LoginActivity;
 import com.project.togather.utils.TokenManager;
 
+import net.daum.mf.map.api.MapPOIItem;
+import net.daum.mf.map.api.MapPoint;
+import net.daum.mf.map.api.MapView;
+
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class HomeActivity extends AppCompatActivity {
 
     private ActivityHomeBinding binding;
-
+    private LocationManager locationManager;
     private RecyclerViewAdapter adapter;
     private TokenManager tokenManager;
+    private UserAPI userAPI;
+    private RecruitmentAPI recruitmentAPI;
+    private RetrofitService retrofitService;
+
+    /**
+     * 위치 권한 요청 코드의 상숫값
+     */
+    private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 1981;
+    private static final int REQUEST_CODE_LOCATION_SETTINGS = 2981;
+
+    private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+
+    /**
+     * Provides access to the Fused Location Provider API.
+     */
+    private FusedLocationProviderClient mFusedLocationClient;
+    /**
+     * Provides access to the Location Settings API.
+     */
+    private SettingsClient mSettingsClient;
+    /**
+     * Stores parameters for requests to the FusedLocationProviderApi.
+     */
+    private LocationRequest mLocationRequest;
+    /**
+     * Callback for Location events.
+     */
+
+    private LocationSettingsRequest mLocationSettingsRequest;
+
+    private static MapView mapView;
+    private static ViewGroup mapViewContainer;
+    private MapPoint currPoint, selectedPoint;
+    private MapPOIItem marker;
+
+    /**
+     * 위치 설정에 대한 객체 변수
+     */
+    private static final int REQUEST_CODE_LOCATION = 2;
+    private static double currLatitude, currLongitude;
+    private static int distance = 100;
+    private static String currCategory = "all";
+
+    private Context context = this;
+    private Activity activity = this;
+
+    private KakaoAPI kakaoInterface;
+
+
+    String sp_extractedDong, sp_selectedAddress, sp_addSpotName;
+
+    float sp_selectedLatitude, sp_selectedLongitude;
 
     private ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
+
 
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
 
@@ -58,12 +158,27 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         tokenManager = TokenManager.getInstance(this);
+        retrofitService = new RetrofitService(tokenManager);
+        recruitmentAPI = retrofitService.getRetrofit().create(RecruitmentAPI.class);
+        userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
-        // 토큰 값이 없다면 메인 액티비티로 이동
-        if (tokenManager.getToken() == null) {
-            startActivity(new Intent(HomeActivity.this, MainActivity.class));
-            finish();
+        /** 앱 초기 실행 시 위치 권한 동의 여부에 따라서
+         * (권한 획득 요청) 및 (현재 위치 표시)를 수행 */
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions();
+            return;
         }
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        /** 사용자의 현재 위치 */
+        GetMyLocation getMyLocation = new GetMyLocation(this, this);
+        Location userLocation = getMyLocation.getMyLocation();
+        if (userLocation != null) {
+            currLatitude = userLocation.getLatitude(); // 소프트웨어학부 건물 위도, 경도
+            currLongitude = userLocation.getLongitude();
+            System.out.println("////////////현재 내 위치값 : " + currLatitude + "," + currLongitude);
+        }
+        Log.d("위치", "lat: " + currLatitude + " lon : " + currLongitude);
 
         // Add callback listener
         onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {
@@ -78,7 +193,9 @@ public class HomeActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
+                PostInfoItem selectedItem = postInfoItems.get(pos);
                 Intent intent = new Intent(HomeActivity.this, RecruitmentPostDetailActivity.class);
+                intent.putExtra("post_id", selectedItem.getId());
                 startActivity(intent);
             }
         });
@@ -86,7 +203,9 @@ public class HomeActivity extends AppCompatActivity {
         adapter.setOnLongItemClickListener(new RecyclerViewAdapter.OnLongItemClickListener() {
             @Override
             public void onLongItemClick(int pos) {
+                PostInfoItem selectedItem = postInfoItems.get(pos);
                 Intent intent = new Intent(HomeActivity.this, RecruitmentPostDetailActivity.class);
+                intent.putExtra("post_id", selectedItem.getId());
                 startActivity(intent);
             }
         });
@@ -95,12 +214,15 @@ public class HomeActivity extends AppCompatActivity {
         binding.postsRecyclerView.setAdapter(adapter);
         binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
+
+
         binding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refreshData(); // 데이터 새로고침 메소드 호출
             }
         });
+
 
         // 초기 데이터 로드
         loadData();
@@ -140,21 +262,33 @@ public class HomeActivity extends AppCompatActivity {
         findViewById(R.id.m100_button).setOnClickListener(view -> {
             if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
                 selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                distance = 100;
                 binding.distanceTextView.setText("100m");
+
+                postInfoItems.clear();
+                loadData();
             }
         });
 
         findViewById(R.id.m300_button).setOnClickListener(view -> {
             if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
                 selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                distance = 300;
                 binding.distanceTextView.setText("300m");
+
+                postInfoItems.clear();
+                loadData();
             }
         });
 
         findViewById(R.id.m500_button).setOnClickListener(view -> {
             if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
                 selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                distance = 500;
                 binding.distanceTextView.setText("500m");
+
+                postInfoItems.clear();
+                loadData();
             }
         });
 
@@ -172,7 +306,9 @@ public class HomeActivity extends AppCompatActivity {
             binding.allFoodTabButton.setTypeface(null, Typeface.BOLD);
             binding.allFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.allFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            filterPostsByCategory("all");
+            currCategory = "all";
+            filterPostsByCategory(currCategory);
+
         });
 
         /** "치킨" 탭 버튼 클릭 시 */
@@ -181,7 +317,8 @@ public class HomeActivity extends AppCompatActivity {
             binding.chickenTabButton.setTypeface(null, Typeface.BOLD);
             binding.chickenTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.chickenTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            filterPostsByCategory("chicken");
+            currCategory = "치킨";
+            filterPostsByCategory(currCategory);
         });
 
         /** "피자" 탭 버튼 클릭 시 */
@@ -190,7 +327,8 @@ public class HomeActivity extends AppCompatActivity {
             binding.pizzaTabButton.setTypeface(null, Typeface.BOLD);
             binding.pizzaTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.pizzaTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            filterPostsByCategory("pizza");
+            currCategory = "피자";
+            filterPostsByCategory(currCategory);
         });
 
         /** "햄버거" 탭 버튼 클릭 시 */
@@ -199,7 +337,8 @@ public class HomeActivity extends AppCompatActivity {
             binding.hamburgerTabButton.setTypeface(null, Typeface.BOLD);
             binding.hamburgerTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.hamburgerTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            filterPostsByCategory("hamburger");
+            currCategory = "햄버거";
+            filterPostsByCategory(currCategory);
         });
 
         /** "한식" 탭 버튼 클릭 시 */
@@ -208,7 +347,8 @@ public class HomeActivity extends AppCompatActivity {
             binding.koreanFoodTabButton.setTypeface(null, Typeface.BOLD);
             binding.koreanFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.koreanFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            filterPostsByCategory("korean_food");
+            currCategory = "한식";
+            filterPostsByCategory(currCategory);
         });
 
         /** "일식" 탭 버튼 클릭 시 */
@@ -217,7 +357,8 @@ public class HomeActivity extends AppCompatActivity {
             binding.japaneseFoodTabButton.setTypeface(null, Typeface.BOLD);
             binding.japaneseFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.japaneseFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            filterPostsByCategory("japanese_food");
+            currCategory = "일식";
+            filterPostsByCategory(currCategory);
         });
 
         /** "중식" 탭 버튼 클릭 시 */
@@ -226,7 +367,8 @@ public class HomeActivity extends AppCompatActivity {
             binding.chineseFoodTabButton.setTypeface(null, Typeface.BOLD);
             binding.chineseFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.chineseFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            filterPostsByCategory("chinese_food");
+            currCategory = "중식";
+            filterPostsByCategory(currCategory);
         });
 
         /** "양식" 탭 버튼 클릭 시 */
@@ -235,7 +377,8 @@ public class HomeActivity extends AppCompatActivity {
             binding.westernFoodTabButton.setTypeface(null, Typeface.BOLD);
             binding.westernFoodTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.westernFoodTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            filterPostsByCategory("western_food");
+            currCategory = "양식";
+            filterPostsByCategory(currCategory);
         });
 
         /** "분식" 탭 버튼 클릭 시 */
@@ -244,7 +387,8 @@ public class HomeActivity extends AppCompatActivity {
             binding.snackTabButton.setTypeface(null, Typeface.BOLD);
             binding.snackTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.snackTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            filterPostsByCategory("snack");
+            currCategory = "분식";
+            filterPostsByCategory(currCategory);
         });
 
         /** "카페·디저트" 탭 버튼 클릭 시 */
@@ -253,7 +397,8 @@ public class HomeActivity extends AppCompatActivity {
             binding.cafeAndDessertTabButton.setTypeface(null, Typeface.BOLD);
             binding.cafeAndDessertTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.cafeAndDessertTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            filterPostsByCategory("cafe_and_dessert");
+            currCategory = "카페·디저트";
+            filterPostsByCategory(currCategory);
         });
 
         /** "일반" 탭 버튼 클릭 시 */
@@ -262,7 +407,8 @@ public class HomeActivity extends AppCompatActivity {
             binding.generalTabButton.setTypeface(null, Typeface.BOLD);
             binding.generalTabButton.setTextColor(getResources().getColor(R.color.text_color));
             binding.generalTabButton.setBackground(getResources().getDrawable(R.drawable.selected_category_tab_border_bottom));
-            filterPostsByCategory("general");
+            currCategory = "일반";
+            filterPostsByCategory(currCategory);
         });
 
         /** "동네생활" 레이아웃 클릭 시 */
@@ -486,7 +632,7 @@ public class HomeActivity extends AppCompatActivity {
             }
 
             void onBind(PostInfoItem item) {
-                if (item.getPostThumbnailImageUrl().equals("")) {
+                if (item.getPostThumbnailImageUrl() != null && item.getPostThumbnailImageUrl().equals("")) {
                     post_imageView.setImageResource(R.drawable.post_thumbnail_background_logo);
                 } else {
                     Glide.with(itemView)
@@ -498,34 +644,34 @@ public class HomeActivity extends AppCompatActivity {
 
                 postTitle_textView.setText(item.getTitle());
                 switch (item.getCategory()) {
-                    case "chicken":
+                    case "치킨":
                         category_textView.setText("치킨");
                         break;
-                    case "pizza":
+                    case "피자":
                         category_textView.setText("피자");
                         break;
-                    case "hamburger":
+                    case "햄버거":
                         category_textView.setText("햄버거");
                         break;
-                    case "korean_food":
+                    case "한식":
                         category_textView.setText("한식");
                         break;
-                    case "japanese_food":
+                    case "일식":
                         category_textView.setText("일식");
                         break;
-                    case "chinese_food":
+                    case "중식":
                         category_textView.setText("중식");
                         break;
-                    case "western_food":
+                    case "양식":
                         category_textView.setText("양식");
                         break;
-                    case "snack":
+                    case "분식":
                         category_textView.setText("분식");
                         break;
-                    case "cafe_and_dessert":
+                    case "카페·디저트":
                         category_textView.setText("카페·디저트");
                         break;
-                    case "general":
+                    case "일반":
                         category_textView.setText("일반");
                         break;
                     default:
@@ -632,6 +778,7 @@ public class HomeActivity extends AppCompatActivity {
         adapter.setPostInfoList(filteredItems); // 필터링된 리스트를 리사이클러 뷰에 설정
         binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
         binding.postsRecyclerView.setAdapter(adapter); // 어댑터를 다시 설정하여 갱신
+
     }
 
     // 데이터 새로고침 함수
@@ -639,36 +786,144 @@ public class HomeActivity extends AppCompatActivity {
         // 기존 데이터를 비우는 로직 추가
         postInfoItems.clear();
 
-        // 새 데이터 추가 (하드 코딩) : 새로고침 했더니 게시글이 두 개만 남았다는 가정
-        postInfoItems.add(new PostInfoItem("https://cdn.mkhealth.co.kr/news/photo/202306/64253_68458_1153.png", "개신동 교촌치킨 파티 구함", "chicken", 320, 3, 2, false, 1));
-        postInfoItems.add(new PostInfoItem("https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 160, 3, 3, false, 0));
+        loadData();
 
-        // 어댑터에 변경된 데이터 리스트를 설정
-        adapter.setPostInfoList(postInfoItems);
-
-        // RecyclerView의 레이아웃 매니저와 어댑터를 다시 설정하여 UI를 갱신
-        binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-        binding.postsRecyclerView.setAdapter(adapter);
+//        // 어댑터에 변경된 데이터 리스트를 설정
+//        adapter.setPostInfoList(postInfoItems);
+//
+//        // RecyclerView의 레이아웃 매니저와 어댑터를 다시 설정하여 UI를 갱신
+//        binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
+//        binding.postsRecyclerView.setAdapter(adapter);
 
         // 새로고침 아이콘을 숨김 (새로고침이 끝났음을 의미)
         binding.swipeRefreshLayout.setRefreshing(false);
     }
 
-    // 초기 데이터 로딩 함수
+    // 데이터 로딩 함수
     private void loadData() {
-        // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-        postInfoItems.add(new PostInfoItem("https://cdn.mkhealth.co.kr/news/photo/202306/64253_68458_1153.png", "개신동 교촌치킨 파티 구함", "chicken", 320, 3, 2, false, 1));
-        postInfoItems.add(new PostInfoItem("https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 160, 3, 3, false, 0));
-        postInfoItems.add(new PostInfoItem("https://mblogthumb-phinf.pstatic.net/MjAyMjA3MjhfMTY5/MDAxNjU4OTkyODg0NTA3.z8WzaZAOKBvo4JkSm9lTMOTiNsKEUNHZJYRB-DPZCdEg.0WdqohiJPsSM5pXWYl-HvTE3JUVlUPe7LT-U6wvjUQwg.JPEG.duwlsrjdwb/KakaoTalk_20220728_151114228_10.jpg?type=w800", "사창동 우리집 닭강정 파티!!", "chicken", 500, 1, 0, false, 0));
-        postInfoItems.add(new PostInfoItem("https://image.kmib.co.kr/online_image/2024/0131/2024013114261427977_1706678775_0019120339.jpg", "맘스터치 배달 파티 999~~", "hamburger", 600, 3, 3, true, 2));
-        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6LTXILpqDk2KY425YAGSIAdF84ogxh-OFRz2P51EPvA&s", "행컵 그룹 구해용", "korean_food", 550, 2, 1, false, 0));
-        postInfoItems.add(new PostInfoItem("", "짚신 스시 & 롤 배달 구해요", "japanese_food", 555, 1, 0, true, 1));
-        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRj0BYs-iE7kn3fmdg0eVBxtqO89kwVRBFe_3Y8uZrgMA&s", "대장집 파티 구", "chinese_food", 560, 2, 1, false, 0));
-        postInfoItems.add(new PostInfoItem("https://d12zq4w4guyljn.cloudfront.net/750_750_20201122041810_photo1_5831aaf849cf.jpg", "파브리카 배달 구해용", "western_food", 700, 2, 2, false, 1));
-        postInfoItems.add(new PostInfoItem("https://media-cdn.tripadvisor.com/media/photo-s/12/31/92/d9/1519804025288-largejpg.jpg", "신전 떡볶이 구해유", "snack", 900, 3, 2, false, 2));
-        postInfoItems.add(new PostInfoItem("https://d12zq4w4guyljn.cloudfront.net/750_750_20230517093845_photo1_edd2f5913a1b.jpg", "메가커피 999", "cafe_and_dessert", 1000, 1, 0, false, 2));
-        postInfoItems.add(new PostInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-1FF9Hpe-_ERtrBHcUDeeckMOeOzm6IWylD_mJJlJEQ&s", "컴포즈 배달 구해요!!!", "cafe_and_dessert", 1500, 1, 1, false, 1));
+        Call<ResponseBody> call = recruitmentAPI.getRecruitmentPostList(currLatitude, currLongitude, distance);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        postInfoItems.clear();
+                        String responseBody = response.body().string();
+                        Type listType = new TypeToken<ArrayList<PostInfoResponse>>() {}.getType();
+                        ArrayList<PostInfoResponse> postList = new Gson().fromJson(responseBody, listType);
 
-        adapter.setPostInfoList(postInfoItems);
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
+                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+
+                        // 현재 시간 UTC로 생성
+                        Date now = new Date();
+
+                        for (PostInfoResponse post : postList) {
+                            try {
+                                String createdAtString = post.getCreatedAt().split("\\.")[0];
+                                Date createdAt = sdf.parse(createdAtString);
+                                long elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
+                                PostInfoItem item = new PostInfoItem(
+                                        post.getId(),
+                                        post.getImg(),
+                                        post.getTitle(),
+                                        post.getCategory(),
+                                        elapsedTime,
+                                        post.getHeadCount(),
+                                        post.getCurrentCount(),
+                                        post.isLiked(),
+                                        post.getLikes()
+                                );
+
+                                postInfoItems.add(0, item);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        filterPostsByCategory(currCategory);
+//                        adapter.setPostInfoList(postInfoItems);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), HomeActivity.this);
+            }
+        });
+
+    }
+
+    private void requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            requestPermissions(PERMISSIONS, REQUEST_PERMISSIONS_REQUEST_CODE);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // Permission denied.
+                for (String permission : permissions) {
+                    if ("android.permission.ACCESS_FINE_LOCATION".equals(permission)) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        builder.setMessage("지도 사용을 위해 위치 권한을 허용해 주세요.\n(필수권한)");
+                        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                /** 위치 정보 설정창에서 '설정으로 이동' 클릭 시 */
+                                Intent intent = new Intent();
+                                intent.setAction(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                                intent.setData(Uri.fromParts("package", getPackageName(), null));
+                                startActivity(intent);
+                            }
+                        });
+                        builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                /** 위치 정보 설정창에서 '취소' 클릭 시 */
+//                                Toast.makeText(MainActivity.this, "Cancel Click", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                            @Override
+                            public void onShow(DialogInterface arg0) {
+                                alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.rgb(0, 133, 254));
+                                alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.rgb(123, 123, 123));
+                            }
+                        });
+                        alertDialog.show();
+                    }
+                }
+            }
+        }
+    }
+    // 유저 정보 조회 메서드
+    private void getUserInfo() {
+        Call<ResponseBody> call = userAPI.getUserInfo();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 403) {
+                    startActivity(new Intent(HomeActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), HomeActivity.this);
+            }
+        });
+    }
+    // 이 액티비티로 다시 돌아왔을 때 실행되는 메소드
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadData();
+        getUserInfo();
     }
 }

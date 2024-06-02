@@ -20,13 +20,15 @@ public class AuthInterceptor implements Interceptor {
     @Override
     public Response intercept(@NotNull Chain chain) throws IOException {
         Request request = chain.request();
-        Request newRequest;
+        Request.Builder requestBuilder = request.newBuilder();
 
-        String token = tokenManager.getToken();
-        newRequest = request.newBuilder()
-                .addHeader("Authorization", "Bearer " + token)
-                .build();
+        if (!"no-auth".equals(request.header("Authorization-Type"))) {
+            String token = tokenManager.getToken();
+            requestBuilder.addHeader("Authorization", "Bearer " + token);
+        }
 
-        return chain.proceed(newRequest);
+        requestBuilder.removeHeader("Authorization-Type");
+
+        return chain.proceed(requestBuilder.build());
     }
 }

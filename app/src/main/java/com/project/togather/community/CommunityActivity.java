@@ -32,9 +32,17 @@ import com.project.togather.notification.NotificationActivity;
 import com.project.togather.profile.ProfileActivity;
 import com.project.togather.R;
 import com.project.togather.home.HomeActivity;
+import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.UserAPI;
+import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
 
 import java.util.ArrayList;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CommunityActivity extends AppCompatActivity {
 
@@ -42,6 +50,8 @@ public class CommunityActivity extends AppCompatActivity {
 
     private RecyclerViewAdapter adapter;
     private TokenManager tokenManager;
+    private UserAPI userAPI;
+    private RetrofitService retrofitService;
 
     ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
 
@@ -56,12 +66,8 @@ public class CommunityActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         tokenManager = TokenManager.getInstance(this);
-
-        // 토큰 값이 없다면 메인 액티비티로 이동
-        if (tokenManager.getToken() == null) {
-            startActivity(new Intent(CommunityActivity.this, MainActivity.class));
-            finish();
-        }
+        retrofitService = new RetrofitService(tokenManager);
+        userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
         onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -474,5 +480,29 @@ public class CommunityActivity extends AppCompatActivity {
         postInfoItems.add(new PostInfoItem("", "풍경", "청주에서 모래사장 있는 놀이터 아시면 알려주시면 감사하겠습니다 ㅠㅠ", "콘텐츠 잠깐 찍을려고 하는데 요즘에 공원에 모래가 있는 곳이 안 보이네요 ㅠㅠ", "개신동", 320, 0));
 
         adapter.setPostInfoList(postInfoItems);
+    }
+    // 유저 정보 조회 메서드
+    private void getUserInfo() {
+        Call<ResponseBody> call = userAPI.getUserInfo();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 403) {
+                    startActivity(new Intent(CommunityActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), CommunityActivity.this);
+            }
+        });
+    }
+    // 이 액티비티로 다시 돌아왔을 때 실행되는 메소드
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getUserInfo();
     }
 }

@@ -21,17 +21,28 @@ import com.project.togather.GetMyLocation;
 import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivitySelectedSpotBinding;
+import com.project.togather.editPost.recruitment.EditRecruitmentPostSelectMeetingSpotActivity;
+import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastSuccess;
+import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
 
 import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class SelectedSpotActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, net.daum.mf.map.api.MapView.MapViewEventListener, net.daum.mf.map.api.MapView.POIItemEventListener {
 
     private ActivitySelectedSpotBinding binding;
     private TokenManager tokenManager;
+    private UserAPI userAPI;
+    private RetrofitService retrofitService;
 
     private Dialog askJoinParty_dialog;
 
@@ -55,12 +66,8 @@ public class SelectedSpotActivity extends AppCompatActivity implements net.daum.
         setContentView(binding.getRoot());
 
         tokenManager = TokenManager.getInstance(this);
-
-        // 토큰 값이 없다면 메인 액티비티로 이동
-        if (tokenManager.getToken() == null) {
-            startActivity(new Intent(SelectedSpotActivity.this, MainActivity.class));
-            finish();
-        }
+        retrofitService = new RetrofitService(tokenManager);
+        userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
         /** (손 들기 확인) 다이얼로그 변수 초기화 및 설정 */
         askJoinParty_dialog = new Dialog(SelectedSpotActivity.this);  // Dialog 초기화
@@ -246,5 +253,30 @@ public class SelectedSpotActivity extends AppCompatActivity implements net.daum.
     @Override
     public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
 
+    }
+
+    // 유저 정보 조회 메서드
+    private void getUserInfo() {
+        Call<ResponseBody> call = userAPI.getUserInfo();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 403) {
+                    startActivity(new Intent(SelectedSpotActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), SelectedSpotActivity.this);
+            }
+        });
+    }
+    // 이 액티비티로 다시 돌아왔을 때 실행되는 메소드
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getUserInfo();
     }
 }

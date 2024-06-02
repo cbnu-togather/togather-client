@@ -16,16 +16,17 @@ import retrofit2.http.Query;
 
 public interface UserAPI {
     @GET("/user/phone")
-    Call<ResponseBody> checkPhoneNumber(@Query("phone") String phone);
+    Call<ResponseBody> checkPhoneNumber(@Header("Authorization-Type") String authType, @Query("phone") String phone);
     @GET("/user/doublecheck")
-    Call<Boolean> doubleCheckUserName(@Query("name") String name);
+    Call<Boolean> doubleCheckUserName(@Header("Authorization-Type") String authType, @Query("name") String name);
     @POST("/user")
     Call<ResponseBody> signUp(
+            @Header("Authorization-Type") String authType,
             @Query("phone") String phone,
             @Query("name") String name
     );
     @POST("/login")
-    Call<ResponseBody> login(@Query("phone") String phone);
+    Call<ResponseBody> login(@Header("Authorization-Type") String authType, @Query("phone") String phone);
     @DELETE("/user")
     @Headers("accept: application/json")
     Call<Void> deleteUser();

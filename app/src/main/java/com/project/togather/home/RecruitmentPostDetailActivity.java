@@ -24,7 +24,11 @@ import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityRecruitmentPostDetailBinding;
 import com.project.togather.editPost.recruitment.EditRecruitmentPostActivity;
+import com.project.togather.editPost.recruitment.EditRecruitmentPostSelectMeetingSpotActivity;
+import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastSuccess;
+import com.project.togather.toast.ToastWarning;
 import com.project.togather.user.LoginActivity;
 import com.project.togather.utils.TokenManager;
 
@@ -32,12 +36,19 @@ import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class RecruitmentPostDetailActivity extends AppCompatActivity {
 
     private ActivityRecruitmentPostDetailBinding binding;
 
     private BottomSheetBehavior selectPostManagementBottomSheetBehavior;
     private TokenManager tokenManager;
+    private UserAPI userAPI;
+    private RetrofitService retrofitService;
     private Dialog askDeletePost_dialog, askJoinParty_dialog, askStopRecruitment_dialog;
 
     private boolean isWriter, isLiked, isRecruitmentComplete;
@@ -60,12 +71,11 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         tokenManager = TokenManager.getInstance(this);
+        retrofitService = new RetrofitService(tokenManager);
+        userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
-        // 토큰 값이 없다면 메인 액티비티로 이동
-        if (tokenManager.getToken() == null) {
-            startActivity(new Intent(RecruitmentPostDetailActivity.this, MainActivity.class));
-            finish();
-        }
+        Intent intent = getIntent();
+        String postId = intent.getStringExtra("post_id");
 
         binding.activityHeaderRelativeLayout.bringToFront();
 
@@ -267,9 +277,29 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         binding.functionButton.setEnabled(isRecruitmentComplete ? false : true);
     }
 
+    // 유저 정보 조회 메서드
+    private void getUserInfo() {
+        Call<ResponseBody> call = userAPI.getUserInfo();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 403) {
+                    startActivity(new Intent(RecruitmentPostDetailActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), RecruitmentPostDetailActivity.this);
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+
+        getUserInfo();
 
         /** 다음 카카오맵 지도를 띄우는 코드 */
         mapView = new MapView(this);

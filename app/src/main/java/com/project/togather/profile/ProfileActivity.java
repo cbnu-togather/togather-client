@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -264,22 +265,32 @@ public class ProfileActivity extends AppCompatActivity {
                         String responseBodyString = response.body().string();
                         JSONObject jsonObject = new JSONObject(responseBodyString);
 
-                        String userName = jsonObject.getString("name");
-                        String photo = jsonObject.getString("photo");
+                        // JSON 필드 존재 여부 확인
+                        if (jsonObject.has("name") && jsonObject.has("photo")) {
+                            String userName = jsonObject.getString("name");
+                            String photo = jsonObject.getString("photo");
 
-                        // 내 유저 이름을 표시
-                        binding.userNameTextView.setText(userName);
+                            // 내 유저 이름을 표시
+                            binding.userNameTextView.setText(userName);
 
-                        // 내 프로필 사진을 표시
-                        Glide.with(ProfileActivity.this)
-                                .load(photo)
-                                .placeholder(R.drawable.one_person_logo)
-                                .error(R.drawable.one_person_logo)
-                                .into(binding.userProfileImageRoundedImageView);
-
-                    } catch (IOException | JSONException e) {
+                            // 내 프로필 사진을 표시
+                            Glide.with(ProfileActivity.this)
+                                    .load(photo)
+                                    .placeholder(R.drawable.one_person_logo)
+                                    .error(R.drawable.one_person_logo)
+                                    .into(binding.userProfileImageRoundedImageView);
+                        } else {
+                            // 필요한 필드가 없을 경우 로그 출력
+                            Log.e("getUserInfo", "Required fields are missing in the JSON response.");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                } else if (response.code() == 403) {
+                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                    finish();
                 }
             }
 
@@ -294,11 +305,6 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // 토큰 값이 없다면 메인 액티비티로 이동
-        if (tokenManager.getToken() == null) {
-            startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-            finish();
-        }
         getUserInfo();
 
     }

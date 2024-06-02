@@ -46,8 +46,10 @@ import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.databinding.ActivitySelectMeetingSpotBinding;
 import com.project.togather.home.HomeActivity;
 import com.project.togather.model.CoordinateToAddress;
+import com.project.togather.retrofit.RetrofitService;
 import com.project.togather.retrofit.RetrofitServiceForKakao;
 import com.project.togather.retrofit.interfaceAPI.KakaoAPI;
+import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
 
@@ -57,6 +59,7 @@ import net.daum.mf.map.api.MapPoint;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -65,6 +68,8 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
 
     private ActivitySelectMeetingSpotBinding binding;
     private TokenManager tokenManager;
+    private UserAPI userAPI;
+    private RetrofitService retrofitService;
 
     /**
      * 위치 권한 요청 코드의 상숫값
@@ -122,12 +127,8 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
         setContentView(binding.getRoot());
 
         tokenManager = TokenManager.getInstance(this);
-
-        // 토큰 값이 없다면 메인 액티비티로 이동
-        if (tokenManager.getToken() == null) {
-            startActivity(new Intent(SelectMeetingSpotActivity.this, MainActivity.class));
-            finish();
-        }
+        retrofitService = new RetrofitService(tokenManager);
+        userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
         // 전역 데이터 로드
         SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);
@@ -169,8 +170,8 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
         GetMyLocation getMyLocation = new GetMyLocation(this, this);
         Location userLocation = getMyLocation.getMyLocation();
         if (userLocation != null) {
-            currLatitude = 36.62565323814696; // 소프트웨어학부 건물 위도, 경도
-            currLongitude = 127.45428323069932;
+            currLatitude = userLocation.getLatitude(); // 소프트웨어학부 건물 위도, 경도
+            currLongitude = userLocation.getLongitude();
             System.out.println("////////////현재 내 위치값 : " + currLatitude + "," + currLongitude);
             currPoint = MapPoint.mapPointWithGeoCoord(currLatitude, currLongitude);
 
@@ -383,6 +384,32 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
         });
     }
 
+    // 유저 정보 조회 메서드
+    private void getUserInfo() {
+        Call<ResponseBody> call = userAPI.getUserInfo();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.code() == 403) {
+                    startActivity(new Intent(SelectMeetingSpotActivity.this, MainActivity.class));
+                    finish();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), SelectMeetingSpotActivity.this);
+            }
+        });
+    }
+
+    // 이 액티비티로 다시 돌아왔을 때 실행되는 메소드
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        getUserInfo();
+    }
+
     public void resolveLocationSettings(Exception exception) {
         ResolvableApiException resolvable = (ResolvableApiException) exception;
         try {
@@ -484,4 +511,5 @@ public class SelectMeetingSpotActivity extends AppCompatActivity implements net.
     public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint
             mapPoint) {
     }
+
 }
