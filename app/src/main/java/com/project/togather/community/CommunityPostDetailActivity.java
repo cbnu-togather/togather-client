@@ -79,7 +79,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
     private static RecyclerViewAdapter adapter;
     private TokenManager tokenManager;
     private UserAPI userAPI;
-    private CommunityAPI communityAPI;
+    private static CommunityAPI communityAPI;
     private RetrofitService retrofitService;
 
     private BottomSheetBehavior selectPostManagementBottomSheetBehavior;
@@ -510,9 +510,24 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
 
         // (삭제) 버튼
         askDeleteComment_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
-            askDeleteComment_dialog.dismiss(); // 다이얼로그 닫기
+
             if (adapter != null) {
-                adapter.removeItem(adapter.currentSelectedPosition); // 선택된 아이템 삭제
+                long commentId = adapter.getCommentInfoItems().get(adapter.currentSelectedPosition).getId();
+                Call<ResponseBody> call = communityAPI.deleteComment((int)commentId);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            askDeleteComment_dialog.dismiss(); // 다이얼로그 닫기
+                            adapter.removeItem(adapter.currentSelectedPosition); // 선택된 아이템 삭제
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    }
+                });
+
             }
         });
     }

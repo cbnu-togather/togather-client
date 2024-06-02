@@ -77,6 +77,10 @@ public interface CommunityAPI {
             @Path("communityId") int postId,
             @Query("content") String content
     );
+    @DELETE("comment/{commentId}")
+    Call<ResponseBody> deleteComment(
+            @Path("commentId") int commentId
+    );
 
 
 
