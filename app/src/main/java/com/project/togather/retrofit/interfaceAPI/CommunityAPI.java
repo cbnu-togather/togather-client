@@ -41,5 +41,8 @@ public interface CommunityAPI {
     @GET("community/{communityId}")
     Call<ResponseBody> getCommunityPostDetail(@Path("communityId") int postId);
 
+    @POST("community/like")
+    Call<ResponseBody> setCommunityPostLike(@Query("communityId") int postId);
+
 
 }

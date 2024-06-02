@@ -83,8 +83,8 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
     private static int postId;
 
     private boolean isWriter;
-    final int likedCnt[] = {0};
-    final boolean isLiked[] = {false};
+    static int likedCnt[] = {0};
+    static boolean isLiked[] = {false};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -350,26 +350,40 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) binding.likedRelativeLayout.getLayoutParams();
 
         binding.likedRelativeLayout.setOnClickListener(view -> {
-            isLiked[0] = !isLiked[0];
-            if (isLiked[0])
-                likedCnt[0]++;  // 사용자가 좋아요를 누른 경우, 좋아요 수 증가
-            else
-                likedCnt[0]--;  // 사용자가 좋아요를 취소한 경우, 좋아요 수 감소
+            Call<ResponseBody> call = communityAPI.setCommunityPostLike(postId);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        isLiked[0] = !isLiked[0];
+                        if (isLiked[0])
+                            likedCnt[0]++;  // 사용자가 좋아요를 누른 경우, 좋아요 수 증가
+                        else
+                            likedCnt[0]--;  // 사용자가 좋아요를 취소한 경우, 좋아요 수 감소
 
-            // UI 업데이트
-            binding.likedRelativeLayout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(isLiked[0] ? R.color.theme_color : R.color.rounded_gray_border_color)));
-            binding.noLikeRelativeLayout.setVisibility(likedCnt[0] > 0 ? View.GONE : View.VISIBLE);
-            binding.yesLikeRelativeLayout.setVisibility(likedCnt[0] > 0 ? View.VISIBLE : View.GONE);
-            binding.likedCntTextView.setTextColor(getResources().getColor(isLiked[0] ? R.color.theme_color : R.color.text_color));
-            binding.likedCntTextView.setText("" + likedCnt[0]);
+                        // UI 업데이트
+                        binding.likedRelativeLayout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(isLiked[0] ? R.color.theme_color : R.color.rounded_gray_border_color)));
+                        binding.noLikeRelativeLayout.setVisibility(likedCnt[0] > 0 ? View.GONE : View.VISIBLE);
+                        binding.yesLikeRelativeLayout.setVisibility(likedCnt[0] > 0 ? View.VISIBLE : View.GONE);
+                        binding.likedCntTextView.setTextColor(getResources().getColor(isLiked[0] ? R.color.theme_color : R.color.text_color));
+                        binding.likedCntTextView.setText("" + likedCnt[0]);
 
-            if (likedCnt[0] > 0)
-                params.width = 220;
-            else
-                params.width = 295;
+                        if (likedCnt[0] > 0)
+                            params.width = 220;
+                        else
+                            params.width = 295;
 
-            binding.likedRelativeLayout.setLayoutParams(params);
-            binding.likedRelativeLayout.requestLayout();
+                        binding.likedRelativeLayout.setLayoutParams(params);
+                        binding.likedRelativeLayout.requestLayout();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+                }
+            });
+
         });
 
         binding.likedRelativeLayout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(isLiked[0] ? R.color.theme_color : R.color.rounded_gray_border_color)));
@@ -659,7 +673,9 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         binding.addressTextView.setText(communityPostDetailItem.getAddress());
         binding.viewsCntTextView.setText(String.valueOf(communityPostDetailItem.getView()));
         isWriter = communityPostDetailItem.isWriter();
+        isLiked[0] = communityPostDetailItem.isLiked();
         likedCnt[0] = communityPostDetailItem.getLikes();
+
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
@@ -709,7 +725,6 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
                     .into(binding.postThumbnailImageView); // ImageView에 이미지 설정
         }
         binding.moreImageButton.setVisibility(isWriter ? View.VISIBLE : View.GONE);
-
     }
 
 
