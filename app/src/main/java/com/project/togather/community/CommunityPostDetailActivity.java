@@ -85,6 +85,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
     private boolean isWriter;
     static int likedCnt[] = {0};
     static boolean isLiked[] = {false};
+    private RelativeLayout.LayoutParams params;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,17 +124,6 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         // initiate recyclerview
         binding.commentRecyclerView.setAdapter(adapter);
         binding.commentRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-
-        // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-//        commentInfoItems.add(new CommentInfoItem("http://image.dongascience.com/Photo/2020/03/5bddba7b6574b95d37b6079c199d7101.jpg", "우리집멍뭉이는세계최강", "하이(1)", "", 10000, "other"));
-//        commentInfoItems.add(new CommentInfoItem("https://m.stylehorn.co.kr/web/product/big/201903/ab7175bb3de5cf3b713d0b74562e26ba.jpg", "쿠크다스", "안녕하세용!", "", 5000, "other"));
-//        commentInfoItems.add(new CommentInfoItem("http://image.dongascience.com/Photo/2020/03/5bddba7b6574b95d37b6079c199d7101.jpg", "우리집멍뭉이는세계최강", "하이요~", "", 1000, "other"));
-//        commentInfoItems.add(new CommentInfoItem("", "홍길동", "멋있어요", "", 500, "other"));
-//        commentInfoItems.add(new CommentInfoItem("https://scontent-ssn1-1.xx.fbcdn.net/v/t1.6435-9/87385337_2603792983243744_6226034272168312832_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=tD2DmCLPzRwQ7kNvgGTN12Q&_nc_ht=scontent-ssn1-1.xx&oh=00_AfB840U4WbepFt_thDMjs_KQZBnE8roFLdvN0sFFr4wvjA&oe=66625729", "김감자", "텍스트", "", 275, "writer"));
-//        commentInfoItems.add(new CommentInfoItem("https://scontent-ssn1-1.xx.fbcdn.net/v/t1.6435-9/87385337_2603792983243744_6226034272168312832_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=tD2DmCLPzRwQ7kNvgGTN12Q&_nc_ht=scontent-ssn1-1.xx&oh=00_AfB840U4WbepFt_thDMjs_KQZBnE8roFLdvN0sFFr4wvjA&oe=66625729", "김감자", "", "https://www.visitbusan.net/uploadImgs/files/cntnts/20191227204425032_wufrotr", 275, "writer"));
-//        commentInfoItems.add(new CommentInfoItem("https://scontent-ssn1-1.xx.fbcdn.net/v/t1.6435-9/87385337_2603792983243744_6226034272168312832_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=tD2DmCLPzRwQ7kNvgGTN12Q&_nc_ht=scontent-ssn1-1.xx&oh=00_AfB840U4WbepFt_thDMjs_KQZBnE8roFLdvN0sFFr4wvjA&oe=66625729", "김감자", "글과 이미지는 동시에도 가능해요", "https://pbs.twimg.com/media/EZ5OCioVAAAM-dG.jpg", 250, "writer"));
-//        commentInfoItems.add(new CommentInfoItem("https://m.stylehorn.co.kr/web/product/big/201903/ab7175bb3de5cf3b713d0b74562e26ba.jpg", "쿠크다스", "테스트 댓글", "https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/91/3c349f3bb041bcf7d75c100b928fe2ea_res.jpeg", 100, "other"));
-//        adapter.setCommentInfoItem(commentInfoItems);
 
         /** (뒤로가기 화살표 이미지) 버튼 클릭 시 */
         binding.backImageButton.setOnClickListener(new View.OnClickListener() {
@@ -193,7 +183,10 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
                 {
                     if (selectPostManagementBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
                         selectPostManagementBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        startActivity(new Intent(CommunityPostDetailActivity.this, EditCommunityPostActivity.class));
+                        Intent intentEdit = new Intent(CommunityPostDetailActivity.this, EditCommunityPostActivity.class);
+                        intentEdit.putExtra("post_id", postId);
+                        startActivity(intentEdit);
+                        finish();
                     }
                 });
 
@@ -347,7 +340,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         // 좋아요가 5개 이상 달린 동네생활 게시글의 경우 상단에 "인기글" 태그가 달림
         binding.hotCategoryCardView.setVisibility(likedCnt[0] >= 5 ? View.VISIBLE : View.GONE);
 
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) binding.likedRelativeLayout.getLayoutParams();
+        params = (RelativeLayout.LayoutParams) binding.likedRelativeLayout.getLayoutParams();
 
         binding.likedRelativeLayout.setOnClickListener(view -> {
             Call<ResponseBody> call = communityAPI.setCommunityPostLike(postId);
@@ -385,20 +378,6 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
             });
 
         });
-
-        binding.likedRelativeLayout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(isLiked[0] ? R.color.theme_color : R.color.rounded_gray_border_color)));
-        binding.noLikeRelativeLayout.setVisibility(likedCnt[0] > 0 ? View.GONE : View.VISIBLE);
-        binding.yesLikeRelativeLayout.setVisibility(likedCnt[0] > 0 ? View.VISIBLE : View.GONE);
-        binding.likedCntTextView.setTextColor(getResources().getColor(isLiked[0] ? R.color.theme_color : R.color.text_color));
-        binding.likedCntTextView.setText("" + likedCnt[0]);
-
-        if (likedCnt[0] > 0)
-            params.width = 220;
-        else
-            params.width = 295;
-
-        binding.likedRelativeLayout.setLayoutParams(params);
-        binding.likedRelativeLayout.requestLayout();
     }
 
     private void writeComment() {
@@ -738,6 +717,21 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
                     .into(binding.postThumbnailImageView); // ImageView에 이미지 설정
         }
         binding.moreImageButton.setVisibility(isWriter ? View.VISIBLE : View.GONE);
+
+        // UI 업데이트
+        binding.likedRelativeLayout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(isLiked[0] ? R.color.theme_color : R.color.rounded_gray_border_color)));
+        binding.noLikeRelativeLayout.setVisibility(likedCnt[0] > 0 ? View.GONE : View.VISIBLE);
+        binding.yesLikeRelativeLayout.setVisibility(likedCnt[0] > 0 ? View.VISIBLE : View.GONE);
+        binding.likedCntTextView.setTextColor(getResources().getColor(isLiked[0] ? R.color.theme_color : R.color.text_color));
+        binding.likedCntTextView.setText("" + likedCnt[0]);
+
+        if (likedCnt[0] > 0)
+            params.width = 220;
+        else
+            params.width = 295;
+
+        binding.likedRelativeLayout.setLayoutParams(params);
+        binding.likedRelativeLayout.requestLayout();
     }
 
 

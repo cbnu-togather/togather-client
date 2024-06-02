@@ -621,7 +621,7 @@ public class EditRecruitmentPostActivity extends AppCompatActivity {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
-                        new ToastSuccess("수정이 완료되었어요", EditRecruitmentPostActivity.this);
+
                     }
                 }
 
