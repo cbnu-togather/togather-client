@@ -32,8 +32,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.project.togather.MainActivity;
 import com.project.togather.R;
+import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.databinding.ActivityCommunityPostDetailBinding;
 import com.project.togather.editPost.community.EditCommunityPostActivity;
 import com.project.togather.editPost.community.EditCommunityPostCommentActivity;
@@ -43,18 +45,28 @@ import com.project.togather.home.RecruitmentPostDetailActivity;
 import com.project.togather.retrofit.RetrofitService;
 import com.project.togather.retrofit.interfaceAPI.CommunityAPI;
 import com.project.togather.retrofit.interfaceAPI.UserAPI;
+import com.project.togather.toast.ToastSuccess;
 import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.UUID;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -86,6 +98,8 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
     static int likedCnt[] = {0};
     static boolean isLiked[] = {false};
     private RelativeLayout.LayoutParams params;
+    private ArrayList<CommentInfoItem> commentInfoItems = new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,8 +132,6 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         askDeleteComment_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         adapter = new RecyclerViewAdapter();
-
-        ArrayList<CommentInfoItem> commentInfoItems = new ArrayList<>();
 
         // initiate recyclerview
         binding.commentRecyclerView.setAdapter(adapter);
@@ -382,24 +394,68 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
 
     private void writeComment() {
         String commentText = binding.commentEditText.getText().toString().trim();
+
+
         if (!commentText.isEmpty()) {
-            CommentInfoItem newItem = new CommentInfoItem(
-                    1,"https://mblogthumb-phinf.pstatic.net/MjAyMjAzMjlfMSAg/MDAxNjQ4NDgwNzgwMzkw.yDLPqC9ouJxYoJSgicANH0CPNvFdcixexP7hZaPlCl4g.n7yZDyGC06_gRTwEnAKIhj5bM04laVpNuKRz29dP83wg.JPEG.38qudehd/IMG_8635.JPG?type=w800",  // userProfileImageUrl, assuming no image for simplicity
-                    "김감자",  // username
-                    commentText,  // comment
-                    selectedImageUri.toString(),  // ImageUrl, assuming no image for simplicity
-                    1, // Elapsed time
-                    "writer" // 작성자 본인의 경우 writer임
-            );
+//            CommentInfoItem newItem = new CommentInfoItem(
+//                    1,"https://mblogthumb-phinf.pstatic.net/MjAyMjAzMjlfMSAg/MDAxNjQ4NDgwNzgwMzkw.yDLPqC9ouJxYoJSgicANH0CPNvFdcixexP7hZaPlCl4g.n7yZDyGC06_gRTwEnAKIhj5bM04laVpNuKRz29dP83wg.JPEG.38qudehd/IMG_8635.JPG?type=w800",  // userProfileImageUrl, assuming no image for simplicity
+//                    "김감자",  // username
+//                    commentText,  // comment
+//                    selectedImageUri.toString(),  // ImageUrl, assuming no image for simplicity
+//                    1, // Elapsed time
+//                    "writer" // 작성자 본인의 경우 writer임
+//            );
+            if (selectedImageUri != null && !selectedImageUri.toString().isEmpty()) {
+                File file = uriToFile(selectedImageUri, CommunityPostDetailActivity.this);
 
-            adapter.getCommentInfoItems().add(newItem);  // Add new message item to the list
-            adapter.notifyDataSetChanged();  // Notify adapter to refresh view
+                RequestBody requestFile = RequestBody.create(MediaType.parse("image/*"), file);
+                MultipartBody.Part body =  MultipartBody.Part.createFormData("img", file.getName(), requestFile);
 
+                Call<ResponseBody> call = communityAPI.postComment(postId, commentText, body);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            getCommunityPostDetail(postId);
+                            new ToastSuccess("작성이 완료되었어요", CommunityPostDetailActivity.this);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                        // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
+                        new ToastWarning(getResources().getString(R.string.toast_server_error), CommunityPostDetailActivity.this);
+                    }
+                });
+            } else {
+                Call<ResponseBody> call = communityAPI.postCommentWithoutImg(postId, commentText);
+                call.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()) {
+                            getCommunityPostDetail(postId);
+                            new ToastSuccess("작성이 완료되었어요", CommunityPostDetailActivity.this);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                        // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
+                        new ToastWarning(getResources().getString(R.string.toast_server_error), CommunityPostDetailActivity.this);
+                    }
+                });
+            }
+
+
+
+//            adapter.getCommentInfoItems().add(newItem);  // Add new message item to the list
+//            adapter.notifyDataSetChanged();  // Notify adapter to refresh view
+//
             int commentNum = adapter.getItemCount();
             binding.activityBodyNestedScrollView.smoothScrollTo(0, 1000 * commentNum + 10000);
 
             binding.commentEditText.setText("");  // Clear the input field
-            selectedImageUri = Uri.parse("");
+            selectedImageUri = null;
             binding.postThumbnailRelativeLayout.setVisibility(View.GONE);
             binding.commentNumTextView.setText("" + adapter.getItemCount());
             hideKeyboard();
@@ -542,7 +598,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
             }
 
             void onBind(CommentInfoItem item) {
-                if (item.getUserProfileImageUrl().equals("")) {
+                if (item.getUserProfileImageUrl()!= null && item.getUserProfileImageUrl().equals("")) {
                     userProfileImage_roundedImageView.setImageResource(R.drawable.user_default_profile);
                 } else {
                     Glide.with(itemView)
@@ -570,17 +626,21 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
                 }
                 elapsedTime_textView.setText(elapsedTime_str);
 
-                comment_textView.setText(item.getComment());
-                comment_textView.setVisibility(item.getComment().equals("") ? View.GONE : View.VISIBLE);
+                if (item.getComment() != null) {
+                    comment_textView.setText(item.getComment());
+                    comment_textView.setVisibility(item.getComment().equals("") ? View.GONE : View.VISIBLE);
+                }
 
-                if (item.getImageUrl().equals("")) {
-                    imageComment_relativeLayout.setVisibility(View.GONE);
-                } else {
+
+                if (item.getImageUrl() != null && !item.getImageUrl().equals("")) {
                     Glide.with(itemView)
                             .load(item.getImageUrl()) // 이미지 URL 가져오기
                             .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
                             .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
                             .into(imageComment_imageView); // ImageView에 이미지 설정
+                } else {
+                    imageComment_relativeLayout.setVisibility(View.GONE);
+
                 }
 
                 if (!isWriter && item.getWho().equals("other")) {
@@ -609,14 +669,15 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
             switch (requestCode) {
                 case REQUEST_GALLERY:
                     // 갤러리에서 이미지를 선택했을 때의 처리
-                    selectedImageUri = data.getData();
-                    updateImage(selectedImageUri);
+                    Uri newSelectedImageUri = data.getData();
+                    updateImage(newSelectedImageUri);
                     break;
             }
         }
     }
 
     private void updateImage(Uri imageUri) {
+        selectedImageUri = imageUri;
         try (InputStream inputStream = getContentResolver().openInputStream(imageUri)) {
             Glide.with(binding.commentImageImageView)
                     .load(imageUri) // 이미지 URL 가져오기
@@ -629,6 +690,22 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
             Toast.makeText(this, "이미지를 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show();
         }
     }
+    // Uri를 실제 파일로 변환하는 메서드
+    private File uriToFile(Uri uri, Context context) {
+        String uniqueFileName = "upload_" + UUID.randomUUID().toString() + ".jpg";
+        File file = new File(context.getCacheDir(), uniqueFileName);
+        try (InputStream inputStream = context.getContentResolver().openInputStream(uri);
+             OutputStream outputStream = new FileOutputStream(file)) {
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, len);
+            }
+        } catch (Exception e) {
+            Log.e("File Conversion", "Error converting Uri to File", e);
+        }
+        return file;
+    }
 
     private void getCommunityPostDetail(int postId) {
         Call<ResponseBody> call = communityAPI.getCommunityPostDetail(postId);
@@ -637,10 +714,46 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
                     try {
+                        commentInfoItems.clear();
                         String jsonString = response.body().string();
                         Gson gson = new Gson();
                         communityPostDetailItem = gson.fromJson(jsonString, CommunityPostDetailItem.class);
 
+                        Log.d("comments", "onResponse: " + communityPostDetailItem.getComments());
+                        CommentInfoResponse[] commentArray = communityPostDetailItem.getComments();
+                        ArrayList<CommentInfoResponse> commentList = new ArrayList<>(Arrays.asList(commentArray));
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
+                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+
+                        // 현재 시간 UTC로 생성
+                        Date now = new Date();
+                        for (CommentInfoResponse comment : commentList) {
+                            try {
+                                String createdAtString = comment.getCreatedAt().split("\\.")[0];
+                                Date createdAt = sdf.parse(createdAtString);
+                                long elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
+
+                                String imgUrl = comment.getImg() != null && !comment.getImg().isEmpty() ? comment.getImg() : null;
+
+                                CommentInfoItem item = new CommentInfoItem(
+                                        comment.getId(),
+                                        comment.getWriterImg(),
+                                        comment.getWriterName(),
+                                        comment.getContent(),
+                                        imgUrl,
+                                        elapsedTime,
+                                        comment.getWho()
+                                );
+
+                                commentInfoItems.add(item);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        adapter.setCommentInfoItem(commentInfoItems);
+                        binding.commentNumTextView.setText(String.valueOf(adapter.getItemCount()));
                         if(communityPostDetailItem != null) {
                             updateUI();
                         }
@@ -658,6 +771,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
+        // 텍스트 업데이트
         binding.postTitleTextView.setText(communityPostDetailItem.getTitle());
         binding.contentTextView.setText(communityPostDetailItem.getContent());
         binding.usernameTextView.setText(communityPostDetailItem.getWriterName());
@@ -668,7 +782,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         isLiked[0] = communityPostDetailItem.isLiked();
         likedCnt[0] = communityPostDetailItem.getLikes();
 
-
+        // 글 작성 후 경과 시간 업데이트
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
@@ -695,7 +809,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         }
 
 
-
+        // 프로필 이미지 업데이트
         if (communityPostDetailItem.getWriterImg() == null) {
             binding.otherUserProfileImageRoundedImageView.setImageResource(R.drawable.post_thumbnail_background_logo);
             Log.d("userImg", "updateUI: " + communityPostDetailItem.getWriterImg());
@@ -706,8 +820,9 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
                     .error(R.drawable.post_thumbnail_background_logo) // 에러 발생 시 표시할 이미s지
                     .into(binding.otherUserProfileImageRoundedImageView); // ImageView에 이미지 설정
         }
+        // 포스트 이미지 업데이트
         if (communityPostDetailItem.getImg() == null) {
-            binding.postThumbnailImageView.setImageResource(R.drawable.post_thumbnail_background_logo);
+            binding.postThumbnailImageView.setVisibility(View.GONE);
             Log.d("postImg", "updateUI: " + communityPostDetailItem.getImg());
         } else {
             Glide.with(CommunityPostDetailActivity.this)
@@ -716,9 +831,10 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
                     .error(R.drawable.post_thumbnail_background_logo) // 에러 발생 시 표시할 이미s지
                     .into(binding.postThumbnailImageView); // ImageView에 이미지 설정
         }
+        // 작성자 여부따라 더보기 버튼 표시
         binding.moreImageButton.setVisibility(isWriter ? View.VISIBLE : View.GONE);
 
-        // UI 업데이트
+        // 좋아요 UI 업데이트
         binding.likedRelativeLayout.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(isLiked[0] ? R.color.theme_color : R.color.rounded_gray_border_color)));
         binding.noLikeRelativeLayout.setVisibility(likedCnt[0] > 0 ? View.GONE : View.VISIBLE);
         binding.yesLikeRelativeLayout.setVisibility(likedCnt[0] > 0 ? View.VISIBLE : View.GONE);
@@ -732,6 +848,8 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
 
         binding.likedRelativeLayout.setLayoutParams(params);
         binding.likedRelativeLayout.requestLayout();
+
+
     }
 
 

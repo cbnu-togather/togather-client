@@ -65,6 +65,18 @@ public interface CommunityAPI {
             @Query("content") String content,
             @Query("category") String category
     );
+    @Multipart
+    @POST("comment/{communityId}")
+    Call<ResponseBody> postComment(
+            @Path("communityId") int postId,
+            @Query("content") String content,
+            @Part @Nullable MultipartBody.Part img
+    );
+    @POST("comment/{communityId}")
+    Call<ResponseBody> postCommentWithoutImg(
+            @Path("communityId") int postId,
+            @Query("content") String content
+    );
 
 
 
