@@ -443,8 +443,21 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
 
         // (삭제) 버튼
         askDeletePost_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
-            askDeletePost_dialog.dismiss(); // 다이얼로그 닫기
-            startActivity(new Intent(CommunityPostDetailActivity.this, CommunityActivity.class));
+            Call<ResponseBody> call = communityAPI.deleteCommunityPost(postId);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        askDeletePost_dialog.dismiss(); // 다이얼로그 닫기
+                        startActivity(new Intent(CommunityPostDetailActivity.this, CommunityActivity.class));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    new ToastWarning(getResources().getString(R.string.toast_server_error), CommunityPostDetailActivity.this);
+                }
+            });
         });
     }
 
@@ -660,7 +673,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-
+                new ToastWarning(getResources().getString(R.string.toast_server_error), CommunityPostDetailActivity.this);
             }
         });
     }

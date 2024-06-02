@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -43,6 +44,8 @@ public interface CommunityAPI {
 
     @POST("community/like")
     Call<ResponseBody> setCommunityPostLike(@Query("communityId") int postId);
+    @DELETE("community/{communityId}")
+    Call<ResponseBody> deleteCommunityPost(@Path("communityId") int postId);
 
 
 }
