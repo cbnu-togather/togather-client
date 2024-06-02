@@ -27,6 +27,7 @@ import com.project.togather.R;
 import com.project.togather.community.CommunityPostDetailActivity;
 import com.project.togather.createPost.community.CreateCommunityPostActivity;
 import com.project.togather.databinding.ActivityCreateRecruitmentPostBinding;
+import com.project.togather.home.HomeActivity;
 import com.project.togather.home.RecruitmentPostDetailActivity;
 import com.project.togather.profile.EditMyProfile;
 import com.project.togather.profile.ProfileActivity;
@@ -405,7 +406,7 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
             // API 요청 부분
             performPost(recruitmentNum[0]);
 
-            startActivity(new Intent(CreateRecruitmentPostActivity.this, RecruitmentPostDetailActivity.class));
+            startActivity(new Intent(CreateRecruitmentPostActivity.this, HomeActivity.class));
             finish();
         });
     }

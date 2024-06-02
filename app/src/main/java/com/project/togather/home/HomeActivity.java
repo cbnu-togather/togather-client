@@ -923,7 +923,10 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        loadData();
+
         getUserInfo();
+        loadData();
+        currCategory ="all";
+        binding.distanceTextView.setText(distance + "m");
     }
 }
