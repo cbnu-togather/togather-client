@@ -71,6 +71,8 @@ public class ProfileActivity extends AppCompatActivity {
         retrofitService = new RetrofitService(tokenManager);
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
 
+        getUserInfo();
+
         onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {

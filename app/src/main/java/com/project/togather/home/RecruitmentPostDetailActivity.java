@@ -65,7 +65,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
     private RetrofitService retrofitService;
     private Dialog askDeletePost_dialog, askJoinParty_dialog, askStopRecruitment_dialog;
 
-    private boolean isWriter, isLiked, isRecruitmentComplete;
+    private static boolean isWriter, isLiked, isRecruitmentComplete;
 
     private static MapView mapView;
     private static ViewGroup mapViewContainer;
@@ -93,6 +93,8 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         postId = intent.getIntExtra("post_id", 0);
+
+
 
         binding.activityHeaderRelativeLayout.bringToFront();
 
@@ -142,11 +144,23 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
             });
         }
 
-        binding.likeImageView.setImageResource(isLiked ? R.drawable.like_filled : R.drawable.like_bolder_gray);
-
         binding.likeImageView.setOnClickListener(view -> {
-            isLiked = !isLiked;
-            binding.likeImageView.setImageResource(isLiked ? R.drawable.like_filled : R.drawable.like_bolder_gray);
+            Call<ResponseBody> call = recruitmentAPI.setRecruitmentPostLike(postId);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        isLiked = !isLiked;
+                        binding.likeImageView.setImageResource(isLiked ? R.drawable.like_filled : R.drawable.like_bolder_gray);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    new ToastSuccess("모집이 마감되었어요", RecruitmentPostDetailActivity.this);
+                }
+            });
+
         });
 
         recruitmentComplete();
@@ -191,7 +205,10 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                 {
                     if (selectPostManagementBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
                         selectPostManagementBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        startActivity(new Intent(RecruitmentPostDetailActivity.this, EditRecruitmentPostActivity.class));
+                        Intent intentEdit = new Intent(RecruitmentPostDetailActivity.this, EditRecruitmentPostActivity.class);
+                        intentEdit.putExtra("post_id", postId);
+                        startActivity(intentEdit);
+                        finish();
                     }
                 });
 
@@ -241,8 +258,23 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
 
         // (삭제) 버튼
         askDeletePost_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
-            askDeletePost_dialog.dismiss(); // 다이얼로그 닫기
-            startActivity(new Intent(RecruitmentPostDetailActivity.this, HomeActivity.class));
+            Call<ResponseBody> call = recruitmentAPI.deleteRecruitmentPost(postId);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        askDeletePost_dialog.dismiss(); // 다이얼로그 닫기
+                        startActivity(new Intent(RecruitmentPostDetailActivity.this, HomeActivity.class));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    new ToastWarning(getResources().getString(R.string.toast_server_error), RecruitmentPostDetailActivity.this);
+                }
+            });
+
+
         });
     }
 
@@ -323,6 +355,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                         Gson gson = new Gson();
                         postDetailsItem = gson.fromJson(jsonString, PostDetailsItem.class);
                         isWriter = postDetailsItem.isWriter();
+                        isLiked = postDetailsItem.isLiked();
 
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
                         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
@@ -349,17 +382,19 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                         // 유저 프로필 사진 set
-                        if (postDetailsItem.getWriterImg() != null && postDetailsItem.getWriterImg().equals("")) {
+                        if (postDetailsItem.getWriterImg() == null) {
                             binding.otherUserProfileImageRoundedImageView.setImageResource(R.drawable.post_thumbnail_background_logo);
                         } else {
                             Glide.with(RecruitmentPostDetailActivity.this)
                                     .load(postDetailsItem.getWriterImg()) // 이미지 URL 가져오기
                                     .placeholder(R.drawable.post_thumbnail_background_logo) // 로딩 중에 표시할 이미지
-                                    .error(R.drawable.post_thumbnail_background_logo) // 에러 발생 시 표시할 이미지
+                                    .error(R.drawable.post_thumbnail_background_logo) // 에러 발생 시 표시할 이미s지
                                     .into(binding.otherUserProfileImageRoundedImageView); // ImageView에 이미지 설정
                         }
-                        if (postDetailsItem.getImg() != null && postDetailsItem.getImg().equals("")) {
-                            binding.otherUserProfileImageRoundedImageView.setImageResource(R.drawable.post_thumbnail_background_logo);
+                        if (postDetailsItem.getImg() == null) {
+                            binding.postThumbnailImageView.setImageResource(R.drawable.post_thumbnail_background_logo);
+                            binding.backImageButton.setImageResource(R.drawable.arrow_back);
+                            binding.homeImageButton.setImageResource(R.drawable.home_normal);
                         } else {
                             Glide.with(RecruitmentPostDetailActivity.this)
                                     .load(postDetailsItem.getImg()) // 이미지 URL 가져오기
@@ -369,7 +404,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                         }
 
 
-
+                        binding.likeImageView.setImageResource(isLiked ? R.drawable.like_filled : R.drawable.like_bolder_gray);
                         binding.usernameTextView.setText(postDetailsItem.getWriterName());
                         binding.addressTextView.setText(postDetailsItem.getAddress());
                         binding.postTitleTextView.setText(postDetailsItem.getTitle());
@@ -412,25 +447,27 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
 
         getRecruitmentPostDetail(postId);
 
-        /** 다음 카카오맵 지도를 띄우는 코드 */
-        mapView = new MapView(this);
-        mapView.setZoomLevel(2, true);
+        if (mapView == null) {
+            /** 다음 카카오맵 지도를 띄우는 코드 */
+            mapView = new MapView(this);
+            mapView.setZoomLevel(2, true);
 
-        mapViewContainer = binding.mapRelativeLayout;
-        mapViewContainer.addView(mapView);
-        binding.centerPointImageView.bringToFront();
+            mapViewContainer = binding.mapRelativeLayout;
+            mapViewContainer.addView(mapView);
+            binding.centerPointImageView.bringToFront();
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        /** 사용자의 현재 위치 */
-        GetMyLocation getMyLocation = new GetMyLocation(this, this);
-        Location userLocation = getMyLocation.getMyLocation();
-        if (userLocation != null) {
-            currLatitude = userLocation.getLatitude();
-            currLongitude = userLocation.getLongitude();
-            selectedPoint = MapPoint.mapPointWithGeoCoord(currLatitude, currLongitude);
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            /** 사용자의 현재 위치 */
+            GetMyLocation getMyLocation = new GetMyLocation(this, this);
+            Location userLocation = getMyLocation.getMyLocation();
+            if (userLocation != null) {
+                currLatitude = userLocation.getLatitude();
+                currLongitude = userLocation.getLongitude();
+                selectedPoint = MapPoint.mapPointWithGeoCoord(currLatitude, currLongitude);
 
-            /** 중심점 변경 */
-            mapView.setMapCenterPoint(selectedPoint, true);
+                /** 중심점 변경 */
+                mapView.setMapCenterPoint(selectedPoint, true);
+            }
         }
     }
 }
