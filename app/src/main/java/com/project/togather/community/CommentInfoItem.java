@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class CommentInfoItem {
+    private int id;
     private String userProfileImageUrl;
     private String username;
     private String comment;

@@ -177,7 +177,9 @@ public class CommunityActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
+                PostInfoItem selectedItem = postInfoItems.get(pos);
                 Intent intent = new Intent(CommunityActivity.this, CommunityPostDetailActivity.class);
+                intent.putExtra("post_id", selectedItem.getId());
                 startActivity(intent);
             }
         });
@@ -185,7 +187,9 @@ public class CommunityActivity extends AppCompatActivity {
         adapter.setOnLongItemClickListener(new RecyclerViewAdapter.OnLongItemClickListener() {
             @Override
             public void onLongItemClick(int pos) {
+                PostInfoItem selectedItem = postInfoItems.get(pos);
                 Intent intent = new Intent(CommunityActivity.this, CommunityPostDetailActivity.class);
+                intent.putExtra("post_id", selectedItem.getId());
                 startActivity(intent);
             }
         });

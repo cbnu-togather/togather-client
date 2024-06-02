@@ -31,19 +31,29 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.gson.Gson;
 import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityCommunityPostDetailBinding;
 import com.project.togather.editPost.community.EditCommunityPostActivity;
 import com.project.togather.editPost.community.EditCommunityPostCommentActivity;
 import com.project.togather.editPost.recruitment.EditRecruitmentPostActivity;
+import com.project.togather.home.PostDetailsItem;
+import com.project.togather.home.RecruitmentPostDetailActivity;
 import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.CommunityAPI;
 import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -57,6 +67,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
     private static RecyclerViewAdapter adapter;
     private TokenManager tokenManager;
     private UserAPI userAPI;
+    private CommunityAPI communityAPI;
     private RetrofitService retrofitService;
 
     private BottomSheetBehavior selectPostManagementBottomSheetBehavior;
@@ -67,9 +78,13 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
     private Dialog askDeletePost_dialog;
     private static Dialog askDeleteComment_dialog;
 
+    private CommunityPostDetailItem communityPostDetailItem;
     Uri selectedImageUri;
+    private static int postId;
 
     private boolean isWriter;
+    final int likedCnt[] = {0};
+    final boolean isLiked[] = {false};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +95,10 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         tokenManager = TokenManager.getInstance(this);
         retrofitService = new RetrofitService(tokenManager);
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
+        communityAPI = retrofitService.getRetrofit().create(CommunityAPI.class);
+
+        Intent intent = getIntent();
+        postId = intent.getIntExtra("post_id", 0);
 
         selectedImageUri = Uri.parse("");
 
@@ -106,15 +125,15 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         binding.commentRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
         // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-        commentInfoItems.add(new CommentInfoItem("http://image.dongascience.com/Photo/2020/03/5bddba7b6574b95d37b6079c199d7101.jpg", "우리집멍뭉이는세계최강", "하이(1)", "", 10000, "other"));
-        commentInfoItems.add(new CommentInfoItem("https://m.stylehorn.co.kr/web/product/big/201903/ab7175bb3de5cf3b713d0b74562e26ba.jpg", "쿠크다스", "안녕하세용!", "", 5000, "other"));
-        commentInfoItems.add(new CommentInfoItem("http://image.dongascience.com/Photo/2020/03/5bddba7b6574b95d37b6079c199d7101.jpg", "우리집멍뭉이는세계최강", "하이요~", "", 1000, "other"));
-        commentInfoItems.add(new CommentInfoItem("", "홍길동", "멋있어요", "", 500, "other"));
-        commentInfoItems.add(new CommentInfoItem("https://scontent-ssn1-1.xx.fbcdn.net/v/t1.6435-9/87385337_2603792983243744_6226034272168312832_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=tD2DmCLPzRwQ7kNvgGTN12Q&_nc_ht=scontent-ssn1-1.xx&oh=00_AfB840U4WbepFt_thDMjs_KQZBnE8roFLdvN0sFFr4wvjA&oe=66625729", "김감자", "텍스트", "", 275, "writer"));
-        commentInfoItems.add(new CommentInfoItem("https://scontent-ssn1-1.xx.fbcdn.net/v/t1.6435-9/87385337_2603792983243744_6226034272168312832_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=tD2DmCLPzRwQ7kNvgGTN12Q&_nc_ht=scontent-ssn1-1.xx&oh=00_AfB840U4WbepFt_thDMjs_KQZBnE8roFLdvN0sFFr4wvjA&oe=66625729", "김감자", "", "https://www.visitbusan.net/uploadImgs/files/cntnts/20191227204425032_wufrotr", 275, "writer"));
-        commentInfoItems.add(new CommentInfoItem("https://scontent-ssn1-1.xx.fbcdn.net/v/t1.6435-9/87385337_2603792983243744_6226034272168312832_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=tD2DmCLPzRwQ7kNvgGTN12Q&_nc_ht=scontent-ssn1-1.xx&oh=00_AfB840U4WbepFt_thDMjs_KQZBnE8roFLdvN0sFFr4wvjA&oe=66625729", "김감자", "글과 이미지는 동시에도 가능해요", "https://pbs.twimg.com/media/EZ5OCioVAAAM-dG.jpg", 250, "writer"));
-        commentInfoItems.add(new CommentInfoItem("https://m.stylehorn.co.kr/web/product/big/201903/ab7175bb3de5cf3b713d0b74562e26ba.jpg", "쿠크다스", "테스트 댓글", "https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/91/3c349f3bb041bcf7d75c100b928fe2ea_res.jpeg", 100, "other"));
-        adapter.setCommentInfoItem(commentInfoItems);
+//        commentInfoItems.add(new CommentInfoItem("http://image.dongascience.com/Photo/2020/03/5bddba7b6574b95d37b6079c199d7101.jpg", "우리집멍뭉이는세계최강", "하이(1)", "", 10000, "other"));
+//        commentInfoItems.add(new CommentInfoItem("https://m.stylehorn.co.kr/web/product/big/201903/ab7175bb3de5cf3b713d0b74562e26ba.jpg", "쿠크다스", "안녕하세용!", "", 5000, "other"));
+//        commentInfoItems.add(new CommentInfoItem("http://image.dongascience.com/Photo/2020/03/5bddba7b6574b95d37b6079c199d7101.jpg", "우리집멍뭉이는세계최강", "하이요~", "", 1000, "other"));
+//        commentInfoItems.add(new CommentInfoItem("", "홍길동", "멋있어요", "", 500, "other"));
+//        commentInfoItems.add(new CommentInfoItem("https://scontent-ssn1-1.xx.fbcdn.net/v/t1.6435-9/87385337_2603792983243744_6226034272168312832_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=tD2DmCLPzRwQ7kNvgGTN12Q&_nc_ht=scontent-ssn1-1.xx&oh=00_AfB840U4WbepFt_thDMjs_KQZBnE8roFLdvN0sFFr4wvjA&oe=66625729", "김감자", "텍스트", "", 275, "writer"));
+//        commentInfoItems.add(new CommentInfoItem("https://scontent-ssn1-1.xx.fbcdn.net/v/t1.6435-9/87385337_2603792983243744_6226034272168312832_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=tD2DmCLPzRwQ7kNvgGTN12Q&_nc_ht=scontent-ssn1-1.xx&oh=00_AfB840U4WbepFt_thDMjs_KQZBnE8roFLdvN0sFFr4wvjA&oe=66625729", "김감자", "", "https://www.visitbusan.net/uploadImgs/files/cntnts/20191227204425032_wufrotr", 275, "writer"));
+//        commentInfoItems.add(new CommentInfoItem("https://scontent-ssn1-1.xx.fbcdn.net/v/t1.6435-9/87385337_2603792983243744_6226034272168312832_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=5f2048&_nc_ohc=tD2DmCLPzRwQ7kNvgGTN12Q&_nc_ht=scontent-ssn1-1.xx&oh=00_AfB840U4WbepFt_thDMjs_KQZBnE8roFLdvN0sFFr4wvjA&oe=66625729", "김감자", "글과 이미지는 동시에도 가능해요", "https://pbs.twimg.com/media/EZ5OCioVAAAM-dG.jpg", 250, "writer"));
+//        commentInfoItems.add(new CommentInfoItem("https://m.stylehorn.co.kr/web/product/big/201903/ab7175bb3de5cf3b713d0b74562e26ba.jpg", "쿠크다스", "테스트 댓글", "https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/91/3c349f3bb041bcf7d75c100b928fe2ea_res.jpeg", 100, "other"));
+//        adapter.setCommentInfoItem(commentInfoItems);
 
         /** (뒤로가기 화살표 이미지) 버튼 클릭 시 */
         binding.backImageButton.setOnClickListener(new View.OnClickListener() {
@@ -164,7 +183,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         binding.moreImageButton.setOnClickListener(view ->
                 selectPostManagementBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED));
 
-        binding.moreImageButton.setVisibility(isWriter ? View.VISIBLE : View.GONE);
+
 
         // (게시글 더 보기 버튼) -> 수정
         findViewById(R.id.editPost_button).
@@ -289,9 +308,9 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         });
 
         binding.galleryImageView.setOnClickListener(view -> {
-            Intent intent = new Intent(Intent.ACTION_PICK);
-            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-            startActivityForResult(intent, REQUEST_GALLERY);
+            Intent intentGallery = new Intent(Intent.ACTION_PICK);
+            intentGallery.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+            startActivityForResult(intentGallery, REQUEST_GALLERY);
         });
 
         // 게시글 섬네일 이미지 우측 상단의 X 버튼 클릭 이벤트 설정
@@ -323,9 +342,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
             }
         });
 
-        // 임시 데이터(서버에서 받아와야 하는 값임)
-        final int likedCnt[] = {0};
-        final boolean isLiked[] = {false};
+
 
         // 좋아요가 5개 이상 달린 동네생활 게시글의 경우 상단에 "인기글" 태그가 달림
         binding.hotCategoryCardView.setVisibility(likedCnt[0] >= 5 ? View.VISIBLE : View.GONE);
@@ -374,7 +391,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         String commentText = binding.commentEditText.getText().toString().trim();
         if (!commentText.isEmpty()) {
             CommentInfoItem newItem = new CommentInfoItem(
-                    "https://mblogthumb-phinf.pstatic.net/MjAyMjAzMjlfMSAg/MDAxNjQ4NDgwNzgwMzkw.yDLPqC9ouJxYoJSgicANH0CPNvFdcixexP7hZaPlCl4g.n7yZDyGC06_gRTwEnAKIhj5bM04laVpNuKRz29dP83wg.JPEG.38qudehd/IMG_8635.JPG?type=w800",  // userProfileImageUrl, assuming no image for simplicity
+                    1,"https://mblogthumb-phinf.pstatic.net/MjAyMjAzMjlfMSAg/MDAxNjQ4NDgwNzgwMzkw.yDLPqC9ouJxYoJSgicANH0CPNvFdcixexP7hZaPlCl4g.n7yZDyGC06_gRTwEnAKIhj5bM04laVpNuKRz29dP83wg.JPEG.38qudehd/IMG_8635.JPG?type=w800",  // userProfileImageUrl, assuming no image for simplicity
                     "김감자",  // username
                     commentText,  // comment
                     selectedImageUri.toString(),  // ImageUrl, assuming no image for simplicity
@@ -531,8 +548,9 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
 
                 username_textView.setText(item.getUsername());
 
-                long elapsedTime = item.getElapsedTime();
+
                 String elapsedTime_str;
+                long elapsedTime = item.getElapsedTime();
                 if (elapsedTime < 60) {
                     elapsedTime_str = elapsedTime + "초 전";
                 } else if (elapsedTime < 3600) {
@@ -606,6 +624,95 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         }
     }
 
+    private void getCommunityPostDetail(int postId) {
+        Call<ResponseBody> call = communityAPI.getCommunityPostDetail(postId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        String jsonString = response.body().string();
+                        Gson gson = new Gson();
+                        communityPostDetailItem = gson.fromJson(jsonString, CommunityPostDetailItem.class);
+
+                        if(communityPostDetailItem != null) {
+                            updateUI();
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+            }
+        });
+    }
+
+    private void updateUI() {
+        binding.postTitleTextView.setText(communityPostDetailItem.getTitle());
+        binding.contentTextView.setText(communityPostDetailItem.getContent());
+        binding.usernameTextView.setText(communityPostDetailItem.getWriterName());
+        binding.categoryTextView.setText(communityPostDetailItem.getCategory());
+        binding.addressTextView.setText(communityPostDetailItem.getAddress());
+        binding.viewsCntTextView.setText(String.valueOf(communityPostDetailItem.getView()));
+        isWriter = communityPostDetailItem.isWriter();
+        likedCnt[0] = communityPostDetailItem.getLikes();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+
+        Date now = new Date();
+        try {
+            String createdAtString = communityPostDetailItem.getCreatedAt().split("\\.")[0];
+            Date createdAt = sdf.parse(createdAtString);
+            long elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
+            String elapsedTime_str;
+            if (elapsedTime < 60) {
+                elapsedTime_str = elapsedTime + "초 전";
+            } else if (elapsedTime < 3600) {
+                elapsedTime_str = elapsedTime / 60 + "분 전";
+            } else if (elapsedTime < 86400) {
+                elapsedTime_str = elapsedTime / 3600 + "시간 전";
+            } else if (elapsedTime < 86400 * 365) {
+                elapsedTime_str = elapsedTime / 86400 + "일 전";
+            } else {
+                elapsedTime_str = elapsedTime / 86400 * 365 + "일 전";
+            }
+            binding.elapsedTimeTextView.setText(elapsedTime_str);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+
+        if (communityPostDetailItem.getWriterImg() == null) {
+            binding.otherUserProfileImageRoundedImageView.setImageResource(R.drawable.post_thumbnail_background_logo);
+            Log.d("userImg", "updateUI: " + communityPostDetailItem.getWriterImg());
+        } else {
+            Glide.with(CommunityPostDetailActivity.this)
+                    .load(communityPostDetailItem.getWriterImg()) // 이미지 URL 가져오기
+                    .placeholder(R.drawable.post_thumbnail_background_logo) // 로딩 중에 표시할 이미지
+                    .error(R.drawable.post_thumbnail_background_logo) // 에러 발생 시 표시할 이미s지
+                    .into(binding.otherUserProfileImageRoundedImageView); // ImageView에 이미지 설정
+        }
+        if (communityPostDetailItem.getImg() == null) {
+            binding.postThumbnailImageView.setImageResource(R.drawable.post_thumbnail_background_logo);
+            Log.d("postImg", "updateUI: " + communityPostDetailItem.getImg());
+        } else {
+            Glide.with(CommunityPostDetailActivity.this)
+                    .load(communityPostDetailItem.getImg()) // 이미지 URL 가져오기
+                    .placeholder(R.drawable.post_thumbnail_background_logo) // 로딩 중에 표시할 이미지
+                    .error(R.drawable.post_thumbnail_background_logo) // 에러 발생 시 표시할 이미s지
+                    .into(binding.postThumbnailImageView); // ImageView에 이미지 설정
+        }
+        binding.moreImageButton.setVisibility(isWriter ? View.VISIBLE : View.GONE);
+
+    }
+
+
     // 유저 정보 조회 메서드
     private void getUserInfo() {
         Call<ResponseBody> call = userAPI.getUserInfo();
@@ -629,5 +736,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
         super.onResume();
 
         getUserInfo();
+        getCommunityPostDetail(postId);
+
     }
 }

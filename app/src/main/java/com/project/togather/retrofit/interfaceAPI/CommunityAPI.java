@@ -9,6 +9,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface CommunityAPI {
@@ -37,4 +38,8 @@ public interface CommunityAPI {
     @GET("/community/list")
     Call<ResponseBody> getCommunityPostList(@Query("Latitude") double latitude,
                                             @Query("Longitude") double longitude);
+    @GET("community/{communityId}")
+    Call<ResponseBody> getCommunityPostDetail(@Path("communityId") int postId);
+
+
 }
