@@ -317,7 +317,7 @@ public class LikedPostListActivity extends AppCompatActivity {
 
     // 데이터 로딩 함수
     private void loadData() {
-        Call<ResponseBody> call = userAPI.getMyRecruitmentPosts();
+        Call<ResponseBody> call = userAPI.getLikedPosts();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
