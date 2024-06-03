@@ -19,17 +19,28 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityLikedPostListBinding;
 import com.project.togather.editPost.recruitment.EditRecruitmentPostSelectMeetingSpotActivity;
+import com.project.togather.home.PostInfoResponse;
 import com.project.togather.home.RecruitmentPostDetailActivity;
+import com.project.togather.profile.myRecruitmentPartyPost.MyRecruitmentPartyPostListActivity;
 import com.project.togather.retrofit.RetrofitService;
 import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -44,6 +55,7 @@ public class LikedPostListActivity extends AppCompatActivity {
     private RetrofitService retrofitService;
 
     private RecyclerViewAdapter adapter;
+    private ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,31 +70,29 @@ public class LikedPostListActivity extends AppCompatActivity {
 
         adapter = new RecyclerViewAdapter();
 
-        ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
-
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
-                startActivity(new Intent(LikedPostListActivity.this, RecruitmentPostDetailActivity.class));
+                PostInfoItem selectedItem = postInfoItems.get(pos);
+                Intent intent = new Intent(LikedPostListActivity.this, RecruitmentPostDetailActivity.class);
+                intent.putExtra("post_id", selectedItem.getId());
+                startActivity(intent);
             }
         });
 
         adapter.setOnLongItemClickListener(new RecyclerViewAdapter.OnLongItemClickListener() {
             @Override
             public void onLongItemClick(int pos) {
-                startActivity(new Intent(LikedPostListActivity.this, RecruitmentPostDetailActivity.class));
+                PostInfoItem selectedItem = postInfoItems.get(pos);
+                Intent intent = new Intent(LikedPostListActivity.this, RecruitmentPostDetailActivity.class);
+                intent.putExtra("post_id", selectedItem.getId());
+                startActivity(intent);
             }
         });
 
         // initiate recyclerview
         binding.postsRecyclerView.setAdapter(adapter);
         binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-
-        // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-        postInfoItems.add(new PostInfoItem("https://image.kmib.co.kr/online_image/2024/0131/2024013114261427977_1706678775_0019120339.jpg", "맘스터치 배달 파티 999~~", "hamburger", 600, 3, 3, true, 2));
-        postInfoItems.add(new PostInfoItem("", "짚신 스시 & 롤 배달 구해요", "japanese_food", 555, 1, 0, true, 1));
-
-        adapter.setPostInfoList(postInfoItems);
 
         /** 뒤로가기 버튼 기능 */
         binding.backImageButton.setOnClickListener(view -> finish());
@@ -305,6 +315,62 @@ public class LikedPostListActivity extends AppCompatActivity {
 
     }
 
+    // 데이터 로딩 함수
+    private void loadData() {
+        Call<ResponseBody> call = userAPI.getMyRecruitmentPosts();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        postInfoItems.clear();
+                        String responseBody = response.body().string();
+                        Type listType = new TypeToken<ArrayList<PostInfoResponse>>() {}.getType();
+                        ArrayList<PostInfoResponse> postList = new Gson().fromJson(responseBody, listType);
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
+                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+
+                        // 현재 시간 UTC로 생성
+                        Date now = new Date();
+
+                        for (PostInfoResponse post : postList) {
+                            try {
+                                String createdAtString = post.getCreatedAt().split("\\.")[0];
+                                Date createdAt = sdf.parse(createdAtString);
+                                long elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
+                                PostInfoItem item = new PostInfoItem(
+                                        post.getId(),
+                                        post.getImg(),
+                                        post.getTitle(),
+                                        post.getCategory(),
+                                        elapsedTime,
+                                        post.getHeadCount(),
+                                        post.getCurrentCount(),
+                                        post.isLiked(),
+                                        post.getLikes()
+                                );
+
+                                postInfoItems.add(0, item);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        adapter.setPostInfoList(postInfoItems);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), LikedPostListActivity.this);
+            }
+        });
+
+    }
+
     // 유저 정보 조회 메서드
     private void getUserInfo() {
         Call<ResponseBody> call = userAPI.getUserInfo();
@@ -328,5 +394,6 @@ public class LikedPostListActivity extends AppCompatActivity {
         super.onResume();
 
         getUserInfo();
+        loadData();
     }
 }
