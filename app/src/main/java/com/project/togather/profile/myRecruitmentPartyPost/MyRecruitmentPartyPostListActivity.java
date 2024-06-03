@@ -19,17 +19,30 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.project.togather.MainActivity;
 import com.project.togather.R;
 import com.project.togather.databinding.ActivityMyRecruitmentPartyListBinding;
 import com.project.togather.editPost.recruitment.EditRecruitmentPostSelectMeetingSpotActivity;
+import com.project.togather.home.HomeActivity;
+import com.project.togather.home.PostInfoResponse;
 import com.project.togather.home.RecruitmentPostDetailActivity;
 import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.RecruitmentAPI;
 import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
+import com.project.togather.home.PostInfoItem;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -41,9 +54,11 @@ public class MyRecruitmentPartyPostListActivity extends AppCompatActivity {
     private ActivityMyRecruitmentPartyListBinding binding;
     private TokenManager tokenManager;
     private UserAPI userAPI;
+    private RecruitmentAPI recruitmentAPI;
     private RetrofitService retrofitService;
 
     private RecyclerViewAdapter adapter;
+    private ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,15 +69,17 @@ public class MyRecruitmentPartyPostListActivity extends AppCompatActivity {
         tokenManager = TokenManager.getInstance(this);
         retrofitService = new RetrofitService(tokenManager);
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
+        recruitmentAPI = retrofitService.getRetrofit().create(RecruitmentAPI.class);
 
         adapter = new RecyclerViewAdapter();
-
-        ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
 
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
-                startActivity(new Intent(MyRecruitmentPartyPostListActivity.this, RecruitmentPostDetailActivity.class));
+                PostInfoItem selectedItem = postInfoItems.get(pos);
+                Intent intent = new Intent(new Intent(MyRecruitmentPartyPostListActivity.this, RecruitmentPostDetailActivity.class));
+                intent.putExtra("post_id", selectedItem.getId());
+                startActivity(intent);
             }
         });
 
@@ -76,13 +93,6 @@ public class MyRecruitmentPartyPostListActivity extends AppCompatActivity {
         // initiate recyclerview
         binding.postsRecyclerView.setAdapter(adapter);
         binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-
-        // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-        postInfoItems.add(new PostInfoItem("https://cdn.mkhealth.co.kr/news/photo/202306/64253_68458_1153.png", "개신동 교촌치킨 파티 구함", "chicken", 320, 3, 2, false, 1));
-        postInfoItems.add(new PostInfoItem("https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "pizza", 160, 3, 3, false, 0));
-        postInfoItems.add(new PostInfoItem("https://mblogthumb-phinf.pstatic.net/MjAyMjA3MjhfMTY5/MDAxNjU4OTkyODg0NTA3.z8WzaZAOKBvo4JkSm9lTMOTiNsKEUNHZJYRB-DPZCdEg.0WdqohiJPsSM5pXWYl-HvTE3JUVlUPe7LT-U6wvjUQwg.JPEG.duwlsrjdwb/KakaoTalk_20220728_151114228_10.jpg?type=w800", "사창동 우리집 닭강정 파티!!", " chicken ", 500, 1, 0, false, 0));
-
-        adapter.setPostInfoList(postInfoItems);
 
         /** 뒤로가기 버튼 기능 */
         binding.backImageButton.setOnClickListener(view -> finish());
@@ -305,6 +315,62 @@ public class MyRecruitmentPartyPostListActivity extends AppCompatActivity {
 
     }
 
+    // 데이터 로딩 함수
+    private void loadData() {
+        Call<ResponseBody> call = userAPI.getMyRecruitmentPosts();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        postInfoItems.clear();
+                        String responseBody = response.body().string();
+                        Type listType = new TypeToken<ArrayList<PostInfoResponse>>() {}.getType();
+                        ArrayList<PostInfoResponse> postList = new Gson().fromJson(responseBody, listType);
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
+                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+
+                        // 현재 시간 UTC로 생성
+                        Date now = new Date();
+
+                        for (PostInfoResponse post : postList) {
+                            try {
+                                String createdAtString = post.getCreatedAt().split("\\.")[0];
+                                Date createdAt = sdf.parse(createdAtString);
+                                long elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
+                                PostInfoItem item = new PostInfoItem(
+                                        post.getId(),
+                                        post.getImg(),
+                                        post.getTitle(),
+                                        post.getCategory(),
+                                        elapsedTime,
+                                        post.getHeadCount(),
+                                        post.getCurrentCount(),
+                                        post.isLiked(),
+                                        post.getLikes()
+                                );
+
+                                postInfoItems.add(0, item);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        adapter.setPostInfoList(postInfoItems);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), MyRecruitmentPartyPostListActivity.this);
+            }
+        });
+
+    }
+
     // 유저 정보 조회 메서드
     private void getUserInfo() {
         Call<ResponseBody> call = userAPI.getUserInfo();
@@ -328,5 +394,6 @@ public class MyRecruitmentPartyPostListActivity extends AppCompatActivity {
         super.onResume();
 
         getUserInfo();
+        loadData();
     }
 }
