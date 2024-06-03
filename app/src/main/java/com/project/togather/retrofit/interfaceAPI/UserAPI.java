@@ -44,5 +44,7 @@ public interface UserAPI {
 
     @GET("user/groupbuy")
     Call<ResponseBody> getMyRecruitmentPosts();
+    @GET("user/community")
+    Call<ResponseBody> getMyCommunityPosts();
 
 }
