@@ -258,7 +258,13 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
                 {
                     if (selectCommentManagementBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
                         selectCommentManagementBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                        startActivity(new Intent(CommunityPostDetailActivity.this, EditCommunityPostCommentActivity.class));
+                        long commentId = adapter.getCommentInfoItems().get(adapter.currentSelectedPosition).getId();
+                        Log.d("commentId", "onCreate: " + commentId);
+                        Intent intentEditComment = new Intent(CommunityPostDetailActivity.this, EditCommunityPostCommentActivity.class);
+                        intentEditComment.putExtra("comment_id", (int)commentId);
+                        intentEditComment.putExtra("post_id", postId);
+
+                        startActivity(intentEditComment);
                     }
                 });
 

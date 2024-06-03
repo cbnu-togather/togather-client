@@ -82,6 +82,20 @@ public interface CommunityAPI {
             @Path("commentId") int commentId
     );
 
+    @Multipart
+    @PUT("comment/{commentId}")
+    Call<ResponseBody> updateComment(
+            @Path("commentId") int commentId,
+            @Query("content") String content,
+            @Part @Nullable MultipartBody.Part img
+    );
+
+    @PUT("comment/{commentId}")
+    Call<ResponseBody> updateCommentWithoutImg(
+            @Path("commentId") int commentId,
+            @Query("content") String content
+    );
+
 
 
 
