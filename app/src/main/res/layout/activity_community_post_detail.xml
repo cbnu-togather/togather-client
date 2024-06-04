@@ -77,8 +77,10 @@
                         app:cardElevation="0dp">
 
                         <RelativeLayout
-                            android:layout_width="77.5dp"
-                            android:layout_height="35dp">
+                            android:layout_width="wrap_content"
+                            android:paddingEnd="12.5dp"
+                            android:layout_height="35dp"
+                            tools:ignore="RtlSymmetry">
 
                             <ImageView
                                 android:id="@+id/category_imageView"
