@@ -17,7 +17,7 @@ public class CommunityPostDetailItem {
     private String createdAt;
     private int view;
     private int likes;
-    private CommentInfoItem[] comments;
+    private CommentInfoResponse[] comments;
     private String category;
     private boolean liked;
     private boolean writer;

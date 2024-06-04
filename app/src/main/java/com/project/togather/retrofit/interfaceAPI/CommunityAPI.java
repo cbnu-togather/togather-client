@@ -65,6 +65,36 @@ public interface CommunityAPI {
             @Query("content") String content,
             @Query("category") String category
     );
+    @Multipart
+    @POST("comment/{communityId}")
+    Call<ResponseBody> postComment(
+            @Path("communityId") int postId,
+            @Query("content") String content,
+            @Part @Nullable MultipartBody.Part img
+    );
+    @POST("comment/{communityId}")
+    Call<ResponseBody> postCommentWithoutImg(
+            @Path("communityId") int postId,
+            @Query("content") String content
+    );
+    @DELETE("comment/{commentId}")
+    Call<ResponseBody> deleteComment(
+            @Path("commentId") int commentId
+    );
+
+    @Multipart
+    @PUT("comment/{commentId}")
+    Call<ResponseBody> updateComment(
+            @Path("commentId") int commentId,
+            @Query("content") String content,
+            @Part @Nullable MultipartBody.Part img
+    );
+
+    @PUT("comment/{commentId}")
+    Call<ResponseBody> updateCommentWithoutImg(
+            @Path("commentId") int commentId,
+            @Query("content") String content
+    );
 
 
 
