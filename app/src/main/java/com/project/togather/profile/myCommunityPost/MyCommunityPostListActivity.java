@@ -19,8 +19,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.project.togather.MainActivity;
 import com.project.togather.R;
+import com.project.togather.community.CommunityActivity;
+import com.project.togather.community.CommunityInfoResponse;
 import com.project.togather.community.CommunityPostDetailActivity;
 import com.project.togather.databinding.ActivityMyCommunityPostListBinding;
 import com.project.togather.editPost.recruitment.EditRecruitmentPostSelectMeetingSpotActivity;
@@ -29,7 +33,14 @@ import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
 
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -45,6 +56,8 @@ public class MyCommunityPostListActivity extends AppCompatActivity {
 
     private RecyclerViewAdapter adapter;
 
+    ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,12 +70,12 @@ public class MyCommunityPostListActivity extends AppCompatActivity {
 
         adapter = new RecyclerViewAdapter();
 
-        ArrayList<PostInfoItem> postInfoItems = new ArrayList<>();
-
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
+                PostInfoItem selectedItem = postInfoItems.get(pos);
                 Intent intent = new Intent(MyCommunityPostListActivity.this, CommunityPostDetailActivity.class);
+                intent.putExtra("post_id", selectedItem.getId());
                 startActivity(intent);
             }
         });
@@ -78,13 +91,6 @@ public class MyCommunityPostListActivity extends AppCompatActivity {
         // initiate recyclerview
         binding.postsRecyclerView.setAdapter(adapter);
         binding.postsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
-
-        // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-        postInfoItems.add(new PostInfoItem("https://gd.image-gmkt.com/%EC%BD%94%EC%B9%98-%EC%BD%94%EC%B9%98-%EB%B8%8C%EB%9D%BC%EC%9A%B4-%EA%B0%80%EC%A3%BD-%EB%82%A8%EB%85%80-%ED%95%99%EC%83%9D-%EC%A7%81%EC%9E%A5%EC%9D%B8-%EB%B0%B1%ED%8C%A9-%EC%B1%85%EA%B0%80%EB%B0%A9-%EC%A4%91%EA%B3%A0-%EB%AA%85%ED%92%88-%EA%B0%80%EB%B0%A9-%EC%9D%80%ED%94%BC%EC%95%84%EB%85%B8/li/600/574/2388574600.g_350-w-et-pj_g.jpg", "나눔", "가방 나눔해요~~", "새거입니다.", "개신동", 320, 1));
-        postInfoItems.add(new PostInfoItem("https://mblogthumb-phinf.pstatic.net/MjAyMjA2MDhfMjMy/MDAxNjU0NjgwMDEyNzQ2.jkfgtrFgZlbkEzgAXCmgEK7lzIcgJOwiMwNfjm9dfUog.weSpjt3puKOlolJv8fZUuNys5s7Vh9RAuJkX2Ikoe0cg.JPEG.dpfls111103/20220602%EF%BC%BF144812.jpg?type=w800", "고민/사연", "실외기 비둘기가 나뭇가지를..ㅠ", "실외기에 비둘기가 나뭇가지를..어제보니 실외기 위에 나뭇가지가 수북히 쌓여있더라구요...\n집은2층 입니다 실외기 커버 씌여놓은 상태구요..ㅠ\n혹시 경험 있으신 분이나 방법 아시는 분..\n조언 좀 부탁드릴게요ㅠ", "사창동", 320, 6));
-        postInfoItems.add(new PostInfoItem("", "맛집", "청주에 파스타 샐러드 / 샌드위치 맛집 있을까요?", "많은 추천 부탁드려요 ㅎㅎ", "율량동", 320, 2));
-
-        adapter.setPostInfoList(postInfoItems);
 
         /** 뒤로가기 버튼 기능 */
         binding.backImageButton.setOnClickListener(view -> finish());
@@ -346,6 +352,61 @@ public class MyCommunityPostListActivity extends AppCompatActivity {
             }
         }
     }
+
+    // 초기 데이터 로딩 함수
+    private void loadData() {
+        Call<ResponseBody> call = userAPI.getMyCommunityPosts();
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    try {
+                        postInfoItems.clear();
+                        String responseBody = response.body().string();
+                        Type listType = new TypeToken<ArrayList<CommunityInfoResponse>>() {}.getType();
+                        ArrayList<CommunityInfoResponse> postList = new Gson().fromJson(responseBody, listType);
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
+                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+
+                        // 현재 시간 UTC로 생성
+                        Date now = new Date();
+                        for (CommunityInfoResponse post : postList) {
+                            try {
+                                String createdAtString = post.getCreatedAt();
+                                Date createdAt = sdf.parse(createdAtString);
+                                long elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
+                                PostInfoItem item = new PostInfoItem(
+                                        post.getId(),
+                                        post.getImg(),
+                                        post.getCategory(),
+                                        post.getTitle(),
+                                        post.getContent(),
+                                        post.getAddress(),
+                                        elapsedTime,
+                                        post.getLikes()
+                                );
+                                postInfoItems.add(0, item);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        adapter.setPostInfoList(postInfoItems);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), MyCommunityPostListActivity.this);
+            }
+        });
+
+
+    }
+
     // 유저 정보 조회 메서드
     private void getUserInfo() {
         Call<ResponseBody> call = userAPI.getUserInfo();
@@ -369,5 +430,6 @@ public class MyCommunityPostListActivity extends AppCompatActivity {
         super.onResume();
 
         getUserInfo();
+        loadData();
     }
 }

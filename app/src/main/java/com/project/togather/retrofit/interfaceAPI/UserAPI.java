@@ -42,4 +42,11 @@ public interface UserAPI {
     @POST("/user/update")
     Call<ResponseBody> updateUserProfileWithoutImg(@Query("name") String name);
 
+    @GET("user/groupbuy")
+    Call<ResponseBody> getMyRecruitmentPosts();
+    @GET("user/community")
+    Call<ResponseBody> getMyCommunityPosts();
+    @GET("user/groupbuy/like")
+    Call<ResponseBody> getLikedPosts();
+
 }
