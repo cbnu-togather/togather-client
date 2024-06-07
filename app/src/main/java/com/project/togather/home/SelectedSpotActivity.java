@@ -3,6 +3,7 @@ package com.project.togather.home;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
@@ -55,7 +56,10 @@ public class SelectedSpotActivity extends AppCompatActivity implements net.daum.
      * 위치 설정에 대한 객체 변수
      */
     private LocationManager locationManager;
-    private static double currLatitude, currLongitude, selectedLatitude, selectedLongitude;
+    private static double currLatitude, currLongitude;
+    String sp_extractedDong, sp_selectedAddress, sp_addSpotName;
+
+    float sp_selectedLatitude, sp_selectedLongitude;
 
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
 
@@ -68,6 +72,15 @@ public class SelectedSpotActivity extends AppCompatActivity implements net.daum.
         tokenManager = TokenManager.getInstance(this);
         retrofitService = new RetrofitService(tokenManager);
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
+
+        // 전역 데이터 로드
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        sp_extractedDong = sharedPreferences.getString("extractedDong", "");
+        sp_selectedAddress = sharedPreferences.getString("selectedAddress", "");
+        sp_addSpotName = sharedPreferences.getString("addSpotName", "");
+        sp_selectedLatitude = sharedPreferences.getFloat("selectedLatitude", 0);
+        sp_selectedLongitude = sharedPreferences.getFloat("selectedLongitude", 0);
 
         /** (손 들기 확인) 다이얼로그 변수 초기화 및 설정 */
         askJoinParty_dialog = new Dialog(SelectedSpotActivity.this);  // Dialog 초기화
@@ -107,14 +120,10 @@ public class SelectedSpotActivity extends AppCompatActivity implements net.daum.
         GetMyLocation getMyLocation = new GetMyLocation(this, this);
         Location userLocation = getMyLocation.getMyLocation();
         if (userLocation != null) {
-            // currLatitude = userLocation.getLatitude();
-            // currLongitude = userLocation.getLongitude();
-            currLatitude = 36.62565323814696; // 소프트웨어학부 건물 위도, 경도
-            currLongitude = 127.45428323069932;
-            selectedLatitude = 36.625264039836026; // 학역산 건물 출입문 앞 위도, 경도
-            selectedLongitude = 127.45708706510892;
+             currLatitude = userLocation.getLatitude();
+             currLongitude = userLocation.getLongitude();
             currPoint = MapPoint.mapPointWithGeoCoord(currLatitude, currLongitude);
-            selectedPoint = MapPoint.mapPointWithGeoCoord(selectedLatitude, selectedLongitude);
+            selectedPoint = MapPoint.mapPointWithGeoCoord(sp_selectedLatitude, sp_selectedLongitude);
 
             /** 중심점 변경 */
             mapView.setMapCenterPoint(selectedPoint, true);
@@ -126,7 +135,7 @@ public class SelectedSpotActivity extends AppCompatActivity implements net.daum.
             mapView.setMapCenterPoint(currPoint, true);
         });
 
-        addMakerToMap(selectedLatitude, selectedLongitude, "학연산 출입문 앞");
+        addMakerToMap(sp_selectedLatitude, sp_selectedLongitude, sp_addSpotName);
 
         binding.joinPartyButton.setOnClickListener(view ->
                 showDialog_askJoinParty_dialog());
