@@ -130,7 +130,7 @@ public class HomeActivity extends AppCompatActivity {
      */
     private static final int REQUEST_CODE_LOCATION = 2;
     private static double currLatitude, currLongitude;
-    private static int distance = 100;
+    private static int distance = 300;
     private static String currCategory = "all";
 
     private Context context = this;
@@ -259,17 +259,6 @@ public class HomeActivity extends AppCompatActivity {
                 selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED));
 
         // 내 근처 거리 선택 이벤트 설정
-        findViewById(R.id.m100_button).setOnClickListener(view -> {
-            if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
-                selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                distance = 100;
-                binding.distanceTextView.setText("100m");
-
-                postInfoItems.clear();
-                loadData();
-            }
-        });
-
         findViewById(R.id.m300_button).setOnClickListener(view -> {
             if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
                 selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
@@ -286,6 +275,17 @@ public class HomeActivity extends AppCompatActivity {
                 selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 distance = 500;
                 binding.distanceTextView.setText("500m");
+
+                postInfoItems.clear();
+                loadData();
+            }
+        });
+
+        findViewById(R.id.m1000_button).setOnClickListener(view -> {
+            if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                distance = 1000;
+                binding.distanceTextView.setText("1km");
 
                 postInfoItems.clear();
                 loadData();
@@ -927,6 +927,10 @@ public class HomeActivity extends AppCompatActivity {
         getUserInfo();
         loadData();
         currCategory ="all";
-        binding.distanceTextView.setText(distance + "m");
+        if (distance >= 1000) {
+            binding.distanceTextView.setText(distance / 1000 + "km");
+        } else {
+            binding.distanceTextView.setText(distance + "m");
+        }
     }
 }

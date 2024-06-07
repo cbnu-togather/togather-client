@@ -592,6 +592,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
             TextView username_textView;
             TextView elapsedTime_textView;
             TextView comment_textView;
+            TextView hotPostTag_textView;
 
             public ViewHolder(@NonNull View itemView) {
                 super(itemView);
@@ -846,6 +847,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
             binding.postThumbnailImageView.setVisibility(View.GONE);
             Log.d("postImg", "updateUI: " + communityPostDetailItem.getImg());
         } else {
+            binding.postThumbnailImageView.setVisibility(View.VISIBLE);
             Glide.with(CommunityPostDetailActivity.this)
                     .load(communityPostDetailItem.getImg()) // 이미지 URL 가져오기
                     .placeholder(R.drawable.post_thumbnail_background_logo) // 로딩 중에 표시할 이미지
@@ -866,7 +868,7 @@ public class CommunityPostDetailActivity extends AppCompatActivity {
             params.width = 220;
         else
             params.width = 295;
-
+        binding.hotRelativelayout.setVisibility(likedCnt[0] > 5 ? View.VISIBLE : View.GONE);
         binding.likedRelativeLayout.setLayoutParams(params);
         binding.likedRelativeLayout.requestLayout();
 

@@ -73,6 +73,7 @@
                     android:layout_height="390dp"
                     android:layout_alignParentTop="true"
                     android:scaleType="centerCrop"
+                    android:visibility="gone"
                     android:src="@drawable/home_temp_image_1" />
 
                 <RelativeLayout
@@ -93,7 +94,7 @@
                             android:layout_width="57.5dp"
                             android:layout_height="57.5dp"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/user_profile_image_temp_image_2"
+                            android:src="@drawable/one_person_logo"
                             app:riv_oval="true" />
 
                         <RelativeLayout
@@ -108,7 +109,7 @@
                                 android:id="@+id/username_textView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="아몬드"
+                                android:text=""
                                 android:textColor="#4e5257"
                                 android:textSize="17.5sp"
                                 android:textStyle="bold" />
@@ -120,7 +121,7 @@
                                 android:layout_below="@+id/username_textView"
                                 android:layout_marginTop="7.5dp"
                                 android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                                android:text="개신동"
+                                android:text=""
                                 android:textColor="#5a5c64"
                                 android:textSize="15sp" />
                         </RelativeLayout>
@@ -132,7 +133,7 @@
                         android:layout_height="match_parent"
                         android:layout_below="@+id/userInfo_relativeLayout"
                         android:layout_marginTop="30dp"
-                        android:text="도미노 피자 드실분 구해요"
+                        android:text=""
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -148,7 +149,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                            android:text="피자"
+                            android:text=""
                             android:textColor="@color/gray_text"
                             android:textSize="15sp" />
 
@@ -169,7 +170,7 @@
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@+id/concatenation_textView"
                             android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                            android:text="4분 전"
+                            android:text=""
                             android:textColor="@color/gray_text"
                             android:textSize="15sp" />
                     </RelativeLayout>
@@ -181,7 +182,7 @@
                         android:layout_below="@+id/postDetailInfo_relativeLayout"
                         android:layout_marginTop="15dp"
                         android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                        android:text="같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~같이 도미노 피자 드실 분은 편하게 손 들어 주세요~~"
+                        android:text=""
                         android:textSize="17.5sp" />
 
                     <RelativeLayout
@@ -219,7 +220,7 @@
                                         android:layout_height="wrap_content"
                                         android:layout_centerVertical="true"
                                         android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                                        android:text="학연산 출입문 앞"
+                                        android:text=""
                                         android:textSize="17.5sp" />
 
                                     <ImageView
@@ -259,6 +260,7 @@
                                         android:layout_centerHorizontal="true"
                                         android:layout_centerVertical="true"
                                         android:layout_marginBottom="-25dp"
+                                        android:visibility="gone"
                                         android:src="@drawable/marker_origin" />
 
                                     <TextView
@@ -332,7 +334,7 @@
                                 android:layout_marginStart="5dp"
                                 android:layout_toRightOf="@+id/views_textView"
                                 android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                                android:text="191"
+                                android:text=""
                                 android:textColor="@color/gray_text"
                                 android:textSize="15sp" />
                         </RelativeLayout>
@@ -398,7 +400,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginStart="2.5dp"
                         android:layout_toRightOf="@+id/currentRecruitmentNum_textView"
-                        android:text="(2/3)"
+                        android:text="(0/3)"
                         android:textColor="@color/gray_text"
                         android:textSize="12sp" />
                 </RelativeLayout>
@@ -421,7 +423,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/one_person_logo_filled" />
+                            android:src="@drawable/one_person_logo" />
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
@@ -437,7 +439,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/one_person_logo_filled" />
+                            android:src="@drawable/one_person_logo" />
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView

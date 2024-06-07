@@ -396,6 +396,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                             binding.backImageButton.setImageResource(R.drawable.arrow_back);
                             binding.homeImageButton.setImageResource(R.drawable.home_normal);
                         } else {
+                            binding.postThumbnailImageView.setVisibility(View.VISIBLE);
                             Glide.with(RecruitmentPostDetailActivity.this)
                                     .load(postDetailsItem.getImg()) // 이미지 URL 가져오기
                                     .placeholder(R.drawable.post_thumbnail_background_logo) // 로딩 중에 표시할 이미지
