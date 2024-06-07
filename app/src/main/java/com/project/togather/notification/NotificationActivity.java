@@ -34,13 +34,16 @@ import com.project.togather.R;
 import com.project.togather.chat.ChatDetailActivity;
 import com.project.togather.databinding.ActivityNotificationBinding;
 import com.project.togather.editPost.recruitment.EditRecruitmentPostSelectMeetingSpotActivity;
+import com.project.togather.home.HomeActivity;
 import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.ChatAPI;
 import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastSuccess;
 import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -52,6 +55,7 @@ public class NotificationActivity extends AppCompatActivity {
     private ActivityNotificationBinding binding;
     private TokenManager tokenManager;
     private UserAPI userAPI;
+    private ChatAPI chatAPI;
     private RetrofitService retrofitService;
 
     private RecyclerViewAdapter adapter;
@@ -67,6 +71,7 @@ public class NotificationActivity extends AppCompatActivity {
         tokenManager = TokenManager.getInstance(this);
         retrofitService = new RetrofitService(tokenManager);
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
+        chatAPI = retrofitService.getRetrofit().create(ChatAPI.class);
 
 
         // 알림 권한 요청
@@ -88,14 +93,14 @@ public class NotificationActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
-                showDialog_askUnsubscribe_dialog();
+                showDialog_askUnsubscribe_dialog(notificationInfoItems.get(pos).getId());
             }
         });
 
         adapter.setOnLongItemClickListener(new RecyclerViewAdapter.OnLongItemClickListener() {
             @Override
             public void onLongItemClick(int pos) {
-                showDialog_askUnsubscribe_dialog();
+                showDialog_askUnsubscribe_dialog(notificationInfoItems.get(pos).getId());
             }
         });
 
@@ -103,10 +108,28 @@ public class NotificationActivity extends AppCompatActivity {
         binding.notificationsRecyclerView.setAdapter(adapter);
         binding.notificationsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
-        // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-        notificationInfoItems.add(new NotificationInfoItem("https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/product/5400941752/B.jpg?481000000", "https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "김하늘", "도미노 피자 드실분 구해요", 30000, 3, 2, "저 같이 주문하고 싶어요..!"));
-        notificationInfoItems.add(new NotificationInfoItem("https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/9mqM/image/6vuarJpov779Xfo2EdNhLhmaPgI.JPG", "", "아무개", "짚신 스시 & 롤 배달 구해요", 70000, 2, 1, "저 같이 주문 가능할까용?"));
-        notificationInfoItems.add(new NotificationInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutGBoBGvVLOofPQ8mNAAKDpgD7NiHKzAyRSAL35gRQA&s", "https://media-cdn.tripadvisor.com/media/photo-s/12/31/92/d9/1519804025288-largejpg.jpg", "크루키", "신전 떡볶이 구해유", 90000, 1, 0, "같이 드시져!😎😎"));
+        Call<List<NotificationInfoItem>> call = chatAPI.getNotificationList();
+        call.enqueue(new Callback<List<NotificationInfoItem>>() {
+            @Override
+            public void onResponse(Call<List<NotificationInfoItem>> call, Response<List<NotificationInfoItem>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    notificationInfoItems.clear();
+                    notificationInfoItems.addAll(response.body());
+                    adapter.setNotificationInfoList(notificationInfoItems);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<NotificationInfoItem>> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), NotificationActivity.this);
+            }
+        });
+
+//        // Adapter 안에 아이템의 정보 담기 (하드 코딩)
+//        notificationInfoItems.add(new NotificationInfoItem("https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/product/5400941752/B.jpg?481000000", "https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "김하늘", "도미노 피자 드실분 구해요", 30000, 3, 2, "저 같이 주문하고 싶어요..!"));
+//        notificationInfoItems.add(new NotificationInfoItem("https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/9mqM/image/6vuarJpov779Xfo2EdNhLhmaPgI.JPG", "", "아무개", "짚신 스시 & 롤 배달 구해요", 70000, 2, 1, "저 같이 주문 가능할까용?"));
+//        notificationInfoItems.add(new NotificationInfoItem("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutGBoBGvVLOofPQ8mNAAKDpgD7NiHKzAyRSAL35gRQA&s", "https://media-cdn.tripadvisor.com/media/photo-s/12/31/92/d9/1519804025288-largejpg.jpg", "크루키", "신전 떡볶이 구해유", 90000, 1, 0, "같이 드시져!😎😎"));
 
         adapter.setNotificationInfoList(notificationInfoItems);
 
@@ -255,28 +278,28 @@ public class NotificationActivity extends AppCompatActivity {
             }
 
             void onBind(NotificationInfoItem item) {
-                if (item.getUserProfileImageUrl().equals("")) {
+                if (item.getUserProfileImgUrl() != null && item.getUserProfileImgUrl().equals("")) {
                     userProfile_roundedImageView.setImageResource(R.drawable.user_default_profile);
                 } else {
                     Glide.with(itemView)
-                            .load(item.getUserProfileImageUrl()) // 이미지 URL 가져오기
+                            .load(item.getUserProfileImgUrl()) // 이미지 URL 가져오기
                             .placeholder(R.drawable.user_default_profile) // 로딩 중에 표시할 이미지
                             .error(R.drawable.user_default_profile) // 에러 발생 시 표시할 이미지
                             .into(userProfile_roundedImageView); // ImageView에 이미지 설정
                 }
 
-                if (item.getPostThumbnailImageUrl().equals("")) {
+                if (item.getGroupBuyThumbnailUrl() != null && item.getGroupBuyThumbnailUrl().equals("")) {
                     post_imageView.setImageResource(R.drawable.post_thumbnail_background_logo);
                 } else {
                     Glide.with(itemView)
-                            .load(item.getPostThumbnailImageUrl()) // 이미지 URL 가져오기
+                            .load(item.getGroupBuyThumbnailUrl()) // 이미지 URL 가져오기
                             .placeholder(R.drawable.post_thumbnail_background_logo) // 로딩 중에 표시할 이미지
                             .error(R.drawable.post_thumbnail_background_logo) // 에러 발생 시 표시할 이미지
                             .into(post_imageView); // ImageView에 이미지 설정
                 }
 
-                username_textView.setText(item.getUsername());
-                postTitle_textView.setText(item.getTitle());
+                username_textView.setText(item.getUserName());
+                postTitle_textView.setText(item.getGroupBuyTitle());
 
                 long elapsedTime = item.getElapsedTime();
                 String elapsedTime_str;
@@ -293,7 +316,7 @@ public class NotificationActivity extends AppCompatActivity {
                 }
                 elapsedTime_textView.setText(elapsedTime_str);
 
-                currentPartyMemberNum_textView.setText("" + item.getCurrentPartyMemberNum() + '/' + item.getMaxPartyMemberNum());
+                currentPartyMemberNum_textView.setText("" + item.getCurrentCount() + '/' + item.getHeadCount());
             }
         }
     }
@@ -301,7 +324,7 @@ public class NotificationActivity extends AppCompatActivity {
     /**
      * (askAcceptJoinParty_dialog) 다이얼로그를 디자인하는 함수
      */
-    public void showDialog_askUnsubscribe_dialog() {
+    public void showDialog_askUnsubscribe_dialog(int waitingId) {
         askAcceptJoinParty_dialog.show(); // 다이얼로그 띄우기
         // 다이얼로그 창이 나타나면서 외부 액티비티가 어두워지는데, 그 정도를 조절함
         askAcceptJoinParty_dialog.getWindow().setDimAmount(0.35f);
@@ -313,12 +336,27 @@ public class NotificationActivity extends AppCompatActivity {
         // (확인) 버튼
         askAcceptJoinParty_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
             askAcceptJoinParty_dialog.dismiss(); // 다이얼로그 닫기
-            new ToastSuccess("채팅방에 초대되었어요", NotificationActivity.this);
-            if (adapter != null) {
-                adapter.removeItem(adapter.currentSelectedPosition); // 선택된 아이템 삭제
 
-                createNotification();
-            }
+            Call<ResponseBody> call = chatAPI.acceptWaiting(waitingId);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        new ToastSuccess("요청을 수락했어요", NotificationActivity.this);
+                        if (adapter != null) {
+                            adapter.removeItem(adapter.currentSelectedPosition); // 선택된 아이템 삭제
+                            createNotification();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+
+                }
+            });
+
+
         });
     }
 
