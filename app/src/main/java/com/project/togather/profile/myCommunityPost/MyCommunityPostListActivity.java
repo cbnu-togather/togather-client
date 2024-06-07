@@ -300,7 +300,7 @@ public class MyCommunityPostListActivity extends AppCompatActivity {
             }
 
             void onBind(PostInfoItem item) {
-                if (item.getPostThumbnailImageUrl().equals("")) {
+                if (item.getPostThumbnailImageUrl() != null && item.getPostThumbnailImageUrl().equals("")) {
                     post_imageView.setVisibility(View.GONE);
                     postTitle_textView.setMaxWidth(1000);
                 } else {
@@ -318,15 +318,15 @@ public class MyCommunityPostListActivity extends AppCompatActivity {
                 ViewGroup.LayoutParams layoutParams = root_relativeLayout.getLayoutParams();
                 if (postTitle.length() >= 28)
                     postTitle = postTitle.substring(0, 28) + "...";
-                else if (!item.getPostThumbnailImageUrl().equals("") && postTitle.length() >= 19)
+                else if (item.getPostThumbnailImageUrl() != null && !item.getPostThumbnailImageUrl().equals("") && postTitle.length() >= 19)
                     postTitle = postTitle.substring(0, 19) + "...";
 
                 postTitle_textView.setText(postTitle);
 
                 String postContent = item.getContent();
-                if (item.getPostThumbnailImageUrl().equals("") && postContent.length() >= 29)
+                if (item.getPostThumbnailImageUrl() != null && item.getPostThumbnailImageUrl().equals("") && postContent.length() >= 29)
                     postContent = postContent.substring(0, 29) + "...";
-                else if(!item.getPostThumbnailImageUrl().equals("") && postContent.length() >= 24)
+                else if(item.getPostThumbnailImageUrl() != null && !item.getPostThumbnailImageUrl().equals("") && postContent.length() >= 24)
                     postContent = postContent.substring(0, 24) + "...";
 
                 postContent_textView.setText(postContent);
