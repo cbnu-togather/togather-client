@@ -82,7 +82,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
     private LocationManager locationManager;
     private static double currLatitude, currLongitude;
     private static int postId;
-    private boolean isRaisedHand = false;
+    private boolean isRaisedHand;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,8 +189,6 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
             });
 
         });
-
-        recruitmentComplete();
 
         selectPostManagementBottomSheetBehavior = BottomSheetBehavior.from(
                 findViewById(R.id.selectPostManagementBottomSheet_layout));
@@ -385,6 +383,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                         postDetailsItem = gson.fromJson(jsonString, PostDetailsItem.class);
                         isWriter = postDetailsItem.isWriter();
                         isLiked = postDetailsItem.isLiked();
+                        isRecruitmentComplete = (postDetailsItem.getCurrentCount() == postDetailsItem.getHeadCount()) ? true : false;
 
 
                         // 전역 데이터 로드
@@ -472,7 +471,9 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                                     .into(binding.postThumbnailImageView); // ImageView에 이미지 설정
                         }
 
-
+                        if (isRecruitmentComplete) {
+                            recruitmentComplete();
+                        }
                         binding.likeImageView.setImageResource(isLiked ? R.drawable.like_filled : R.drawable.like_bolder_gray);
                         binding.usernameTextView.setText(postDetailsItem.getWriterName());
                         binding.addressTextView.setText(postDetailsItem.getAddress());
@@ -494,6 +495,9 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
 
                         binding.functionButton.setText(isWriter ? "마감하기" : "손 들기");
                         binding.moreImageButton.setVisibility(isWriter ? View.VISIBLE : View.GONE);
+
+
+
 
                     } catch (IOException e) {
                         e.printStackTrace();
