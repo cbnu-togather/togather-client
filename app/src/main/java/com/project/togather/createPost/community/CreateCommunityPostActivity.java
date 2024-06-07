@@ -175,49 +175,49 @@ public class CreateCommunityPostActivity extends AppCompatActivity {
             System.out.println("////////////현재 내 위치값 : " + currLatitude + "," + currLongitude);
         }
 
-        Call<CoordinateToAddress> call = kakaoInterface.getAddress("WGS84", currLatitude, currLongitude);
-        call.enqueue(new Callback<CoordinateToAddress>() {
-            @Override
-            public void onResponse(Call<CoordinateToAddress> call, Response<CoordinateToAddress> response) {
-                if (response.isSuccessful()) {
-                    CoordinateToAddress responseData = response.body();
-                    List<CoordinateToAddress.Document> documents = responseData.getDocuments();
-                    if (!documents.isEmpty()) {
-                        CoordinateToAddress.Document document = documents.get(0);
-                        CoordinateToAddress.Address address = document.getAddress();
-                        String addressName = address.getAddressName();
-                        String extractedDong = address.extractDong(); // "동" 추출
-
-                        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-
-
-                        // 조회된 주소에 '동' 정보가 없을 때 일반 주소를 저장
-                        if (extractedDong == null) {
-                            editor.putString("selectedAddress", addressName);
-                            editor.apply();
-                            finish();
-                            return;
-                        }
-
-                        editor.putString("extractedDong", extractedDong);
-                        editor.apply();
-                        finish();
-                    } else {
-                        System.out.println(response.code());
-                        new ToastWarning("서비스 불가 지역이에요", CreateCommunityPostActivity.this);
-                    }
-                } else {
-                    new ToastWarning("잘못된 요청이에요", CreateCommunityPostActivity.this);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<CoordinateToAddress> call, Throwable t) {
-                // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
-                new ToastWarning(getResources().getString(R.string.toast_server_error), CreateCommunityPostActivity.this);
-            }
-        });
+//        Call<CoordinateToAddress> call = kakaoInterface.getAddress("WGS84", currLatitude, currLongitude);
+//        call.enqueue(new Callback<CoordinateToAddress>() {
+//            @Override
+//            public void onResponse(Call<CoordinateToAddress> call, Response<CoordinateToAddress> response) {
+//                if (response.isSuccessful()) {
+//                    CoordinateToAddress responseData = response.body();
+//                    List<CoordinateToAddress.Document> documents = responseData.getDocuments();
+//                    if (!documents.isEmpty()) {
+//                        CoordinateToAddress.Document document = documents.get(0);
+//                        CoordinateToAddress.Address address = document.getAddress();
+//                        String addressName = address.getAddressName();
+//                        String extractedDong = address.extractDong(); // "동" 추출
+//
+//                        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);
+//                        SharedPreferences.Editor editor = sharedPreferences.edit();
+//
+//
+//                        // 조회된 주소에 '동' 정보가 없을 때 일반 주소를 저장
+//                        if (extractedDong == null) {
+//                            editor.putString("selectedAddress", addressName);
+//                            editor.apply();
+//                            finish();
+//                            return;
+//                        }
+//
+//                        editor.putString("extractedDong", extractedDong);
+//                        editor.apply();
+//                        finish();
+//                    } else {
+//                        System.out.println(response.code());
+//                        new ToastWarning("서비스 불가 지역이에요", CreateCommunityPostActivity.this);
+//                    }
+//                } else {
+//                    new ToastWarning("잘못된 요청이에요", CreateCommunityPostActivity.this);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<CoordinateToAddress> call, Throwable t) {
+//                // 서버 코드 및 네트워크 오류 등의 이유로 요청 실패
+//                new ToastWarning(getResources().getString(R.string.toast_server_error), CreateCommunityPostActivity.this);
+//            }
+//        });
 
 
         // X 이미지뷰 클릭 시 현재 액티비티 종료
