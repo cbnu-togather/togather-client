@@ -406,6 +406,13 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
             // API 요청 부분
             performPost(recruitmentNum[0]);
 
+            editor.remove("selectedLatitude");
+            editor.remove("selectedLongitude");
+            editor.remove("extractedDong");
+            editor.remove("selectedAddress");
+            editor.remove("addSpotName");
+            editor.apply();
+
 //            startActivity(new Intent(CreateRecruitmentPostActivity.this, HomeActivity.class));
             finish();
         });

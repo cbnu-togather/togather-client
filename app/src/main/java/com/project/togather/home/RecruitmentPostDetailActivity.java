@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -69,7 +70,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
 
     private static MapView mapView;
     private static ViewGroup mapViewContainer;
-    private MapPoint selectedPoint;
+    private MapPoint currPoint, selectedPoint;
     private MapPOIItem marker;
     private PostDetailsItem postDetailsItem;
 
@@ -94,9 +95,31 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
         postId = intent.getIntExtra("post_id", 0);
 
-
+        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("selectedAddress", "");
+        editor.putString("extractedDong", "");
+        editor.putString("addSpotName", "");
+        editor.putFloat("selectedLatitude", 0);
+        editor.putFloat("selectedLongitude", 0);
+        editor.apply();
 
         binding.activityHeaderRelativeLayout.bringToFront();
+
+        if (mapView == null) {
+            /** 다음 카카오맵 지도를 띄우는 코드 */
+            mapView = new MapView(this);
+            mapView.setZoomLevel(2, true);
+
+            mapViewContainer = binding.mapRelativeLayout;
+            mapViewContainer.addView(mapView);
+//            binding.centerPointImageView.bringToFront();
+
+            /** 현재 나의 위치에 점을 갱신하며 찍어줌 */
+            mapView.setCurrentLocationTrackingMode(net.daum.mf.map.api.MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving);
+
+        }
+
 
         /** (게시글 삭제 확인) 다이얼로그 변수 초기화 및 설정 */
         askDeletePost_dialog = new Dialog(RecruitmentPostDetailActivity.this);  // Dialog 초기화
@@ -357,6 +380,44 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                         isWriter = postDetailsItem.isWriter();
                         isLiked = postDetailsItem.isLiked();
 
+
+                        // 전역 데이터 로드
+                        SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("AppPreferences", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("selectedAddress", postDetailsItem.getAddress());
+                        editor.putString("extractedDong", postDetailsItem.getAddress());
+                        editor.putString("addSpotName", postDetailsItem.getSpotName());
+                        editor.putFloat("selectedLatitude", (float)postDetailsItem.getLatitude());
+                        editor.putFloat("selectedLongitude", (float)postDetailsItem.getLongitude());
+                        editor.apply();
+
+                        if (mapView != null) {
+                            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                            /** 사용자의 현재 위치 */
+                            GetMyLocation getMyLocation = new GetMyLocation(RecruitmentPostDetailActivity.this, RecruitmentPostDetailActivity.this);
+                            Location userLocation = getMyLocation.getMyLocation();
+                            if (userLocation != null) {
+                                currLatitude = userLocation.getLatitude();
+                                currLongitude = userLocation.getLongitude();
+                                currPoint = MapPoint.mapPointWithGeoCoord(currLatitude, currLongitude);
+                                selectedPoint = MapPoint.mapPointWithGeoCoord(postDetailsItem.getLatitude(), postDetailsItem.getLongitude());
+
+                                /** 중심점 변경 */
+                                mapView.setMapCenterPoint(selectedPoint, true);
+                            }
+                            marker = new MapPOIItem();
+                            marker.setItemName(postDetailsItem.getSpotName());
+                            marker.setTag(0);
+                            // 원하는 위치에 마커 추가
+                            MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(postDetailsItem.getLatitude(), postDetailsItem.getLongitude()); // 마커의 위도, 경도 설정
+                            marker.setMapPoint(mapPoint);
+                            marker.setMarkerType(MapPOIItem.MarkerType.CustomImage); // 기본으로 제공하는 BluePin 마커 모양.
+                            marker.setCustomImageResourceId(R.drawable.marker_small);
+                            mapView.addPOIItem(marker);
+                        }
+
+
+
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
                         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
@@ -392,6 +453,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                                     .into(binding.otherUserProfileImageRoundedImageView); // ImageView에 이미지 설정
                         }
                         if (postDetailsItem.getImg() == null) {
+                            binding.postThumbnailImageView.setVisibility(View.VISIBLE);
                             binding.postThumbnailImageView.setImageResource(R.drawable.post_thumbnail_background_logo);
                             binding.backImageButton.setImageResource(R.drawable.arrow_back);
                             binding.homeImageButton.setImageResource(R.drawable.home_normal);
@@ -440,6 +502,32 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 마커 등록
+     */
+    public void addMakerToMap(double selectedLatitude, double selectedLongitude, String spotName) {
+        if (mapView != null) {
+            marker = new MapPOIItem();
+            marker.setItemName(spotName);
+            marker.setTag(0);
+            // 원하는 위치에 마커 추가
+            MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(selectedLatitude, selectedLongitude); // 마커의 위도, 경도 설정
+            marker.setMapPoint(mapPoint);
+            marker.setMarkerType(MapPOIItem.MarkerType.CustomImage); // 기본으로 제공하는 BluePin 마커 모양.
+            marker.setCustomImageResourceId(R.drawable.marker_small);
+            mapView.addPOIItem(marker);
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mapView != null && mapView.getParent() != null) {
+            mapViewContainer.removeView(mapView);
+            mapView = null;
+        }
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -448,27 +536,5 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
 
         getRecruitmentPostDetail(postId);
 
-        if (mapView == null) {
-            /** 다음 카카오맵 지도를 띄우는 코드 */
-            mapView = new MapView(this);
-            mapView.setZoomLevel(2, true);
-
-            mapViewContainer = binding.mapRelativeLayout;
-            mapViewContainer.addView(mapView);
-            binding.centerPointImageView.bringToFront();
-
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            /** 사용자의 현재 위치 */
-            GetMyLocation getMyLocation = new GetMyLocation(this, this);
-            Location userLocation = getMyLocation.getMyLocation();
-            if (userLocation != null) {
-                currLatitude = userLocation.getLatitude();
-                currLongitude = userLocation.getLongitude();
-                selectedPoint = MapPoint.mapPointWithGeoCoord(currLatitude, currLongitude);
-
-                /** 중심점 변경 */
-                mapView.setMapCenterPoint(selectedPoint, true);
-            }
-        }
     }
 }
