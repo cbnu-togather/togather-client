@@ -88,14 +88,20 @@ public class ChatActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
-                startActivity(new Intent(ChatActivity.this, ChatDetailActivity.class));
+                Intent intent = new Intent(ChatActivity.this, ChatDetailActivity.class);
+                intent.putExtra("chatroom_id",chatInfoItems.get(pos).getId());
+                intent.putExtra("chatRoom_member", chatInfoItems.get(pos).getParticipantCount());
+                intent.putExtra("chatRoom_title", chatInfoItems.get(pos).getChatRoomTitle());
+                startActivity(intent);
             }
         });
 
         adapter.setOnLongItemClickListener(new RecyclerViewAdapter.OnLongItemClickListener() {
             @Override
             public void onLongItemClick(int pos) {
-                startActivity(new Intent(ChatActivity.this, ChatDetailActivity.class));
+                Intent intent = new Intent(ChatActivity.this, ChatDetailActivity.class);
+                intent.putExtra("chatroom_id",chatInfoItems.get(pos).getId());
+                startActivity(intent);
             }
         });
 
@@ -120,12 +126,6 @@ public class ChatActivity extends AppCompatActivity {
                 new ToastWarning(getResources().getString(R.string.toast_server_error), ChatActivity.this);
             }
         });
-
-//        // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-//        chatInfoItems.add(new ChatInfoItem("", "https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/product/5400941752/B.jpg?481000000", "https://image.newsis.com/2023/07/12/NISI20230712_0001313626_web.jpg?rnd=20230712163021", "https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "도착했습니다! 모여용", 300, 3, 3, 3));
-//        chatInfoItems.add(new ChatInfoItem("http://image.dongascience.com/Photo/2020/03/5bddba7b6574b95d37b6079c199d7101.jpg", "https://www.sisajournal.com/news/photo/first/200508/img_102658_1.jpg", "", "https://d12zq4w4guyljn.cloudfront.net/750_750_20201122041810_photo1_5831aaf849cf.jpg", "파브리카 배달 구해용", "솔못에서 모일게요", 30000, 1, 2, 3));
-//        chatInfoItems.add(new ChatInfoItem("", "https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/9mqM/image/6vuarJpov779Xfo2EdNhLhmaPgI.JPG", "", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-1FF9Hpe-_ERtrBHcUDeeckMOeOzm6IWylD_mJJlJEQ&s", "컴포즈 배달 구해요!!!", "맛나게 드셔요~", 100000, 0, 1, 1));
-//        chatInfoItems.add(new ChatInfoItem("", "", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutGBoBGvVLOofPQ8mNAAKDpgD7NiHKzAyRSAL35gRQA&s", "", "밥버거 드실분", "넹", 300000, 0, 2, 1));
 
         adapter.setChatInfoList(chatInfoItems);
 
@@ -351,10 +351,10 @@ public class ChatActivity extends AppCompatActivity {
 
                 for (int i=0; i < item.getParticipantCount(); i++) {
                     if (item.getUserProfileImgUrls()[i] != null && item.getUserProfileImgUrls()[i].equals("")) {
-                        secondUser_roundedImageView.setImageResource(R.drawable.user_default_profile);
+                        userImageViews[i].setImageResource(R.drawable.user_default_profile);
                     } else {
                         Glide.with(itemView)
-                                .load(item.getUserProfileImgUrls()[1]) // 이미지 URL 가져오기
+                                .load(item.getUserProfileImgUrls()[i]) // 이미지 URL 가져오기
                                 .placeholder(R.drawable.user_default_profile) // 로딩 중에 표시할 이미지
                                 .error(R.drawable.user_default_profile) // 에러 발생 시 표시할 이미지
                                 .into(userImageViews[i]); // ImageView에 이미지 설정
@@ -381,15 +381,15 @@ public class ChatActivity extends AppCompatActivity {
 //                            .into(thirdUser_roundedImageView); // ImageView에 이미지 설정
 //                }
 //
-//                if (item.getGroupBuyThumbnailUrl() != null && item.getGroupBuyThumbnailUrl().equals("")) {
-//                    post_imageView.setImageResource(R.drawable.one_person_logo);
-//                } else {
-//                    Glide.with(itemView)
-//                            .load(item.getGroupBuyThumbnailUrl()) // 이미지 URL 가져오기
-//                            .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
-//                            .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
-//                            .into(post_imageView); // ImageView에 이미지 설정
-//                }
+                if (item.getGroupBuyThumbnailUrl() != null && item.getGroupBuyThumbnailUrl().equals("")) {
+                    post_imageView.setImageResource(R.drawable.one_person_logo);
+                } else {
+                    Glide.with(itemView)
+                            .load(item.getGroupBuyThumbnailUrl()) // 이미지 URL 가져오기
+                            .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
+                            .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
+                            .into(post_imageView); // ImageView에 이미지 설정
+                }
 
                 String postTitle = item.getChatRoomTitle();
                 if (postTitle.length() >= 20)
