@@ -1,5 +1,6 @@
 package com.project.togather.retrofit.interfaceAPI;
 
+import com.project.togather.chat.ChatInfoItem;
 import com.project.togather.notification.NotificationInfoItem;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface ChatAPI {
 
     @GET("notifications")
     Call<List<NotificationInfoItem>> getNotificationList();
+    @GET("chatrooms")
+    Call<List<ChatInfoItem>> getChatRoomList();
 }
