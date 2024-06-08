@@ -21,6 +21,8 @@ public interface ChatAPI {
     Call<ResponseBody> raiseHand(@Path("groupBuyId") int postId);
     @PUT("acceptWaiting/{waitingId}")
     Call<ResponseBody> acceptWaiting(@Path("waitingId") int waitingId);
+    @DELETE("declineWaiting/{waitingId}")
+    Call<ResponseBody> deleteNotification(@Path("waitingId") int waitingId);
 
     @GET("notifications")
     Call<List<NotificationInfoItem>> getNotificationList();
@@ -30,6 +32,7 @@ public interface ChatAPI {
     Call<List<ChatDetailInfoItem>> getChatRoomDetails(@Path("chatRoomId") int chatRoomId);
     @PUT("chatrooms/{chatRoomId}/messages")
     Call<ResponseBody> sendMessage(@Path("chatRoomId") int chatRoomId, @Body ChatMessageRequest chatMessageRequest);
-    @DELETE("declineWaiting/{waitingId}")
-    Call<ResponseBody> deleteNotification(@Path("waitingId") int waitingId);
+    @DELETE("chatrooms/{chatRoomId}/leave")
+    Call<ResponseBody> leaveChatRoom(@Path("chatRoomId") int chatRoomId);
+
 }
