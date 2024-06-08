@@ -40,10 +40,14 @@ public class ChatInfoItem {
             sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
             Date now = new Date();
+            if (lastMessageTime != null) {
+                String createdAtString = lastMessageTime.split("\\.")[0];
+                Date createdAt = sdf.parse(createdAtString);
+                elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
+            } else {
+                return -1;
+            }
 
-            String createdAtString = lastMessageTime.split("\\.")[0];
-            Date createdAt = sdf.parse(createdAtString);
-            elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
         } catch (ParseException e) {
             e.printStackTrace();
         }

@@ -346,12 +346,12 @@ public class NotificationActivity extends AppCompatActivity {
         askAcceptJoinParty_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
             askAcceptJoinParty_dialog.dismiss(); // 다이얼로그 닫기
 
-            Call<ResponseBody> call = chatAPI.deleteNotification(waitingId);
+            Call<ResponseBody> call = chatAPI.acceptWaiting(waitingId);
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
-                        new ToastSuccess("요청을 거절했어요", NotificationActivity.this);
+                        new ToastSuccess("요청을 수락했어요", NotificationActivity.this);
                         if (adapter != null) {
                             adapter.removeItem(adapter.currentSelectedPosition); // 선택된 아이템 삭제
 //                            createNotification();

@@ -468,6 +468,7 @@ public class ChatDetailActivity extends AppCompatActivity {
                     RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
                     params.topMargin = marginTopPx;
                     itemView.setLayoutParams(params);
+
                 } else if (item.isContinuousMessage()) {
                     root_relativeLayout.setPadding(root_relativeLayout.getPaddingLeft(), 15, root_relativeLayout.getPaddingRight(), 15);
                     otherUserProfileImage_roundedImageView.setVisibility(View.INVISIBLE);
@@ -560,7 +561,9 @@ public class ChatDetailActivity extends AppCompatActivity {
 
 //            adapter.getChatDetailInfoItems().add(newItem);  // Add new message item to the list
 //            adapter.notifyDataSetChanged();  // Notify adapter to refresh view
-            binding.chatRoomRecyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);  // Scroll to the new message
+            if (adapter.getItemCount() > 0) {
+                binding.chatRoomRecyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);  // Scroll to the new message
+            }
             binding.messageEditText.setText("");  // Clear the input field
 
             sendMessageToServer(messageText);
@@ -599,7 +602,22 @@ public class ChatDetailActivity extends AppCompatActivity {
         // (확인) 버튼
         askLeaveChatRoom_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
             askLeaveChatRoom_dialog.dismiss(); // 다이얼로그 닫기
-            startActivity(new Intent(ChatDetailActivity.this, ChatActivity.class));
+            Call<ResponseBody> call = chatAPI.leaveChatRoom(chatRoomId);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        new ToastWarning("요청이 수락되었어요", ChatDetailActivity.this);
+                        startActivity(new Intent(ChatDetailActivity.this, ChatActivity.class));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    new ToastWarning(getResources().getString(R.string.toast_server_error), ChatDetailActivity.this);
+                }
+            });
+
         });
     }
 
