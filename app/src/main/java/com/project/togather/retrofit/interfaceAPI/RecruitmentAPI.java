@@ -2,6 +2,10 @@ package com.project.togather.retrofit.interfaceAPI;
 
 import androidx.annotation.Nullable;
 
+import com.project.togather.home.PostInfoItem;
+
+import java.util.List;
+
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -41,7 +45,7 @@ public interface RecruitmentAPI {
     );
 
     @GET("groupbuy/list")
-    Call<ResponseBody> getRecruitmentPostList(
+    Call<List<PostInfoItem>> getRecruitmentPostList(
             @Query("Latitude") double latitude,
             @Query("Longitude") double longitude,
             @Query("distance") int distance

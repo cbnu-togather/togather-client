@@ -528,7 +528,6 @@ public class CreateCommunityPostActivity extends AppCompatActivity {
 
             performPost();
 
-            startActivity(new Intent(CreateCommunityPostActivity.this, CommunityPostDetailActivity.class));
             finish();
         });
 

@@ -44,6 +44,7 @@ import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import okhttp3.ResponseBody;
@@ -123,7 +124,9 @@ public class NotificationActivity extends AppCompatActivity {
             public void onResponse(Call<List<NotificationInfoItem>> call, Response<List<NotificationInfoItem>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     notificationInfoItems.clear();
-                    notificationInfoItems.addAll(response.body());
+                    List<NotificationInfoItem> reversedList = response.body();
+                    Collections.reverse(reversedList); // 리스트를 역순으로 변경
+                    notificationInfoItems.addAll(reversedList);
                     adapter.setNotificationInfoList(notificationInfoItems);
                     adapter.notifyDataSetChanged();
                 }

@@ -33,6 +33,7 @@ import com.project.togather.home.HomeActivity;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -487,7 +488,9 @@ public class ChatActivity extends AppCompatActivity {
             public void onResponse(Call<List<ChatInfoItem>> call, Response<List<ChatInfoItem>> response) {
                 if (response.isSuccessful()) {
                     chatInfoItems.clear();
-                    chatInfoItems.addAll(response.body());
+                    List<ChatInfoItem> reversedList = response.body();
+                    Collections.reverse(reversedList); // 리스트를 역순으로 변경
+                    chatInfoItems.addAll(reversedList);
                     adapter.setChatInfoList(chatInfoItems);
                     adapter.notifyDataSetChanged();
                 }

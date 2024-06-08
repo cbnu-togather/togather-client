@@ -2,6 +2,10 @@ package com.project.togather.retrofit.interfaceAPI;
 
 import androidx.annotation.Nullable;
 
+import com.project.togather.community.PostInfoItem;
+
+import java.util.List;
+
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -38,8 +42,8 @@ public interface CommunityAPI {
             @Query("category") String category
     );
     @GET("/community/list")
-    Call<ResponseBody> getCommunityPostList(@Query("Latitude") double latitude,
-                                            @Query("Longitude") double longitude);
+    Call<List<PostInfoItem>> getCommunityPostList(@Query("Latitude") double latitude,
+                                                  @Query("Longitude") double longitude);
     @GET("community/{communityId}")
     Call<ResponseBody> getCommunityPostDetail(@Path("communityId") int postId);
 
