@@ -503,6 +503,11 @@ public class ChatActivity extends AppCompatActivity {
         });
     }
 
+
+    private void stopRefreshing() {
+        handler.removeCallbacks(refreshRunnable);
+    }
+
     // 유저 정보 조회 메서드
     private void getUserInfo() {
         Call<ResponseBody> call = userAPI.getUserInfo();
@@ -520,6 +525,13 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopRefreshing();
+    }
+
     // 이 액티비티로 다시 돌아왔을 때 실행되는 메소드
     @Override
     public void onResume() {
