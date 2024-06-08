@@ -63,7 +63,7 @@ public class ChatActivity extends AppCompatActivity {
     ArrayList<ChatInfoItem> chatInfoItems = new ArrayList<>();
     private Handler handler = new Handler();
     private Runnable refreshRunnable;
-    private static final int REFRESH_INTERVAL = 500;
+    private static final int REFRESH_INTERVAL = 2000;
     private BottomSheetBehavior selectCreatePostTypeBottomSheetBehavior;
 
     @Override

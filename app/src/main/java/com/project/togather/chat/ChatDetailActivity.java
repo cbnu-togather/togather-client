@@ -257,8 +257,8 @@ public class ChatDetailActivity extends AppCompatActivity {
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                binding.backgroundDimmer.setAlpha(slideOffset);
                 binding.backgroundDimmer.setVisibility(View.VISIBLE);
+                binding.backgroundDimmer.setAlpha(slideOffset);
             }
         });
 
@@ -456,9 +456,6 @@ public class ChatDetailActivity extends AppCompatActivity {
             }
 
             void onBind(ChatDetailInfoItem item) {
-//                myMessage_relativeLayout.setVisibility(item.isMyMessage() ? View.VISIBLE : View.GONE);
-//                otherUserMessage_relativeLayout.setVisibility(item.isMyMessage() ? View.GONE : View.VISIBLE);
-//
                 if (item.isMyMessage() && item.isContinuousMessage()) {
                     root_relativeLayout.setPadding(root_relativeLayout.getPaddingLeft(), 15, root_relativeLayout.getPaddingRight(), 15);
                     float density = itemView.getContext().getResources().getDisplayMetrics().density;
@@ -558,9 +555,9 @@ public class ChatDetailActivity extends AppCompatActivity {
 //                    true,  // isMyMessage
 //                    true  // isContinuousMessage, assuming new message is not part of a continuous block
 //            );
-
+//
 //            adapter.getChatDetailInfoItems().add(newItem);  // Add new message item to the list
-//            adapter.notifyDataSetChanged();  // Notify adapter to refresh view
+            adapter.notifyDataSetChanged();  // Notify adapter to refresh view
             if (adapter.getItemCount() > 0) {
                 binding.chatRoomRecyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);  // Scroll to the new message
             }
@@ -638,8 +635,8 @@ public class ChatDetailActivity extends AppCompatActivity {
             long timestamp = System.currentTimeMillis();  // Get current timestamp
             ChatDetailInfoItem newItem = new ChatDetailInfoItem(
                     "",  // userProfileImageUrl, assuming no image for simplicity
-                    "You",  // username
-                    "",  // message
+                    "2번",  // username
+                    binding.messageEditText.getText().toString(),  // message
                     imageUri.toString(),  // ImageUrl, assuming no image for simplicity
                     new SimpleDateFormat("a h:mm", Locale.KOREA).format(new Date(timestamp)),  // current timestamp
                     true,  // isMyMessage
