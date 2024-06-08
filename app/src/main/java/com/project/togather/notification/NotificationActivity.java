@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,7 @@ public class NotificationActivity extends AppCompatActivity {
     private RecyclerViewAdapter adapter;
 
     private Dialog askAcceptJoinParty_dialog;
+    private Dialog askDeleteNotifcation_dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +88,13 @@ public class NotificationActivity extends AppCompatActivity {
         // dialog 창의 root 레이아웃을 투명하게 조절 모서리(코너)를 둥글게 보이게 하기 위해
         askAcceptJoinParty_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
+        /** (파티 가입 요청 확인) 다이얼로그 변수 초기화 및 설정 */
+        askDeleteNotifcation_dialog = new Dialog(NotificationActivity.this);  // Dialog 초기화
+        askDeleteNotifcation_dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // 타이틀 제거
+        askDeleteNotifcation_dialog.setContentView(R.layout.dialog_ask_delete_party); // xml 레이아웃 파일과 연결
+        // dialog 창의 root 레이아웃을 투명하게 조절 모서리(코너)를 둥글게 보이게 하기 위해
+        askDeleteNotifcation_dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
         adapter = new RecyclerViewAdapter();
 
         ArrayList<NotificationInfoItem> notificationInfoItems = new ArrayList<>();
@@ -100,7 +109,7 @@ public class NotificationActivity extends AppCompatActivity {
         adapter.setOnLongItemClickListener(new RecyclerViewAdapter.OnLongItemClickListener() {
             @Override
             public void onLongItemClick(int pos) {
-                showDialog_askUnsubscribe_dialog(notificationInfoItems.get(pos).getId());
+                showDialog_deleteUnsubscribe_dialog(notificationInfoItems.get(pos).getId());
             }
         });
 
@@ -337,22 +346,61 @@ public class NotificationActivity extends AppCompatActivity {
         askAcceptJoinParty_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
             askAcceptJoinParty_dialog.dismiss(); // 다이얼로그 닫기
 
-            Call<ResponseBody> call = chatAPI.acceptWaiting(waitingId);
+            Call<ResponseBody> call = chatAPI.deleteNotification(waitingId);
             call.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()) {
-                        new ToastSuccess("요청을 수락했어요", NotificationActivity.this);
+                        new ToastSuccess("요청을 거절했어요", NotificationActivity.this);
                         if (adapter != null) {
                             adapter.removeItem(adapter.currentSelectedPosition); // 선택된 아이템 삭제
-                            createNotification();
+//                            createNotification();
                         }
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    Log.d("fail", "onFailure: 실패");
+                }
+            });
 
+
+        });
+    }
+
+    /**
+     * (deleteAcceptJoinParty_dialog) 다이얼로그를 디자인하는 함수
+     */
+    public void showDialog_deleteUnsubscribe_dialog(int waitingId) {
+        askDeleteNotifcation_dialog.show(); // 다이얼로그 띄우기
+        // 다이얼로그 창이 나타나면서 외부 액티비티가 어두워지는데, 그 정도를 조절함
+        askDeleteNotifcation_dialog.getWindow().setDimAmount(0.35f);
+
+        // (아니오) 버튼
+        Button noBtn = askDeleteNotifcation_dialog.findViewById(R.id.noBtn);
+        noBtn.setOnClickListener(view -> askDeleteNotifcation_dialog.dismiss());
+
+        // (확인) 버튼
+        askDeleteNotifcation_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
+            askDeleteNotifcation_dialog.dismiss(); // 다이얼로그 닫기
+
+            Call<ResponseBody> call = chatAPI.deleteNotification(waitingId);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        new ToastSuccess("요청을 거절했어요", NotificationActivity.this);
+                        if (adapter != null) {
+                            adapter.removeItem(adapter.currentSelectedPosition); // 선택된 아이템 삭제
+//                            createNotification();
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    Log.d("fail", "onFailure: 실패");
                 }
             });
 

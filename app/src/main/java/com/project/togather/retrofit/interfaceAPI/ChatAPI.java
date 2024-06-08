@@ -10,6 +10,7 @@ import java.util.List;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
@@ -29,4 +30,6 @@ public interface ChatAPI {
     Call<List<ChatDetailInfoItem>> getChatRoomDetails(@Path("chatRoomId") int chatRoomId);
     @PUT("chatrooms/{chatRoomId}/messages")
     Call<ResponseBody> sendMessage(@Path("chatRoomId") int chatRoomId, @Body ChatMessageRequest chatMessageRequest);
+    @DELETE("declineWaiting/{waitingId}")
+    Call<ResponseBody> deleteNotification(@Path("waitingId") int waitingId);
 }

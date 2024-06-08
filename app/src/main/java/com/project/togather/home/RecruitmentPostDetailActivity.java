@@ -383,7 +383,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                         postDetailsItem = gson.fromJson(jsonString, PostDetailsItem.class);
                         isWriter = postDetailsItem.isWriter();
                         isLiked = postDetailsItem.isLiked();
-                        isRecruitmentComplete = (postDetailsItem.getCurrentCount() == postDetailsItem.getHeadCount()) ? true : false;
+                        isRecruitmentComplete = postDetailsItem.isCompleted();
 
 
                         // 전역 데이터 로드
