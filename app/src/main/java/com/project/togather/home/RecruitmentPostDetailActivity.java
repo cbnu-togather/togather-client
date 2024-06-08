@@ -338,9 +338,23 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         // (확인) 버튼
         askStopRecruitment_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
             askStopRecruitment_dialog.dismiss(); // 다이얼로그 닫기
-            new ToastSuccess("모집이 마감되었어요", RecruitmentPostDetailActivity.this);
-            isRecruitmentComplete = true;
-            recruitmentComplete();
+            Call<ResponseBody> call = recruitmentAPI.closeRecruitment(postId);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        new ToastSuccess("모집이 마감되었어요", RecruitmentPostDetailActivity.this);
+                        isRecruitmentComplete = true;
+                        recruitmentComplete();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    new ToastWarning(getResources().getString(R.string.toast_server_error), RecruitmentPostDetailActivity.this);
+                }
+            });
+
         });
     }
 

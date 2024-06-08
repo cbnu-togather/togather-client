@@ -88,4 +88,7 @@ public interface RecruitmentAPI {
 
     );
 
+    @PUT("groupbuy/{groupBuyId}/close")
+    Call<ResponseBody> closeRecruitment(@Path("groupBuyId") int postId);
+
 }
