@@ -502,15 +502,15 @@ public class ChatDetailActivity extends AppCompatActivity {
 
                     // 사진 부분
                     myTimestamp_textView.setText("" + item.getCreatedAt());
-                    if (item.getUserProfileImgUrl() != null && !item.getUserProfileImgUrl().equals("")) {
-                        Glide.with(itemView)
-                                .load(item.getUserProfileImgUrl()) // 이미지 URL 가져오기
-                                .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
-                                .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
-                                .into(myImage_imageView); // ImageView에 이미지 설정
-                        myImage_cardView.setVisibility(View.VISIBLE);
-                        myMessage_textView.setVisibility(View.GONE);
-                    }
+//                    if (item.getUserProfileImgUrl() != null && !item.getUserProfileImgUrl().equals("")) {
+//                        Glide.with(itemView)
+//                                .load(item.getUserProfileImgUrl()) // 이미지 URL 가져오기
+//                                .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
+//                                .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
+//                                .into(myImage_imageView); // ImageView에 이미지 설정
+//                        myImage_cardView.setVisibility(View.VISIBLE);
+//                        myMessage_textView.setVisibility(View.GONE);
+//                    }
                     myMessage_textView.setText(item.getContent());
                     myTimestamp_textView.setText(formattedDate);
 
@@ -527,16 +527,16 @@ public class ChatDetailActivity extends AppCompatActivity {
                             .into(otherUserProfileImage_roundedImageView); // ImageView에 이미지 설정
                 }
 
-                // 사진 부분
-                if (item.getUserProfileImgUrl() != null && !item.getUserProfileImgUrl().equals("")) {
-                    Glide.with(itemView)
-                            .load(item.getUserProfileImgUrl()) // 이미지 URL 가져오기
-                            .placeholder(R.drawable.post_thumbnail_background_logo) // 로딩 중에 표시할 이미지
-                            .error(R.drawable.post_thumbnail_background_logo) // 에러 발생 시 표시할 이미지
-                            .into(otherUserImage_imageView); // ImageView에 이미지 설정
-                    otherUserImage_imageView.setVisibility(View.VISIBLE);
-                    otherUserMessage_textView.setVisibility(View.GONE);
-                }
+//                // 사진 부분
+//                if (item.getUserProfileImgUrl() != null && !item.getUserProfileImgUrl().equals("")) {
+//                    Glide.with(itemView)
+//                            .load(item.getUserProfileImgUrl()) // 이미지 URL 가져오기
+//                            .placeholder(R.drawable.post_thumbnail_background_logo) // 로딩 중에 표시할 이미지
+//                            .error(R.drawable.post_thumbnail_background_logo) // 에러 발생 시 표시할 이미지
+//                            .into(otherUserImage_imageView); // ImageView에 이미지 설정
+//                    otherUserImage_imageView.setVisibility(View.VISIBLE);
+//                    otherUserMessage_textView.setVisibility(View.GONE);
+//                }
 
                 otherUsername_textView.setText(item.getUserName());
                 otherUserMessage_textView.setText(item.getContent());
@@ -635,20 +635,20 @@ public class ChatDetailActivity extends AppCompatActivity {
     private void updateImage(Uri imageUri) {
         try (InputStream inputStream = getContentResolver().openInputStream(imageUri)) {
             addMenuBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-            long timestamp = System.currentTimeMillis();  // Get current timestamp
-            ChatDetailInfoItem newItem = new ChatDetailInfoItem(
-                    "",  // userProfileImageUrl, assuming no image for simplicity
-                    "2번",  // username
-                    binding.messageEditText.getText().toString(),  // message
-                    imageUri.toString(),  // ImageUrl, assuming no image for simplicity
-                    new SimpleDateFormat("a h:mm", Locale.KOREA).format(new Date(timestamp)),  // current timestamp
-                    true,  // isMyMessage
-                    true  // isContinuousMessage, assuming new message is not part of a continuous block
-            );
-
-            adapter.getChatDetailInfoItems().add(newItem);  // Add new message item to the list
-            adapter.notifyDataSetChanged();  // Notify adapter to refresh view
-            binding.chatRoomRecyclerView.scrollToPosition(adapter.getItemCount() - 1);  // Scroll to the new message
+//            long timestamp = System.currentTimeMillis();  // Get current timestamp
+//            ChatDetailInfoItem newItem = new ChatDetailInfoItem(
+//                    "",  // userProfileImageUrl, assuming no image for simplicity
+//                    "2번",  // username
+//                    binding.messageEditText.getText().toString(),  // message
+//                    imageUri.toString(),  // ImageUrl, assuming no image for simplicity
+//                    new SimpleDateFormat("a h:mm", Locale.KOREA).format(new Date(timestamp)),  // current timestamp
+//                    true,  // isMyMessage
+//                    true  // isContinuousMessage, assuming new message is not part of a continuous block
+//            );
+//
+//            adapter.getChatDetailInfoItems().add(newItem);  // Add new message item to the list
+//            adapter.notifyDataSetChanged();  // Notify adapter to refresh view
+//            binding.chatRoomRecyclerView.scrollToPosition(adapter.getItemCount() - 1);  // Scroll to the new message
             binding.messageEditText.setText("");  // Clear the input field
         } catch (Exception e) {
             Toast.makeText(this, "이미지를 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show();
@@ -711,18 +711,18 @@ public class ChatDetailActivity extends AppCompatActivity {
                     bitmap = (Bitmap) extras.get("data");
 
                     addMenuBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    long timestamp = System.currentTimeMillis();  // Get current timestamp
-                    ChatDetailInfoItem newItem = new ChatDetailInfoItem(
-                            "",  // userProfileImageUrl, assuming no image for simplicity
-                            "You",  // username
-                            binding.messageEditText.getText().toString(),  // message
-                            "https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/558/5adebf4c2aa0441be0b9eecf9d7bec7c_res.jpeg",  // ImageUrl, assuming no image for simplicity
-                            new SimpleDateFormat("a h:mm", Locale.KOREA).format(new Date(timestamp)),  // current timestamp
-                            true,  // isMyMessage
-                            true  // isContinuousMessage, assuming new message is not part of a continuous block
-                    );
-
-                    adapter.getChatDetailInfoItems().add(newItem);  // Add new message item to the list
+//                    long timestamp = System.currentTimeMillis();  // Get current timestamp
+//                    ChatDetailInfoItem newItem = new ChatDetailInfoItem(
+//                            "",  // userProfileImageUrl, assuming no image for simplicity
+//                            "You",  // username
+//                            binding.messageEditText.getText().toString(),  // message
+//                            "https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/558/5adebf4c2aa0441be0b9eecf9d7bec7c_res.jpeg",  // ImageUrl, assuming no image for simplicity
+//                            new SimpleDateFormat("a h:mm", Locale.KOREA).format(new Date(timestamp)),  // current timestamp
+//                            true,  // isMyMessage
+//                            true  // isContinuousMessage, assuming new message is not part of a continuous block
+//                    );
+//
+//                    adapter.getChatDetailInfoItems().add(newItem);  // Add new message item to the list
                     adapter.notifyDataSetChanged();  // Notify adapter to refresh view
                     binding.chatRoomRecyclerView.scrollToPosition(adapter.getItemCount() - 1);  // Scroll to the new message
                     binding.messageEditText.setText("");  // Clear the input field
