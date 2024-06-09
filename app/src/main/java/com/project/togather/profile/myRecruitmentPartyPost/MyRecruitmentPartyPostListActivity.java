@@ -237,7 +237,7 @@ public class MyRecruitmentPartyPostListActivity extends AppCompatActivity {
             }
 
             void onBind(PostInfoItem item) {
-                if (item.getPostThumbnailImageUrl().equals("")) {
+                if (item.getPostThumbnailImageUrl() != null && item.getPostThumbnailImageUrl().equals("")) {
                     post_imageView.setImageResource(R.drawable.post_thumbnail_background_logo);
                 } else {
                     Glide.with(itemView)

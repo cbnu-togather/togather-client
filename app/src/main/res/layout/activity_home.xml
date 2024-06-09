@@ -42,7 +42,7 @@
                     android:layout_marginStart="7.5dp"
                     android:layout_toRightOf="@+id/selectDistance_textView"
                     android:fontFamily="@font/spoqa_han_sans_neo_bold"
-                    android:text="100m"
+                    android:text="300m"
                     android:textColor="@color/gray"
                     android:textSize="17.5sp" />
 

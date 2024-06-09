@@ -71,7 +71,7 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
     String sp_extractedDong, sp_selectedAddress, sp_addSpotName;
 
     float sp_selectedLatitude, sp_selectedLongitude;
-
+    private static int postId;
     Uri selectedImageUri;
 
     @Override
@@ -406,7 +406,14 @@ public class CreateRecruitmentPostActivity extends AppCompatActivity {
             // API 요청 부분
             performPost(recruitmentNum[0]);
 
-            startActivity(new Intent(CreateRecruitmentPostActivity.this, HomeActivity.class));
+            editor.remove("selectedLatitude");
+            editor.remove("selectedLongitude");
+            editor.remove("extractedDong");
+            editor.remove("selectedAddress");
+            editor.remove("addSpotName");
+            editor.apply();
+
+//            startActivity(new Intent(CreateRecruitmentPostActivity.this, HomeActivity.class));
             finish();
         });
     }

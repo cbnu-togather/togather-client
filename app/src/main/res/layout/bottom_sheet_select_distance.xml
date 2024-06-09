@@ -27,21 +27,9 @@
         android:layout_marginTop="22.5dp">
 
         <Button
-            android:id="@+id/m100_button"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:background="@color/transparent"
-            android:fontFamily="@font/spoqa_han_sans_neo_regular"
-            android:text="100m"
-            android:textAlignment="textStart"
-            android:textAllCaps="false"
-            android:textSize="17.5sp" />
-
-        <Button
             android:id="@+id/m300_button"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:layout_below="@+id/m100_button"
             android:background="@color/transparent"
             android:fontFamily="@font/spoqa_han_sans_neo_regular"
             android:text="300m"
@@ -57,6 +45,18 @@
             android:background="@color/transparent"
             android:fontFamily="@font/spoqa_han_sans_neo_regular"
             android:text="500m"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            android:textSize="17.5sp" />
+
+        <Button
+            android:id="@+id/m1000_button"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_below="@+id/m500_button"
+            android:background="@color/transparent"
+            android:fontFamily="@font/spoqa_han_sans_neo_regular"
+            android:text="1km"
             android:textAlignment="textStart"
             android:textAllCaps="false"
             android:textSize="17.5sp" />

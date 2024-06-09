@@ -115,8 +115,10 @@
                         app:cardElevation="0dp">
 
                         <RelativeLayout
+                            android:id="@+id/hot_relativelayout"
                             android:layout_width="92.5dp"
-                            android:layout_height="35dp">
+                            android:layout_height="35dp"
+                            android:visibility="gone">
 
                             <ImageView
                                 android:id="@+id/hot_imageView"
@@ -157,7 +159,7 @@
                             android:layout_height="50dp"
                             android:layout_centerVertical="true"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/user_profile_image_temp_image_2"
+                            android:src="@drawable/one_person_logo"
                             app:riv_oval="true" />
 
                         <RelativeLayout
@@ -172,7 +174,7 @@
                                 android:id="@+id/username_textView"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="김감자"
+                                android:text=""
                                 android:textColor="#4e5257"
                                 android:textSize="17.5sp"
                                 android:textStyle="bold" />
@@ -188,7 +190,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                                    android:text="개신동"
+                                    android:text=""
                                     android:textColor="#878b93"
                                     android:textSize="15sp" />
 
@@ -209,7 +211,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_toRightOf="@+id/concatenation_textView"
                                     android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                                    android:text="4분 전"
+                                    android:text="분 전"
                                     android:textColor="#878b93"
                                     android:textSize="15sp" />
                             </RelativeLayout>
@@ -222,7 +224,7 @@
                         android:layout_height="match_parent"
                         android:layout_below="@+id/userInfo_relativeLayout"
                         android:layout_marginTop="30dp"
-                        android:text="제목이랍니다"
+                        android:text=""
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -233,7 +235,7 @@
                         android:layout_below="@+id/postTitle_textView"
                         android:layout_marginTop="15dp"
                         android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                        android:text="이 부분은 내용이랍니다..."
+                        android:text=""
                         android:textSize="17.5sp" />
 
                     <androidx.cardview.widget.CardView
@@ -250,6 +252,7 @@
                             android:layout_height="wrap_content"
                             android:adjustViewBounds="true"
                             android:scaleType="centerCrop"
+                            android:visibility="gone"
                             android:src="@drawable/temp_community_post_image" />
                     </androidx.cardview.widget.CardView>
 
@@ -273,7 +276,7 @@
                             android:layout_marginStart="7.5dp"
                             android:layout_toRightOf="@+id/view_imageView"
                             android:fontFamily="@font/spoqa_han_sans_neo_regular"
-                            android:text="53"
+                            android:text=""
                             android:textColor="#878b93" />
 
                         <TextView
