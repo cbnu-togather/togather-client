@@ -104,6 +104,7 @@
                 android:background="@drawable/light_gray_border"
                 android:fontFamily="@font/spoqa_han_sans_neo_regular"
                 android:hint="인증문자 입력"
+                android:inputType="number"
                 android:paddingHorizontal="15dp"
                 android:textColorHint="@color/hint_color"
                 android:textSize="17.5sp" />
