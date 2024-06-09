@@ -41,6 +41,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -237,11 +238,11 @@ public class MyRecruitmentPartyPostListActivity extends AppCompatActivity {
             }
 
             void onBind(PostInfoItem item) {
-                if (item.getPostThumbnailImageUrl() != null && item.getPostThumbnailImageUrl().equals("")) {
+                if (item.getImg() != null && item.getImg().equals("")) {
                     post_imageView.setImageResource(R.drawable.post_thumbnail_background_logo);
                 } else {
                     Glide.with(itemView)
-                            .load(item.getPostThumbnailImageUrl()) // 이미지 URL 가져오기
+                            .load(item.getImg()) // 이미지 URL 가져오기
                             .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
                             .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
                             .into(post_imageView); // ImageView에 이미지 설정
@@ -295,21 +296,21 @@ public class MyRecruitmentPartyPostListActivity extends AppCompatActivity {
                 }
                 elapsedTime_textView.setText(elapsedTime_str);
 
-                if (item.getMaxPartyMemberNum() == item.getCurrentPartyMemberNum()) {
+                if (item.getHeadCount() == item.getCurrentCount()) {
                     recruitmentComplete_textView.setVisibility(View.VISIBLE);
                 } else {
-                    currentPartyMemberNumFirstState_cardView.setVisibility(item.getMaxPartyMemberNum() >= 1 ? View.VISIBLE : View.INVISIBLE);
-                    currentPartyMemberNumFirstState_imageView.setImageResource(item.getCurrentPartyMemberNum() >= 1 ? R.drawable.one_person_logo_filled : R.drawable.one_person_logo);
+                    currentPartyMemberNumFirstState_cardView.setVisibility(item.getHeadCount() >= 1 ? View.VISIBLE : View.INVISIBLE);
+                    currentPartyMemberNumFirstState_imageView.setImageResource(item.getCurrentCount() >= 1 ? R.drawable.one_person_logo_filled : R.drawable.one_person_logo);
 
-                    currentPartyMemberNumSecondState_cardView.setVisibility(item.getMaxPartyMemberNum() >= 2 ? View.VISIBLE : View.INVISIBLE);
-                    currentPartyMemberSecondState_imageView.setImageResource(item.getCurrentPartyMemberNum() >= 2 ? R.drawable.one_person_logo_filled : R.drawable.one_person_logo);
+                    currentPartyMemberNumSecondState_cardView.setVisibility(item.getHeadCount() >= 2 ? View.VISIBLE : View.INVISIBLE);
+                    currentPartyMemberSecondState_imageView.setImageResource(item.getCurrentCount() >= 2 ? R.drawable.one_person_logo_filled : R.drawable.one_person_logo);
 
-                    currentPartyMemberNumThirdState_cardView.setVisibility(item.getMaxPartyMemberNum() >= 3 ? View.VISIBLE : View.INVISIBLE);
-                    currentPartyMemberNumThirdState_imageView.setImageResource(item.getCurrentPartyMemberNum() >= 3 ? R.drawable.one_person_logo_filled : R.drawable.one_person_logo);
+                    currentPartyMemberNumThirdState_cardView.setVisibility(item.getHeadCount() >= 3 ? View.VISIBLE : View.INVISIBLE);
+                    currentPartyMemberNumThirdState_imageView.setImageResource(item.getCurrentCount() >= 3 ? R.drawable.one_person_logo_filled : R.drawable.one_person_logo);
                 }
 
-                liked_imageView.setImageResource(item.isLikedState() ? R.drawable.like_filled : R.drawable.like_normal);
-                likedCnt_textView.setText("" + item.getLikedCnt());
+                liked_imageView.setImageResource(item.isLiked() ? R.drawable.like_filled : R.drawable.like_normal);
+                likedCnt_textView.setText("" + item.getLikes());
             }
         }
 
@@ -317,57 +318,75 @@ public class MyRecruitmentPartyPostListActivity extends AppCompatActivity {
 
     // 데이터 로딩 함수
     private void loadData() {
-        Call<ResponseBody> call = userAPI.getMyRecruitmentPosts();
-        call.enqueue(new Callback<ResponseBody>() {
+        Call<List<PostInfoItem>> call = userAPI.getMyRecruitmentPosts();
+        call.enqueue(new Callback<List<PostInfoItem>>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()) {
-                    try {
-                        postInfoItems.clear();
-                        String responseBody = response.body().string();
-                        Type listType = new TypeToken<ArrayList<PostInfoResponse>>() {}.getType();
-                        ArrayList<PostInfoResponse> postList = new Gson().fromJson(responseBody, listType);
+            public void onResponse(Call<List<PostInfoItem>> call, Response<List<PostInfoItem>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    postInfoItems.clear();
+                    postInfoItems.addAll(response.body());
+                    adapter.setPostInfoList(postInfoItems);
+                    adapter.notifyDataSetChanged();
 
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
-                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
-
-                        // 현재 시간 UTC로 생성
-                        Date now = new Date();
-
-                        for (PostInfoResponse post : postList) {
-                            try {
-                                String createdAtString = post.getCreatedAt().split("\\.")[0];
-                                Date createdAt = sdf.parse(createdAtString);
-                                long elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
-                                PostInfoItem item = new PostInfoItem(
-                                        post.getId(),
-                                        post.getImg(),
-                                        post.getTitle(),
-                                        post.getCategory(),
-                                        elapsedTime,
-                                        post.getHeadCount(),
-                                        post.getCurrentCount(),
-                                        post.isLiked(),
-                                        post.getLikes()
-                                );
-
-                                postInfoItems.add(0, item);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        adapter.setPostInfoList(postInfoItems);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+            public void onFailure(Call<List<PostInfoItem>> call, Throwable throwable) {
                 new ToastWarning(getResources().getString(R.string.toast_server_error), MyRecruitmentPartyPostListActivity.this);
             }
         });
+//        Call<ResponseBody> call = userAPI.getMyRecruitmentPosts();
+//        call.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                if (response.isSuccessful()) {
+//                    try {
+//                        postInfoItems.clear();
+//                        String responseBody = response.body().string();
+//                        Type listType = new TypeToken<ArrayList<PostInfoResponse>>() {}.getType();
+//                        ArrayList<PostInfoResponse> postList = new Gson().fromJson(responseBody, listType);
+//
+//                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
+//                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+//
+//                        // 현재 시간 UTC로 생성
+//                        Date now = new Date();
+//
+//                        for (PostInfoResponse post : postList) {
+//                            try {
+//                                String createdAtString = post.getCreatedAt().split("\\.")[0];
+//                                Date createdAt = sdf.parse(createdAtString);
+//                                long elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
+//                                PostInfoItem item = new PostInfoItem(
+//                                        post.getId(),
+//                                        post.getImg(),
+//                                        post.getTitle(),
+//                                        post.getCategory(),
+//                                        elapsedTime,
+//                                        post.getHeadCount(),
+//                                        post.getCurrentCount(),
+//                                        post.isLiked(),
+//                                        post.getLikes()
+//                                );
+//
+//                                postInfoItems.add(0, item);
+//                            } catch (ParseException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                        adapter.setPostInfoList(postInfoItems);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+//                new ToastWarning(getResources().getString(R.string.toast_server_error), MyRecruitmentPartyPostListActivity.this);
+//            }
+//        });
 
     }
 

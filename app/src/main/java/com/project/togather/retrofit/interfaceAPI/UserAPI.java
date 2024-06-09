@@ -2,6 +2,10 @@ package com.project.togather.retrofit.interfaceAPI;
 
 import androidx.annotation.Nullable;
 
+import com.project.togather.home.PostInfoItem;
+
+import java.util.List;
+
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -43,7 +47,7 @@ public interface UserAPI {
     Call<ResponseBody> updateUserProfileWithoutImg(@Query("name") String name);
 
     @GET("user/groupbuy")
-    Call<ResponseBody> getMyRecruitmentPosts();
+    Call<List<PostInfoItem>> getMyRecruitmentPosts();
     @GET("user/community")
     Call<ResponseBody> getMyCommunityPosts();
     @GET("user/groupbuy/like")

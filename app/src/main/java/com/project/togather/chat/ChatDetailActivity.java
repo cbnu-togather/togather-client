@@ -86,6 +86,7 @@ public class ChatDetailActivity extends AppCompatActivity {
     private static String chatRoomTitle;
     private static final int REFRESH_INTERVAL = 500;
     ArrayList<ChatDetailInfoItem> chatDetailInfoItems = new ArrayList<>();
+
     private Handler handler = new Handler();
     private Runnable refreshRunnable;
     private boolean firstLoad = true;
@@ -456,9 +457,6 @@ public class ChatDetailActivity extends AppCompatActivity {
             }
 
             void onBind(ChatDetailInfoItem item) {
-//                myMessage_relativeLayout.setVisibility(item.isMyMessage() ? View.VISIBLE : View.GONE);
-//                otherUserMessage_relativeLayout.setVisibility(item.isMyMessage() ? View.GONE : View.VISIBLE);
-//
                 if (item.isMyMessage() && item.isContinuousMessage()) {
                     root_relativeLayout.setPadding(root_relativeLayout.getPaddingLeft(), 15, root_relativeLayout.getPaddingRight(), 15);
                     float density = itemView.getContext().getResources().getDisplayMetrics().density;
@@ -468,6 +466,7 @@ public class ChatDetailActivity extends AppCompatActivity {
                     RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) itemView.getLayoutParams();
                     params.topMargin = marginTopPx;
                     itemView.setLayoutParams(params);
+
                 } else if (item.isContinuousMessage()) {
                     root_relativeLayout.setPadding(root_relativeLayout.getPaddingLeft(), 15, root_relativeLayout.getPaddingRight(), 15);
                     otherUserProfileImage_roundedImageView.setVisibility(View.INVISIBLE);
@@ -501,16 +500,17 @@ public class ChatDetailActivity extends AppCompatActivity {
 
                 if (item.isMyMessage()) {
 
+                    // 사진 부분
                     myTimestamp_textView.setText("" + item.getCreatedAt());
-//                    if (!item.get.equals("")) {
-//                        Glide.with(itemView)
-//                                .load(item.getImageUrl()) // 이미지 URL 가져오기
-//                                .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
-//                                .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
-//                                .into(myImage_imageView); // ImageView에 이미지 설정
-//                        myImage_cardView.setVisibility(View.VISIBLE);
-//                        myMessage_textView.setVisibility(View.GONE);
-//                    }
+                    if (item.getUserProfileImgUrl() != null && !item.getUserProfileImgUrl().equals("")) {
+                        Glide.with(itemView)
+                                .load(item.getUserProfileImgUrl()) // 이미지 URL 가져오기
+                                .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
+                                .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
+                                .into(myImage_imageView); // ImageView에 이미지 설정
+                        myImage_cardView.setVisibility(View.VISIBLE);
+                        myMessage_textView.setVisibility(View.GONE);
+                    }
                     myMessage_textView.setText(item.getContent());
                     myTimestamp_textView.setText(formattedDate);
 
@@ -527,15 +527,16 @@ public class ChatDetailActivity extends AppCompatActivity {
                             .into(otherUserProfileImage_roundedImageView); // ImageView에 이미지 설정
                 }
 
-//                if (!item.getImageUrl().equals("")) {
-//                    Glide.with(itemView)
-//                            .load(item.getImageUrl()) // 이미지 URL 가져오기
-//                            .placeholder(R.drawable.post_thumbnail_background_logo) // 로딩 중에 표시할 이미지
-//                            .error(R.drawable.post_thumbnail_background_logo) // 에러 발생 시 표시할 이미지
-//                            .into(otherUserImage_imageView); // ImageView에 이미지 설정
-//                    otherUserImage_imageView.setVisibility(View.VISIBLE);
-//                    otherUserMessage_textView.setVisibility(View.GONE);
-//                }
+                // 사진 부분
+                if (item.getUserProfileImgUrl() != null && !item.getUserProfileImgUrl().equals("")) {
+                    Glide.with(itemView)
+                            .load(item.getUserProfileImgUrl()) // 이미지 URL 가져오기
+                            .placeholder(R.drawable.post_thumbnail_background_logo) // 로딩 중에 표시할 이미지
+                            .error(R.drawable.post_thumbnail_background_logo) // 에러 발생 시 표시할 이미지
+                            .into(otherUserImage_imageView); // ImageView에 이미지 설정
+                    otherUserImage_imageView.setVisibility(View.VISIBLE);
+                    otherUserMessage_textView.setVisibility(View.GONE);
+                }
 
                 otherUsername_textView.setText(item.getUserName());
                 otherUserMessage_textView.setText(item.getContent());
@@ -547,20 +548,22 @@ public class ChatDetailActivity extends AppCompatActivity {
     private void sendMessage() {
         String messageText = binding.messageEditText.getText().toString().trim();
         if (!messageText.isEmpty()) {
-//            long timestamp = System.currentTimeMillis();  // Get current timestamp
-//            ChatDetailInfoItem newItem = new ChatDetailInfoItem(
-//                    "",  // userProfileImageUrl, assuming no image for simplicity
-//                    "You",  // username
-//                    messageText,  // message
-//                    "",  // ImageUrl, assuming no image for simplicity
-//                    new SimpleDateFormat("a h:mm", Locale.KOREA).format(new Date(timestamp)),  // current timestamp
-//                    true,  // isMyMessage
-//                    true  // isContinuousMessage, assuming new message is not part of a continuous block
-//            );
+            long timestamp = System.currentTimeMillis();  // Get current timestamp
+            ChatDetailInfoItem newItem = new ChatDetailInfoItem(
+                    "",  // userProfileImageUrl, assuming no image for simplicity
+                    "You",  // username
+                    messageText,  // message
+                    "",  // ImageUrl, assuming no image for simplicity
+                    new SimpleDateFormat("a h:mm", Locale.KOREA).format(new Date(timestamp)),  // current timestamp
+                    true,  // isMyMessage
+                    true  // isContinuousMessage, assuming new message is not part of a continuous block
+            );
 
-//            adapter.getChatDetailInfoItems().add(newItem);  // Add new message item to the list
-//            adapter.notifyDataSetChanged();  // Notify adapter to refresh view
-            binding.chatRoomRecyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);  // Scroll to the new message
+            adapter.getChatDetailInfoItems().add(newItem);  // Add new message item to the list
+            adapter.notifyDataSetChanged();  // Notify adapter to refresh view
+            if (adapter.getItemCount() > 0) {
+                binding.chatRoomRecyclerView.smoothScrollToPosition(adapter.getItemCount() - 1);  // Scroll to the new message
+            }
             binding.messageEditText.setText("");  // Clear the input field
 
             sendMessageToServer(messageText);
@@ -599,7 +602,22 @@ public class ChatDetailActivity extends AppCompatActivity {
         // (확인) 버튼
         askLeaveChatRoom_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
             askLeaveChatRoom_dialog.dismiss(); // 다이얼로그 닫기
-            startActivity(new Intent(ChatDetailActivity.this, ChatActivity.class));
+            Call<ResponseBody> call = chatAPI.leaveChatRoom(chatRoomId);
+            call.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        new ToastWarning("요청이 수락되었어요", ChatDetailActivity.this);
+                        startActivity(new Intent(ChatDetailActivity.this, ChatActivity.class));
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                    new ToastWarning(getResources().getString(R.string.toast_server_error), ChatDetailActivity.this);
+                }
+            });
+
         });
     }
 
@@ -620,8 +638,8 @@ public class ChatDetailActivity extends AppCompatActivity {
             long timestamp = System.currentTimeMillis();  // Get current timestamp
             ChatDetailInfoItem newItem = new ChatDetailInfoItem(
                     "",  // userProfileImageUrl, assuming no image for simplicity
-                    "You",  // username
-                    "",  // message
+                    "2번",  // username
+                    binding.messageEditText.getText().toString(),  // message
                     imageUri.toString(),  // ImageUrl, assuming no image for simplicity
                     new SimpleDateFormat("a h:mm", Locale.KOREA).format(new Date(timestamp)),  // current timestamp
                     true,  // isMyMessage
@@ -733,6 +751,12 @@ public class ChatDetailActivity extends AppCompatActivity {
                 new ToastWarning(getResources().getString(R.string.toast_server_error), ChatDetailActivity.this);
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopRefreshing();
     }
 
     @Override

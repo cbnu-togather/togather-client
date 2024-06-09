@@ -33,6 +33,7 @@ import com.project.togather.home.HomeActivity;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -59,7 +60,10 @@ public class ChatActivity extends AppCompatActivity {
     private TokenManager tokenManager;
     private RetrofitService retrofitService;
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
-
+    ArrayList<ChatInfoItem> chatInfoItems = new ArrayList<>();
+    private Handler handler = new Handler();
+    private Runnable refreshRunnable;
+    private static final int REFRESH_INTERVAL = 2000;
     private BottomSheetBehavior selectCreatePostTypeBottomSheetBehavior;
 
     @Override
@@ -83,7 +87,7 @@ public class ChatActivity extends AppCompatActivity {
 
         adapter = new RecyclerViewAdapter();
 
-        ArrayList<ChatInfoItem> chatInfoItems = new ArrayList<>();
+
 
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
@@ -109,23 +113,9 @@ public class ChatActivity extends AppCompatActivity {
         binding.chatsRecyclerView.setAdapter(adapter);
         binding.chatsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
-        Call<List<ChatInfoItem>> call = chatAPI.getChatRoomList();
-        call.enqueue(new Callback<List<ChatInfoItem>>() {
-            @Override
-            public void onResponse(Call<List<ChatInfoItem>> call, Response<List<ChatInfoItem>> response) {
-                if (response.isSuccessful()) {
-                    chatInfoItems.clear();
-                    chatInfoItems.addAll(response.body());
-                    adapter.setChatInfoList(chatInfoItems);
-                    adapter.notifyDataSetChanged();
-                }
-            }
+        startRefreshing();
 
-            @Override
-            public void onFailure(Call<List<ChatInfoItem>> call, Throwable throwable) {
-                new ToastWarning(getResources().getString(R.string.toast_server_error), ChatActivity.this);
-            }
-        });
+
 
         adapter.setChatInfoList(chatInfoItems);
 
@@ -399,13 +389,24 @@ public class ChatActivity extends AppCompatActivity {
 
                 String lastChat = item.getLastMessage();
                 if (lastChat.length() >= 40) lastChat = lastChat.substring(0, 40) + "...";
-                lastChatContent_textView.setText(lastChat);
+                if (lastChat != null) {
+                    lastChatContent_textView.setText(lastChat);
+                } else {
+                    lastChatContent_textView.setText("");
+                }
+
 
                 chatMemberNum_textView.setText("" + (item.getParticipantCount()));
 
                 long lastChatElapsedTime = item.getElapsedTime(); // 이 부분은 기존 코드에서 가져왔다고 가정합니다.
-                String elapsedTime_str = getFormattedElapsedTime(lastChatElapsedTime);
-                lastChatElapsedTime_textView.setText(elapsedTime_str);
+
+                if (lastChatElapsedTime < 0) {
+                    lastChatElapsedTime_textView.setText("");
+                } else {
+                    String elapsedTime_str = getFormattedElapsedTime(lastChatElapsedTime);
+                    lastChatElapsedTime_textView.setText(elapsedTime_str);
+                }
+
 
 
                 int unreadMsgNum = item.getUnreadMessageCount();
@@ -424,10 +425,10 @@ public class ChatActivity extends AppCompatActivity {
                 elapsedTimeCalendar.add(Calendar.SECOND, (int) -elapsedTimeSeconds); // 시간을 빼서 과거의 시간을 나타냄
 
                 // 날짜 포맷을 정의
-                SimpleDateFormat todayFormat = new SimpleDateFormat("a hh:mm", Locale.getDefault());
-                SimpleDateFormat yesterdayFormat = new SimpleDateFormat("'어제' a hh:mm", Locale.getDefault());
-                SimpleDateFormat sameYearFormat = new SimpleDateFormat("MM월 dd일", Locale.getDefault());
-                SimpleDateFormat differentYearFormat = new SimpleDateFormat("yyyy. MM. dd.", Locale.getDefault());
+                SimpleDateFormat todayFormat = new SimpleDateFormat("a hh:mm", Locale.KOREA);
+                SimpleDateFormat yesterdayFormat = new SimpleDateFormat("'어제' a hh:mm", Locale.KOREA);
+                SimpleDateFormat sameYearFormat = new SimpleDateFormat("MM월 dd일", Locale.KOREA);
+                SimpleDateFormat differentYearFormat = new SimpleDateFormat("yyyy. MM. dd.", Locale.KOREA);
 
                 // 현재 시간과 경과 시간의 년도 비교
                 int currentYear = currentCalendar.get(Calendar.YEAR);
@@ -468,6 +469,45 @@ public class ChatActivity extends AppCompatActivity {
             }
         }
     }
+
+    private void startRefreshing() {
+        refreshRunnable = new Runnable() {
+            @Override
+            public void run() {
+                refreshChatDetails();
+                handler.postDelayed(this, REFRESH_INTERVAL);
+            }
+        };
+        handler.post(refreshRunnable);
+    }
+
+    private void refreshChatDetails() {
+        Call<List<ChatInfoItem>> call = chatAPI.getChatRoomList();
+        call.enqueue(new Callback<List<ChatInfoItem>>() {
+            @Override
+            public void onResponse(Call<List<ChatInfoItem>> call, Response<List<ChatInfoItem>> response) {
+                if (response.isSuccessful()) {
+                    chatInfoItems.clear();
+                    List<ChatInfoItem> reversedList = response.body();
+                    Collections.reverse(reversedList); // 리스트를 역순으로 변경
+                    chatInfoItems.addAll(reversedList);
+                    adapter.setChatInfoList(chatInfoItems);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ChatInfoItem>> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), ChatActivity.this);
+            }
+        });
+    }
+
+
+    private void stopRefreshing() {
+        handler.removeCallbacks(refreshRunnable);
+    }
+
     // 유저 정보 조회 메서드
     private void getUserInfo() {
         Call<ResponseBody> call = userAPI.getUserInfo();
@@ -485,6 +525,13 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopRefreshing();
+    }
+
     // 이 액티비티로 다시 돌아왔을 때 실행되는 메소드
     @Override
     public void onResume() {

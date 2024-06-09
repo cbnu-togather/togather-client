@@ -66,7 +66,9 @@ import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -338,7 +340,7 @@ public class CommunityActivity extends AppCompatActivity {
             TextView likedCnt_textView = convertView.findViewById(R.id.likedCnt_textView);
 
             postTitle_textView.setText(postInfoItem.getTitle());
-            district_textView.setText(postInfoItem.getDistrict());
+            district_textView.setText(postInfoItem.getAddress());
 
             long elapsedTime = postInfoItem.getElapsedTime();
             String elapsedTime_str;
@@ -357,7 +359,7 @@ public class CommunityActivity extends AppCompatActivity {
 
             post_imageView.setImageResource(R.drawable.community_temp_image_1);
 
-            likedCnt_textView.setText("" + postInfoItem.getLikedCnt());
+            likedCnt_textView.setText("" + postInfoItem.getAddress());
 
             //각 아이템 선택 event
             convertView.setOnClickListener(view ->
@@ -493,37 +495,37 @@ public class CommunityActivity extends AppCompatActivity {
             }
 
             void onBind(PostInfoItem item) {
-                if (item.getPostThumbnailImageUrl() != null && item.getPostThumbnailImageUrl().equals("")) {
+                if (item.getImg() != null && item.getImg().equals("")) {
                     post_imageView.setVisibility(View.GONE);
                     postTitle_textView.setMaxWidth(1000);
                 } else {
                     Glide.with(itemView)
-                            .load(item.getPostThumbnailImageUrl()) // 이미지 URL 가져오기
+                            .load(item.getImg()) // 이미지 URL 가져오기
                             .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
                             .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
                             .into(post_imageView); // ImageView에 이미지 설정
                 }
 
-                hotPostTag_textView.setVisibility(item.getLikedCnt() > 5 ? View.VISIBLE : View.GONE);
-                categoryTag_textView.setText(item.getTag());
+                hotPostTag_textView.setVisibility(item.getLikes() > 5 ? View.VISIBLE : View.GONE);
+                categoryTag_textView.setText(item.getCategory());
 
                 String postTitle = item.getTitle();
                 ViewGroup.LayoutParams layoutParams = root_relativeLayout.getLayoutParams();
                 if (postTitle.length() >= 28)
                     postTitle = postTitle.substring(0, 28) + "...";
-                else if (item.getPostThumbnailImageUrl() != null && !item.getPostThumbnailImageUrl().equals("") && postTitle.length() >= 19)
+                else if (item.getImg() != null && !item.getImg().equals("") && postTitle.length() >= 19)
                     postTitle = postTitle.substring(0, 19) + "...";
 
                 postTitle_textView.setText(postTitle);
 
                 String postContent = item.getContent();
-                if (item.getPostThumbnailImageUrl() != null && item.getPostThumbnailImageUrl().equals("") && postContent.length() >= 29)
+                if (item.getImg() != null && item.getImg().equals("") && postContent.length() >= 29)
                     postContent = postContent.substring(0, 29) + "...";
-                else if(item.getPostThumbnailImageUrl() != null && !item.getPostThumbnailImageUrl().equals("") && postContent.length() >= 24)
+                else if(item.getImg() != null && !item.getImg().equals("") && postContent.length() >= 24)
                     postContent = postContent.substring(0, 24) + "...";
                 postContent_textView.setText(postContent);
 
-                district_textView.setText(item.getDistrict());
+                district_textView.setText(item.getAddress());
 
                 long elapsedTime = item.getElapsedTime();
                 String elapsedTime_str;
@@ -540,7 +542,7 @@ public class CommunityActivity extends AppCompatActivity {
                 }
                 elapsedTime_textView.setText(elapsedTime_str);
 
-                likedCnt_textView.setText("" + item.getLikedCnt());
+                likedCnt_textView.setText("" + item.getLikes());
             }
         }
     }
@@ -565,54 +567,74 @@ public class CommunityActivity extends AppCompatActivity {
 
     // 초기 데이터 로딩 함수
     private void loadData() {
-        Call<ResponseBody> call = communityAPI.getCommunityPostList(currLatitude, currLongitude);
-        call.enqueue(new Callback<ResponseBody>() {
+        Call<List<PostInfoItem>> call = communityAPI.getCommunityPostList(currLatitude, currLongitude);
+        call.enqueue(new Callback<List<PostInfoItem>>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<List<PostInfoItem>> call, Response<List<PostInfoItem>> response) {
                 if (response.isSuccessful()) {
-                    try {
-                        postInfoItems.clear();
-                        String responseBody = response.body().string();
-                        Type listType = new TypeToken<ArrayList<CommunityInfoResponse>>() {}.getType();
-                        ArrayList<CommunityInfoResponse> postList = new Gson().fromJson(responseBody, listType);
-
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
-                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
-
-                        // 현재 시간 UTC로 생성
-                        Date now = new Date();
-                        for (CommunityInfoResponse post : postList) {
-                            try {
-                                String createdAtString = post.getCreatedAt();
-                                Date createdAt = sdf.parse(createdAtString);
-                                long elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
-                                PostInfoItem item = new PostInfoItem(
-                                        post.getId(),
-                                        post.getImg(),
-                                        post.getCategory(),
-                                        post.getTitle(),
-                                        post.getContent(),
-                                        post.getAddress(),
-                                        elapsedTime,
-                                        post.getLikes()
-                                );
-                                postInfoItems.add(0, item);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        adapter.setPostInfoList(postInfoItems);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    postInfoItems.clear();
+                    List<PostInfoItem> reversedList = response.body();
+                    Collections.reverse(reversedList);
+                    postInfoItems.addAll(reversedList);
+                    adapter.setPostInfoList(postInfoItems);
+                    adapter.notifyDataSetChanged();
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+            public void onFailure(Call<List<PostInfoItem>> call, Throwable throwable) {
                 new ToastWarning(getResources().getString(R.string.toast_server_error), CommunityActivity.this);
             }
         });
+
+//        Call<ResponseBody> call = communityAPI.getCommunityPostList(currLatitude, currLongitude);
+//        call.enqueue(new Callback<ResponseBody>() {
+//            @Override
+//            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                if (response.isSuccessful()) {
+//                    try {
+//                        postInfoItems.clear();
+//                        String responseBody = response.body().string();
+//                        Type listType = new TypeToken<ArrayList<CommunityInfoResponse>>() {}.getType();
+//                        ArrayList<CommunityInfoResponse> postList = new Gson().fromJson(responseBody, listType);
+//
+//                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN);
+//                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+//
+//                        // 현재 시간 UTC로 생성
+//                        Date now = new Date();
+//                        for (CommunityInfoResponse post : postList) {
+//                            try {
+//                                String createdAtString = post.getCreatedAt();
+//                                Date createdAt = sdf.parse(createdAtString);
+//                                long elapsedTime = (now.getTime() - createdAt.getTime()) / 1000;
+//                                PostInfoItem item = new PostInfoItem(
+//                                        post.getId(),
+//                                        post.getImg(),
+//                                        post.getCategory(),
+//                                        post.getTitle(),
+//                                        post.getContent(),
+//                                        post.getAddress(),
+//                                        elapsedTime,
+//                                        post.getLikes()
+//                                );
+//                                postInfoItems.add(0, item);
+//                            } catch (ParseException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+//                        adapter.setPostInfoList(postInfoItems);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+//                new ToastWarning(getResources().getString(R.string.toast_server_error), CommunityActivity.this);
+//            }
+//        });
 
 
     }
