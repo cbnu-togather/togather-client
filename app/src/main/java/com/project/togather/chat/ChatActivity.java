@@ -34,10 +34,12 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import com.project.togather.databinding.ActivityChatBinding;
 import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.ChatAPI;
 import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastWarning;
 import com.project.togather.utils.TokenManager;
@@ -53,6 +55,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private RecyclerViewAdapter adapter;
     private UserAPI userAPI;
+    private ChatAPI chatAPI;
     private TokenManager tokenManager;
     private RetrofitService retrofitService;
     private final OnBackPressedDispatcher onBackPressedDispatcher = getOnBackPressedDispatcher();
@@ -68,12 +71,8 @@ public class ChatActivity extends AppCompatActivity {
         tokenManager = TokenManager.getInstance(this);
         retrofitService = new RetrofitService(tokenManager);
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
+        chatAPI = retrofitService.getRetrofit().create(ChatAPI.class);
 
-        // 토큰 값이 없다면 메인 액티비티로 이동
-        if (tokenManager.getToken() == null) {
-            startActivity(new Intent(ChatActivity.this, MainActivity.class));
-            finish();
-        }
 
         onBackPressedDispatcher.addCallback(new OnBackPressedCallback(true) {
             @Override
@@ -89,14 +88,20 @@ public class ChatActivity extends AppCompatActivity {
         adapter.setOnItemClickListener(new RecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int pos) {
-                startActivity(new Intent(ChatActivity.this, ChatDetailActivity.class));
+                Intent intent = new Intent(ChatActivity.this, ChatDetailActivity.class);
+                intent.putExtra("chatroom_id",chatInfoItems.get(pos).getId());
+                intent.putExtra("chatRoom_member", chatInfoItems.get(pos).getParticipantCount());
+                intent.putExtra("chatRoom_title", chatInfoItems.get(pos).getChatRoomTitle());
+                startActivity(intent);
             }
         });
 
         adapter.setOnLongItemClickListener(new RecyclerViewAdapter.OnLongItemClickListener() {
             @Override
             public void onLongItemClick(int pos) {
-                startActivity(new Intent(ChatActivity.this, ChatDetailActivity.class));
+                Intent intent = new Intent(ChatActivity.this, ChatDetailActivity.class);
+                intent.putExtra("chatroom_id",chatInfoItems.get(pos).getId());
+                startActivity(intent);
             }
         });
 
@@ -104,11 +109,23 @@ public class ChatActivity extends AppCompatActivity {
         binding.chatsRecyclerView.setAdapter(adapter);
         binding.chatsRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
 
-        // Adapter 안에 아이템의 정보 담기 (하드 코딩)
-        chatInfoItems.add(new ChatInfoItem("", "https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/product/5400941752/B.jpg?481000000", "https://image.newsis.com/2023/07/12/NISI20230712_0001313626_web.jpg?rnd=20230712163021", "https://cdn.dominos.co.kr/admin/upload/goods/20240214_8rBc1T61.jpg?RS=350x350&SP=1", "도미노 피자 드실분 구해요", "도착했습니다! 모여용", 300, 3, 3, 3));
-        chatInfoItems.add(new ChatInfoItem("http://image.dongascience.com/Photo/2020/03/5bddba7b6574b95d37b6079c199d7101.jpg", "https://www.sisajournal.com/news/photo/first/200508/img_102658_1.jpg", "", "https://d12zq4w4guyljn.cloudfront.net/750_750_20201122041810_photo1_5831aaf849cf.jpg", "파브리카 배달 구해용", "솔못에서 모일게요", 30000, 1, 2, 3));
-        chatInfoItems.add(new ChatInfoItem("", "https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/9mqM/image/6vuarJpov779Xfo2EdNhLhmaPgI.JPG", "", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-1FF9Hpe-_ERtrBHcUDeeckMOeOzm6IWylD_mJJlJEQ&s", "컴포즈 배달 구해요!!!", "맛나게 드셔요~", 100000, 0, 1, 1));
-        chatInfoItems.add(new ChatInfoItem("", "", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSutGBoBGvVLOofPQ8mNAAKDpgD7NiHKzAyRSAL35gRQA&s", "", "밥버거 드실분", "넹", 300000, 0, 2, 1));
+        Call<List<ChatInfoItem>> call = chatAPI.getChatRoomList();
+        call.enqueue(new Callback<List<ChatInfoItem>>() {
+            @Override
+            public void onResponse(Call<List<ChatInfoItem>> call, Response<List<ChatInfoItem>> response) {
+                if (response.isSuccessful()) {
+                    chatInfoItems.clear();
+                    chatInfoItems.addAll(response.body());
+                    adapter.setChatInfoList(chatInfoItems);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ChatInfoItem>> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), ChatActivity.this);
+            }
+        });
 
         adapter.setChatInfoList(chatInfoItems);
 
@@ -325,66 +342,75 @@ public class ChatActivity extends AppCompatActivity {
             }
 
             void onBind(ChatInfoItem item) {
-                if (item.getFirstChatUserProfileImageUrl().equals("")) {
-                    firstUser_roundedImageView.setImageResource(R.drawable.user_default_profile);
-                } else {
-                    Glide.with(itemView)
-                            .load(item.getFirstChatUserProfileImageUrl()) // 이미지 URL 가져오기
-                            .placeholder(R.drawable.user_default_profile) // 로딩 중에 표시할 이미지
-                            .error(R.drawable.user_default_profile) // 에러 발생 시 표시할 이미지
-                            .into(firstUser_roundedImageView); // ImageView에 이미지 설정
+
+                ImageView[] userImageViews = {
+                        firstUser_roundedImageView,
+                        secondUser_roundedImageView,
+                        thirdUser_roundedImageView
+                };
+
+                for (int i=0; i < item.getParticipantCount(); i++) {
+                    if (item.getUserProfileImgUrls()[i] != null && item.getUserProfileImgUrls()[i].equals("")) {
+                        userImageViews[i].setImageResource(R.drawable.user_default_profile);
+                    } else {
+                        Glide.with(itemView)
+                                .load(item.getUserProfileImgUrls()[i]) // 이미지 URL 가져오기
+                                .placeholder(R.drawable.user_default_profile) // 로딩 중에 표시할 이미지
+                                .error(R.drawable.user_default_profile) // 에러 발생 시 표시할 이미지
+                                .into(userImageViews[i]); // ImageView에 이미지 설정
+                    }
                 }
 
-                if (item.getSecondChatUserProfileImageUrl().equals("")) {
-                    secondUser_roundedImageView.setImageResource(R.drawable.user_default_profile);
-                } else {
-                    Glide.with(itemView)
-                            .load(item.getSecondChatUserProfileImageUrl()) // 이미지 URL 가져오기
-                            .placeholder(R.drawable.user_default_profile) // 로딩 중에 표시할 이미지
-                            .error(R.drawable.user_default_profile) // 에러 발생 시 표시할 이미지
-                            .into(secondUser_roundedImageView); // ImageView에 이미지 설정
-                }
-
-                if (item.getThirdChatUserProfileImageUrl().equals("")) {
-                    thirdUser_roundedImageView.setImageResource(R.drawable.user_default_profile);
-                } else {
-                    Glide.with(itemView)
-                            .load(item.getThirdChatUserProfileImageUrl()) // 이미지 URL 가져오기
-                            .placeholder(R.drawable.user_default_profile) // 로딩 중에 표시할 이미지
-                            .error(R.drawable.user_default_profile) // 에러 발생 시 표시할 이미지
-                            .into(thirdUser_roundedImageView); // ImageView에 이미지 설정
-                }
-
-                if (item.getPostThumbnailImageUrl().equals("")) {
+//                if (item.getUserProfileImgUrls()[1] != null && item.getUserProfileImgUrls()[1].equals("")) {
+//                    secondUser_roundedImageView.setImageResource(R.drawable.user_default_profile);
+//                } else {
+//                    Glide.with(itemView)
+//                            .load(item.getUserProfileImgUrls()[1]) // 이미지 URL 가져오기
+//                            .placeholder(R.drawable.user_default_profile) // 로딩 중에 표시할 이미지
+//                            .error(R.drawable.user_default_profile) // 에러 발생 시 표시할 이미지
+//                            .into(secondUser_roundedImageView); // ImageView에 이미지 설정
+//                }
+//
+//                if (item.getUserProfileImgUrls()[2] != null && item.getUserProfileImgUrls()[2].equals("")) {
+//                    thirdUser_roundedImageView.setImageResource(R.drawable.user_default_profile);
+//                } else {
+//                    Glide.with(itemView)
+//                            .load(item.getUserProfileImgUrls()[2]) // 이미지 URL 가져오기
+//                            .placeholder(R.drawable.user_default_profile) // 로딩 중에 표시할 이미지
+//                            .error(R.drawable.user_default_profile) // 에러 발생 시 표시할 이미지
+//                            .into(thirdUser_roundedImageView); // ImageView에 이미지 설정
+//                }
+//
+                if (item.getGroupBuyThumbnailUrl() != null && item.getGroupBuyThumbnailUrl().equals("")) {
                     post_imageView.setImageResource(R.drawable.one_person_logo);
                 } else {
                     Glide.with(itemView)
-                            .load(item.getPostThumbnailImageUrl()) // 이미지 URL 가져오기
+                            .load(item.getGroupBuyThumbnailUrl()) // 이미지 URL 가져오기
                             .placeholder(R.drawable.one_person_logo) // 로딩 중에 표시할 이미지
                             .error(R.drawable.one_person_logo) // 에러 발생 시 표시할 이미지
                             .into(post_imageView); // ImageView에 이미지 설정
                 }
 
-                String postTitle = item.getTitle();
+                String postTitle = item.getChatRoomTitle();
                 if (postTitle.length() >= 20)
                     postTitle = postTitle.substring(0, 20) + "...";
 
                 postTitle_textView.setText(postTitle);
 
-                String lastChat = item.getLastChat();
+                String lastChat = item.getLastMessage();
                 if (lastChat.length() >= 40) lastChat = lastChat.substring(0, 40) + "...";
                 lastChatContent_textView.setText(lastChat);
 
-                chatMemberNum_textView.setText("" + (item.getCurrentPartyMemberNum() + 1));
+                chatMemberNum_textView.setText("" + (item.getParticipantCount()));
 
-                long lastChatElapsedTime = item.getLastChatElapsedTime(); // 이 부분은 기존 코드에서 가져왔다고 가정합니다.
+                long lastChatElapsedTime = item.getElapsedTime(); // 이 부분은 기존 코드에서 가져왔다고 가정합니다.
                 String elapsedTime_str = getFormattedElapsedTime(lastChatElapsedTime);
                 lastChatElapsedTime_textView.setText(elapsedTime_str);
 
 
-                int unreadMsgNum = item.getUnreadMsgNum();
+                int unreadMsgNum = item.getUnreadMessageCount();
                 unreadMsgNum_relativeLayout.setVisibility(unreadMsgNum == 0 ? View.INVISIBLE : View.VISIBLE);
-                unreadMsgNum_textView.setText("" + item.getUnreadMsgNum());
+                unreadMsgNum_textView.setText("" + item.getUnreadMessageCount());
             }
 
             private String getFormattedElapsedTime(long elapsedTimeSeconds) {

@@ -30,6 +30,7 @@ import com.project.togather.databinding.ActivityRecruitmentPostDetailBinding;
 import com.project.togather.editPost.recruitment.EditRecruitmentPostActivity;
 import com.project.togather.editPost.recruitment.EditRecruitmentPostSelectMeetingSpotActivity;
 import com.project.togather.retrofit.RetrofitService;
+import com.project.togather.retrofit.interfaceAPI.ChatAPI;
 import com.project.togather.retrofit.interfaceAPI.RecruitmentAPI;
 import com.project.togather.retrofit.interfaceAPI.UserAPI;
 import com.project.togather.toast.ToastSuccess;
@@ -63,6 +64,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
     private TokenManager tokenManager;
     private UserAPI userAPI;
     private RecruitmentAPI recruitmentAPI;
+    private ChatAPI chatAPI;
     private RetrofitService retrofitService;
     private Dialog askDeletePost_dialog, askJoinParty_dialog, askStopRecruitment_dialog;
 
@@ -80,6 +82,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
     private LocationManager locationManager;
     private static double currLatitude, currLongitude;
     private static int postId;
+    private boolean isRaisedHand;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +94,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         retrofitService = new RetrofitService(tokenManager);
         userAPI = retrofitService.getRetrofit().create(UserAPI.class);
         recruitmentAPI = retrofitService.getRetrofit().create(RecruitmentAPI.class);
+        chatAPI = retrofitService.getRetrofit().create(ChatAPI.class);
 
         Intent intent = getIntent();
         postId = intent.getIntExtra("post_id", 0);
@@ -180,13 +184,11 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable throwable) {
-                    new ToastSuccess("모집이 마감되었어요", RecruitmentPostDetailActivity.this);
+                    new ToastSuccess("이 마감되었어요", RecruitmentPostDetailActivity.this);
                 }
             });
 
         });
-
-        recruitmentComplete();
 
         selectPostManagementBottomSheetBehavior = BottomSheetBehavior.from(
                 findViewById(R.id.selectPostManagementBottomSheet_layout));
@@ -316,7 +318,8 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         // (확인) 버튼
         askJoinParty_dialog.findViewById(R.id.yesBtn).setOnClickListener(view -> {
             askJoinParty_dialog.dismiss(); // 다이얼로그 닫기
-            new ToastSuccess("요청이 전송되었어요", RecruitmentPostDetailActivity.this);
+                requestRaisingHand(postId);
+                new ToastSuccess("요청이 전송되었어요", RecruitmentPostDetailActivity.this);
         });
     }
 
@@ -349,6 +352,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
         binding.functionButton.setEnabled(isRecruitmentComplete ? false : true);
     }
 
+
     // 유저 정보 조회 메서드
     private void getUserInfo() {
         Call<ResponseBody> call = userAPI.getUserInfo();
@@ -379,6 +383,7 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                         postDetailsItem = gson.fromJson(jsonString, PostDetailsItem.class);
                         isWriter = postDetailsItem.isWriter();
                         isLiked = postDetailsItem.isLiked();
+                        isRecruitmentComplete = (postDetailsItem.getCurrentCount() == postDetailsItem.getHeadCount()) ? true : false;
 
 
                         // 전역 데이터 로드
@@ -466,7 +471,9 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                                     .into(binding.postThumbnailImageView); // ImageView에 이미지 설정
                         }
 
-
+                        if (isRecruitmentComplete) {
+                            recruitmentComplete();
+                        }
                         binding.likeImageView.setImageResource(isLiked ? R.drawable.like_filled : R.drawable.like_bolder_gray);
                         binding.usernameTextView.setText(postDetailsItem.getWriterName());
                         binding.addressTextView.setText(postDetailsItem.getAddress());
@@ -488,6 +495,9 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
 
                         binding.functionButton.setText(isWriter ? "마감하기" : "손 들기");
                         binding.moreImageButton.setVisibility(isWriter ? View.VISIBLE : View.GONE);
+
+
+
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -517,6 +527,23 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
             marker.setCustomImageResourceId(R.drawable.marker_small);
             mapView.addPOIItem(marker);
         }
+    }
+
+    private void requestRaisingHand(int postId) {
+        Call<ResponseBody> call = chatAPI.raiseHand(postId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    isRaisedHand = true;
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable throwable) {
+                new ToastWarning(getResources().getString(R.string.toast_server_error), RecruitmentPostDetailActivity.this);
+            }
+        });
     }
 
 
