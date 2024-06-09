@@ -98,17 +98,9 @@
             android:overScrollMode="never"
             android:scrollbars="none" />
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="1dp">
 
-            <!-- bottom sheet 레이아웃 -->
-            <include layout="@layout/bottom_sheet_chat_room_more_menu" />
-
-            <include layout="@layout/bottom_sheet_chat_room_add_menu" />
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </RelativeLayout>
+
 
     <!-- activity (addExtraInfo) RelativeLayout -->
     <RelativeLayout
@@ -158,12 +150,24 @@
             android:padding="10dp"
             android:src="@drawable/send_normal" />
     </RelativeLayout>
-
     <FrameLayout
         android:id="@+id/background_dimmer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#80000000"
         android:visibility="gone" />
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="1dp"
+        android:layout_alignParentBottom="true">
+
+        <!-- bottom sheet 레이아웃 -->
+        <include layout="@layout/bottom_sheet_chat_room_more_menu" />
+
+        <include layout="@layout/bottom_sheet_chat_room_add_menu" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
 
 </RelativeLayout>
