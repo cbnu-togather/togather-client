@@ -28,6 +28,7 @@
                 android:layout_marginBottom="0dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/user_default_profile"
+                android:visibility="invisible"
                 app:riv_oval="true" />
 
             <com.makeramen.roundedimageview.RoundedImageView
@@ -38,6 +39,7 @@
                 android:layout_toRightOf="@+id/firstUser_roundedImageView"
                 android:scaleType="centerCrop"
                 android:src="@drawable/user_profile_image_temp_image_1"
+                android:visibility="invisible"
                 app:riv_oval="true" />
 
             <com.makeramen.roundedimageview.RoundedImageView
@@ -49,6 +51,7 @@
                 android:layout_marginTop="-5dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/user_profile_image_temp_image_2"
+                android:visibility="invisible"
                 app:riv_oval="true" />
 
             <androidx.cardview.widget.CardView
@@ -76,7 +79,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/home_temp_image_1" />
+                        android:src="@drawable/not_found_logo" />
                 </androidx.cardview.widget.CardView>
             </androidx.cardview.widget.CardView>
         </RelativeLayout>

@@ -341,8 +341,10 @@ public class ChatActivity extends AppCompatActivity {
 
                 for (int i=0; i < item.getParticipantCount(); i++) {
                     if (item.getUserProfileImgUrls()[i] != null && item.getUserProfileImgUrls()[i].equals("")) {
+                        userImageViews[i].setVisibility(View.VISIBLE);
                         userImageViews[i].setImageResource(R.drawable.user_default_profile);
                     } else {
+                        userImageViews[i].setVisibility(View.VISIBLE);
                         Glide.with(itemView)
                                 .load(item.getUserProfileImgUrls()[i]) // 이미지 URL 가져오기
                                 .placeholder(R.drawable.user_default_profile) // 로딩 중에 표시할 이미지

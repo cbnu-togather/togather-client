@@ -331,7 +331,7 @@
             android:id="@+id/homeActivity_relativeLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="45dp"
+            android:layout_marginEnd="35dp"
             android:layout_toLeftOf="@+id/communityActivity_relativeLayout">
 
             <ImageView
@@ -357,7 +357,7 @@
             android:id="@+id/communityActivity_relativeLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="45dp"
+            android:layout_marginEnd="35dp"
             android:layout_toLeftOf="@+id/createPostActivity_relativeLayout">
 
             <ImageView
@@ -408,7 +408,7 @@
             android:id="@+id/chatActivity_relativeLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="45dp"
+            android:layout_marginStart="35dp"
             android:layout_toRightOf="@+id/createPostActivity_relativeLayout">
 
             <ImageView
@@ -434,7 +434,7 @@
             android:id="@+id/profileActivity_relativeLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="45dp"
+            android:layout_marginStart="35dp"
             android:layout_toRightOf="@+id/chatActivity_relativeLayout">
 
             <ImageView
