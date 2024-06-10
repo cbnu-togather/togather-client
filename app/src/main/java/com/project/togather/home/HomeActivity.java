@@ -152,6 +152,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private BottomSheetBehavior selectCreatePostTypeBottomSheetBehavior;
     private BottomSheetBehavior selectDistanceBottomSheetBehavior;
+    private BottomSheetBehavior homeAdsBottomSheetBehavior;
+
+    static boolean isAdsClosed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,15 +223,12 @@ public class HomeActivity extends AppCompatActivity {
         loadData();
 
 
-
         binding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 refreshData(); // 데이터 새로고침 메소드 호출
             }
         });
-
-
 
 
         // 내 근처 거리 설정 bottom sheet layout
@@ -295,6 +295,58 @@ public class HomeActivity extends AppCompatActivity {
                 loadData();
             }
         });
+
+        // 홈 액티비티 광고 bottom sheet layout
+        homeAdsBottomSheetBehavior = BottomSheetBehavior.from(
+                findViewById(R.id.homeAdsBottomSheet_layout));
+
+        homeAdsBottomSheetBehavior.setDraggable(false);
+
+        homeAdsBottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        binding.backgroundDimmer.setVisibility(View.VISIBLE);
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        binding.backgroundDimmer.setVisibility(View.GONE);
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                binding.backgroundDimmer.setAlpha(slideOffset);
+                binding.backgroundDimmer.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // "오늘 하루동안 보지 않기" 버튼 클릭 시
+        findViewById(R.id.notShowUntilToday_button).setOnClickListener(view -> {
+            if (homeAdsBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                homeAdsBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        });
+
+        // "광고 닫기" 버튼 클릭 시
+        findViewById(R.id.closeAds_button).setOnClickListener(view -> {
+            if (homeAdsBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                homeAdsBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+        });
+
+        binding.openAdsButton.setOnClickListener(view ->
+                homeAdsBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED));
+
+        // 0.5초 후에 버튼 클릭 이벤트 실행
+        binding.getRoot().postDelayed(() -> {
+            if (!isAdsClosed) {
+                binding.openAdsButton.performClick();
+                isAdsClosed = true;
+            }
+        }, 500);
 
         /** "알림" 버튼 클릭 시 */
         binding.notificationImageButton.setOnClickListener(view ->
@@ -430,6 +482,10 @@ public class HomeActivity extends AppCompatActivity {
 
             if (selectDistanceBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
                 selectDistanceBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+
+            if (homeAdsBottomSheetBehavior.getState() != BottomSheetBehavior.STATE_HIDDEN) {
+                homeAdsBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
             }
         });
 
@@ -832,6 +888,7 @@ public class HomeActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             requestPermissions(PERMISSIONS, REQUEST_PERMISSIONS_REQUEST_CODE);
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -874,6 +931,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         }
     }
+
     // 유저 정보 조회 메서드
     private void getUserInfo() {
         Call<ResponseBody> call = userAPI.getUserInfo();
@@ -885,12 +943,14 @@ public class HomeActivity extends AppCompatActivity {
                     finish();
                 }
             }
+
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable throwable) {
                 new ToastWarning(getResources().getString(R.string.toast_server_error), HomeActivity.this);
             }
         });
     }
+
     // 이 액티비티로 다시 돌아왔을 때 실행되는 메소드
     @Override
     public void onResume() {
@@ -898,7 +958,7 @@ public class HomeActivity extends AppCompatActivity {
 
         getUserInfo();
         loadData();
-        currCategory ="all";
+        currCategory = "all";
         if (distance >= 1000) {
             binding.distanceTextView.setText(distance / 1000 + "km");
         } else {

@@ -55,6 +55,14 @@
                     android:layout_marginTop="5dp"
                     android:layout_toRightOf="@+id/distance_textView"
                     android:src="@drawable/arrow_down" />
+
+                <Button
+                    android:id="@+id/openAds_button"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_toEndOf="@+id/selectDistance_imageButton"
+                    android:background="@color/transparent" />
             </RelativeLayout>
 
             <!-- "알림" 버튼 -->
@@ -402,6 +410,9 @@
 
         <!-- bottom sheet 레이아웃 -->
         <include layout="@layout/bottom_sheet_select_create_post_type" />
+
         <include layout="@layout/bottom_sheet_select_distance" />
+
+        <include layout="@layout/bottom_sheet_home_ads" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </RelativeLayout>
