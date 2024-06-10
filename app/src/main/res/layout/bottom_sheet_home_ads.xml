@@ -1,0 +1,45 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/homeAdsBottomSheet_layout"
+    android:layout_width="match_parent"
+    android:layout_height="260dp"
+    android:layout_alignParentBottom="true"
+    android:background="@drawable/bottom_sheet_background"
+    android:backgroundTint="@color/white"
+    android:orientation="vertical"
+    app:behavior_peekHeight="0dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <ImageView
+        android:id="@+id/homeAds_imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="210dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/home_ads" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/homeAds_imageView"
+        android:layout_marginHorizontal="15dp">
+
+        <Button
+            android:id="@+id/notShowUntilToday_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:background="@color/transparent"
+            android:textSize="15sp"
+            android:text="오늘 하루동안 보지 않기" />
+
+        <Button
+            android:id="@+id/closeAds_button"
+            android:layout_width="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_height="wrap_content"
+            android:background="@color/transparent"
+            android:text="닫기" />
+    </RelativeLayout>
+</RelativeLayout>
