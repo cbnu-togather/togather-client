@@ -485,6 +485,9 @@ public class RecruitmentPostDetailActivity extends AppCompatActivity {
                                     .into(binding.postThumbnailImageView); // ImageView에 이미지 설정
                         }
 
+                        if (postDetailsItem.getHeadCount() <= postDetailsItem.getCurrentCount()) {
+                            isRecruitmentComplete = true;
+                        }
                         if (isRecruitmentComplete) {
                             recruitmentComplete();
                         }

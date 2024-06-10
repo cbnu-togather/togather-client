@@ -28,6 +28,7 @@ import com.project.togather.editPost.recruitment.EditRecruitmentPostSelectMeetin
 import com.project.togather.home.HomeActivity;
 import com.project.togather.home.PostInfoResponse;
 import com.project.togather.home.RecruitmentPostDetailActivity;
+import com.project.togather.notification.NotificationInfoItem;
 import com.project.togather.retrofit.RetrofitService;
 import com.project.togather.retrofit.interfaceAPI.RecruitmentAPI;
 import com.project.togather.retrofit.interfaceAPI.UserAPI;
@@ -40,6 +41,7 @@ import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -324,7 +326,9 @@ public class MyRecruitmentPartyPostListActivity extends AppCompatActivity {
             public void onResponse(Call<List<PostInfoItem>> call, Response<List<PostInfoItem>> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     postInfoItems.clear();
-                    postInfoItems.addAll(response.body());
+                    List<PostInfoItem> reversedList = response.body();
+                    Collections.reverse(reversedList); // 리스트를 역순으로 변경
+                    postInfoItems.addAll(reversedList);
                     adapter.setPostInfoList(postInfoItems);
                     adapter.notifyDataSetChanged();
 

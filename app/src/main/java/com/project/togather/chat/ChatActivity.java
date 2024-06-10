@@ -339,7 +339,7 @@ public class ChatActivity extends AppCompatActivity {
                         thirdUser_roundedImageView
                 };
 
-                for (int i=0; i < item.getParticipantCount(); i++) {
+                for (int i=0; i < item.getParticipantCount() - 1; i++) {
                     if (item.getUserProfileImgUrls()[i] != null && item.getUserProfileImgUrls()[i].equals("")) {
                         userImageViews[i].setVisibility(View.VISIBLE);
                         userImageViews[i].setImageResource(R.drawable.user_default_profile);
