@@ -341,7 +341,7 @@ public class LoginActivity extends AppCompatActivity {
         /** (인증문자 확인) 버튼 클릭 시 */
         binding.confirmAuthCodeButton.setOnClickListener(view -> {
             String usersAuthCodeText = binding.authCodeEditText.getText().toString();
-            String systemAuthCodeText = "909409";
+            String systemAuthCodeText = "692352";
 
             if (usersAuthCodeText.equals(systemAuthCodeText)) {
                 checkPhoneNumber(binding.phoneNumberEditText.getText().toString());
