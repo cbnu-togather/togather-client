@@ -33,7 +33,7 @@
             android:layout_below="@id/bottomSheetTitle_textView"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/spoqa_han_sans_neo_regular"
-            android:text="예) 강남역 1번 출, 교보타워 앞"
+            android:text="예) 강남역 1번 출구, 교보타워 앞"
             android:textSize="17.5sp" />
 
         <EditText

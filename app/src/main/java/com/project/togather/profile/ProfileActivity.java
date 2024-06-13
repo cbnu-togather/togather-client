@@ -274,13 +274,15 @@ public class ProfileActivity extends AppCompatActivity {
 
                             // 내 유저 이름을 표시
                             binding.userNameTextView.setText(userName);
+                            if (!isDestroyed() && !isFinishing() && photo != null) {
+                                // 내 프로필 사진을 표시
+                                Glide.with(ProfileActivity.this)
+                                        .load(photo)
+                                        .placeholder(R.drawable.one_person_logo)
+                                        .error(R.drawable.one_person_logo)
+                                        .into(binding.userProfileImageRoundedImageView);
+                            }
 
-                            // 내 프로필 사진을 표시
-                            Glide.with(ProfileActivity.this)
-                                    .load(photo)
-                                    .placeholder(R.drawable.one_person_logo)
-                                    .error(R.drawable.one_person_logo)
-                                    .into(binding.userProfileImageRoundedImageView);
                         } else {
                             // 필요한 필드가 없을 경우 로그 출력
                             Log.e("getUserInfo", "Required fields are missing in the JSON response.");

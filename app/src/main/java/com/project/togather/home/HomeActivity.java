@@ -753,7 +753,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
                 elapsedTime_textView.setText(elapsedTime_str);
 
-                if (item.getHeadCount() == item.getCurrentCount()) {
+                if (item.isCompleted() || item.getHeadCount() == item.getCurrentCount()) {
                     recruitmentComplete_textView.setVisibility(View.VISIBLE);
                 } else {
                     currentPartyMemberNumFirstState_cardView.setVisibility(item.getHeadCount() >= 1 ? View.VISIBLE : View.INVISIBLE);
@@ -861,7 +861,7 @@ public class HomeActivity extends AppCompatActivity {
 
     // 데이터 로딩 함수
     private void loadData() {
-        Call<List<PostInfoItem>> call = recruitmentAPI.getRecruitmentPostList(currLatitude, currLongitude, distance);
+        Call<List<PostInfoItem>> call = recruitmentAPI.getRecruitmentPostList(36.6257, 127.4544, distance);
         call.enqueue(new Callback<List<PostInfoItem>>() {
             @Override
             public void onResponse(Call<List<PostInfoItem>> call, Response<List<PostInfoItem>> response) {

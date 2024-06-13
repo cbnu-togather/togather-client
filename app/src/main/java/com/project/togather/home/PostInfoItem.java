@@ -23,6 +23,7 @@ public class PostInfoItem {
     private int currentCount;
     private boolean liked;
     private int likes;
+    private boolean completed;
 
     public long getElapsedTime() {
         long elapsedTime = 0;
